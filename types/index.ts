@@ -14,6 +14,12 @@ export interface Teacher {
   rating: number;
   avatarUrl?: string;
   availableSlots: string[]; // ISO date strings
+  experience: number; // in years
+  tags?: string[]; // e.g. ['islamic studies', 'quran', 'tajweed'],
+  isPaid: boolean; // true if the teacher charges for lessons
+  price?: number; // price per lesson in currency units, required if isPaid is true
+  videoUrl?: string; // URL to a video introduction
+  gender: 'male' | 'female';
 }
 
 export interface Booking {

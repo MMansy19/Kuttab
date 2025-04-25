@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <section className="flex flex-col items-center justify-center text-center min-h-[70vh] gap-6">
-      <h1 className="text-4xl md:text-5xl font-bold mb-2">مرحبا بكم في كُـــتَّـــاب | KOTTAB</h1>
+      <h1 className="text-4xl md:text-5xl font-bold mb-2">مرحبا بكم في كُـــتَّـــاب</h1>
       <p className="mb-6 text-lg md:text-xl text-gray-300 max-w-2xl">
         منصة تعليمية تجمع بين الطلاب والمعلمين لجلسات تعليمية مميزة عبر الإنترنت. احجز معلمك الآن وابدأ رحلتك التعليمية.
       </p>

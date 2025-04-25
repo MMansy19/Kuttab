@@ -12,7 +12,7 @@ html {
 }
 
 body {
-  @apply bg-emerald-950 text-white dark:bg-gray-900 dark:text-white transition-colors duration-300;
+  @apply bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300;
   font-family: 'Cairo', 'Tajawal', 'Noto Kufi Arabic', Arial, sans-serif;
 }
 
@@ -21,7 +21,7 @@ body {
 }
 
 .light body {
-  @apply bg-emerald-50 text-emerald-900;
+  @apply bg-white text-gray-900 transition-colors duration-300;
 }
 
 h1, h2, h3, h4, h5, h6 {
