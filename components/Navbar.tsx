@@ -24,27 +24,27 @@ export default function Navbar() {
   };
 
   return (
-    <nav dir="rtl" className="w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-4 px-2 sm:px-6 flex flex-col sm:flex-row items-center justify-between shadow-md transition-colors duration-300">
+    <nav dir="rtl" className="w-full bg-white dark:bg-gray-900 text-emerald-900 dark:text-white py-4 px-2 sm:px-6 flex flex-col sm:flex-row items-center justify-between shadow-md transition-colors duration-300 border-b border-accent">
       <div className="flex items-center gap-2 mb-2 sm:mb-0">
-        <span className="text-2xl font-bold tracking-tight">كتاب</span>
+        <span className="text-3xl font-bold tracking-tight text-accent">كُتّاب <span className="text-emerald-700">|</span> KOTTAB</span>
       </div>
-      <ul className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-base sm:text-lg font-medium w-full sm:w-auto text-center">
-        <li><a href="/" className="hover:text-blue-500 dark:hover:text-blue-400 transition">الرئيسية</a></li>
-        <li><a href="/about" className="hover:text-blue-500 dark:hover:text-blue-400 transition">من نحن</a></li>
-        <li><a href="/teachers" className="hover:text-blue-500 dark:hover:text-blue-400 transition">المعلمون</a></li>
-        <li><a href="/donate" className="hover:text-blue-500 dark:hover:text-blue-400 transition">تبرع</a></li>
-        <li><a href="/contact" className="hover:text-blue-500 dark:hover:text-blue-400 transition">تواصل</a></li>
+      <ul className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-lg font-bold w-full sm:w-auto text-center">
+        <li><a href="/" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">الرئيسية</a></li>
+        <li><a href="/about" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">عن المنصة</a></li>
+        <li><a href="/teachers" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">المعلمون</a></li>
+        <li><a href="/donate" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">تبرع</a></li>
+        <li><a href="/contact" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">تواصل</a></li>
       </ul>
       <div className="flex items-center gap-2 mt-2 sm:mt-0">
         <button
           onClick={toggleTheme}
-          className="px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-800 transition text-gray-900 dark:text-white text-lg"
+          className="px-2 py-1 rounded bg-emerald-100 dark:bg-emerald-800 hover:bg-emerald-200 dark:hover:bg-emerald-900 transition text-emerald-900 dark:text-white text-lg border border-accent"
           aria-label="تبديل الوضع الليلي/النهاري"
         >
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
-        <a href="/auth/login" className="px-3 py-1 rounded bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 transition text-white">دخول</a>
-        <a href="/auth/signup" className="px-3 py-1 rounded bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-800 transition text-gray-900 dark:text-white">حساب جديد</a>
+        <a href="/auth/login" className="px-3 py-1 rounded bg-accent hover:bg-emerald-700 transition text-white font-bold">دخول</a>
+        <a href="/auth/signup" className="px-3 py-1 rounded bg-emerald-200 dark:bg-emerald-700 hover:bg-emerald-300 dark:hover:bg-emerald-800 transition text-emerald-900 dark:text-white font-bold">حساب جديد</a>
       </div>
     </nav>
   );

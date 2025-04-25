@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Booking } from '../../types';
+import type { Booking } from '../../../types';
 
 const mockBookings: Booking[] = [
   {

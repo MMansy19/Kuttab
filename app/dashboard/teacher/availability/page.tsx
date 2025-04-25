@@ -1,5 +1,5 @@
 import React from 'react';
-import AvailabilityCalendar from '../../components/AvailabilityCalendar';
+import AvailabilityCalendar from '@/components/AvailabilityCalendar';
 
 const mockSlots = [
   '2025-04-28 18:00',

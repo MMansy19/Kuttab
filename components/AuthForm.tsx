@@ -1,12 +1,16 @@
 import React from 'react';
 
 export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
-  // حالة وهمية للحقول
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [name, setName] = React.useState('');
   const [error, setError] = React.useState('');
   const [success, setSuccess] = React.useState('');
+  const [role, setRole] = React.useState<'USER' | 'TEACHER'>('USER');
+  const [bio, setBio] = React.useState('');
+  const [experience, setExperience] = React.useState('');
+  const [avatar, setAvatar] = React.useState<File | null>(null);
+  const [video, setVideo] = React.useState<File | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,6 +19,12 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
     if (!email || !password || (mode === 'signup' && !name)) {
       setError('يرجى تعبئة جميع الحقول');
       return;
+    }
+    if (mode === 'signup' && role === 'TEACHER') {
+      if (!bio || !experience) {
+        setError('يرجى تعبئة جميع بيانات المعلم');
+        return;
+      }
     }
     setSuccess(mode === 'login' ? 'تم تسجيل الدخول بنجاح (وهمي)' : 'تم إنشاء الحساب بنجاح (وهمي)');
   };
@@ -25,17 +35,75 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
         {mode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب'}
       </h2>
       {mode === 'signup' && (
-        <div>
-          <label className="block mb-1 text-right">الاسم الكامل</label>
-          <input
-            type="text"
-            className="w-full px-3 py-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="أدخل اسمك الكامل"
-            dir="rtl"
-          />
-        </div>
+        <>
+          <div>
+            <label className="block mb-1 text-right">الاسم الكامل</label>
+            <input
+              type="text"
+              className="w-full px-3 py-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="أدخل اسمك الكامل"
+              dir="rtl"
+            />
+          </div>
+          <div>
+            <label className="block mb-1 text-right">نوع الحساب</label>
+            <select
+              className="w-full px-3 py-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              value={role}
+              onChange={e => setRole(e.target.value as 'USER' | 'TEACHER')}
+              dir="rtl"
+            >
+              <option value="USER">طالب</option>
+              <option value="TEACHER">معلم</option>
+            </select>
+          </div>
+          {role === 'TEACHER' && (
+            <>
+              <div>
+                <label className="block mb-1 text-right">نبذة عنك</label>
+                <textarea
+                  className="w-full px-3 py-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  value={bio}
+                  onChange={e => setBio(e.target.value)}
+                  placeholder="اكتب نبذة مختصرة عنك"
+                  dir="rtl"
+                />
+              </div>
+              <div>
+                <label className="block mb-1 text-right">سنوات الخبرة</label>
+                <input
+                  type="number"
+                  min="0"
+                  className="w-full px-3 py-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  value={experience}
+                  onChange={e => setExperience(e.target.value)}
+                  placeholder="عدد سنوات الخبرة"
+                  dir="rtl"
+                />
+              </div>
+              <div>
+                <label className="block mb-1 text-right">صورة شخصية (اختياري)</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="w-full text-white"
+                  onChange={e => setAvatar(e.target.files?.[0] || null)}
+                />
+              </div>
+              <div>
+                <label className="block mb-1 text-right">فيديو تعريفي (اختياري)</label>
+                <input
+                  type="file"
+                  accept="video/*"
+                  className="w-full text-white"
+                  onChange={e => setVideo(e.target.files?.[0] || null)}
+                />
+              </div>
+            </>
+          )}
+        </>
       )}
       <div>
         <label className="block mb-1 text-right">البريد الإلكتروني</label>

@@ -2,14 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
 html {
   direction: rtl;
+  font-family: 'Cairo', 'Tajawal', 'Noto Kufi Arabic', Arial, sans-serif;
   min-width: 100vw;
   min-height: 100vh;
 }
 
 body {
-  @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300;
+  @apply bg-emerald-950 text-white dark:bg-gray-900 dark:text-white transition-colors duration-300;
+  font-family: 'Cairo', 'Tajawal', 'Noto Kufi Arabic', Arial, sans-serif;
 }
 
 .dark body {
@@ -17,7 +21,13 @@ body {
 }
 
 .light body {
-  @apply bg-gray-50 text-gray-900;
+  @apply bg-emerald-50 text-emerald-900;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cairo', 'Tajawal', 'Noto Kufi Arabic', Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 @media (max-width: 640px) {
@@ -26,6 +36,31 @@ body {
     padding: 0;
     margin: 0;
   }
+}
+
+/* Islamic accent color for buttons and highlights */
+.btn, .bg-accent {
+  @apply bg-emerald-600 text-white hover:bg-emerald-700 transition;
+}
+
+.text-accent {
+  @apply text-emerald-500;
+}
+
+.border-accent {
+  @apply border-emerald-600;
+}
+
+input, textarea, select {
+  @apply bg-emerald-50 dark:bg-gray-800 text-emerald-900 dark:text-white border border-emerald-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-500 rounded;
+}
+
+label {
+  @apply text-emerald-900 dark:text-emerald-200 font-semibold;
+}
+
+nav {
+  font-family: 'Cairo', 'Tajawal', 'Noto Kufi Arabic', Arial, sans-serif;
 }
 
 /* Custom styles can be added below */

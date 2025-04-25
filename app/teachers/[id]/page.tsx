@@ -1,17 +1,15 @@
+"use client";
+
 import type { Teacher } from '../../../types';
 import TeacherProfile from '../../../components/TeacherProfile';
-
-// بيانات وهمية لمعلم
-const mockTeacher: Teacher = {
-  id: '1',
-  name: 'أ. محمد علي',
-  bio: 'معلم رياضيات بخبرة 10 سنوات في تدريس المرحلة الثانوية.',
-  subjects: ['رياضيات'],
-  rating: 4.8,
-  avatarUrl: '',
-  availableSlots: ['2025-04-28 18:00', '2025-04-29 17:00'],
-};
+import teachersData from '../../../data/teachers';
+import { useState } from 'react';
+import { useParams } from 'next/navigation';
 
 export default function TeacherProfilePage() {
-  return <TeacherProfile teacher={mockTeacher} />;
+  const params = useParams();
+  const [teachers] = useState(teachersData);
+  const teacher = teachers.find((t: Teacher) => t.id === params.id);
+  if (!teacher) return <div className="text-center text-red-500 mt-8">المعلم غير موجود</div>;
+  return <TeacherProfile teacher={teacher} />;
 }
