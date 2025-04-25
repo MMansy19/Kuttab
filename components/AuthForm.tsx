@@ -40,7 +40,7 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
             <label className="block mb-1 text-right">الاسم الكامل</label>
             <input
               type="text"
-              className="w-full px-3 py-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full px-3 py-2 rounded bg-white dark:bg-gray-900 text-emerald-900 dark:text-white border border-emerald-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="أدخل اسمك الكامل"
@@ -50,7 +50,7 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
           <div>
             <label className="block mb-1 text-right">نوع الحساب</label>
             <select
-              className="w-full px-3 py-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="w-full px-3 py-2 rounded bg-white dark:bg-gray-900 text-emerald-900 dark:text-white border border-emerald-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               value={role}
               onChange={e => setRole(e.target.value as 'USER' | 'TEACHER')}
               dir="rtl"
@@ -64,7 +64,7 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
               <div>
                 <label className="block mb-1 text-right">نبذة عنك</label>
                 <textarea
-                  className="w-full px-3 py-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full px-3 py-2 rounded bg-white dark:bg-gray-900 text-emerald-900 dark:text-white border border-emerald-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   value={bio}
                   onChange={e => setBio(e.target.value)}
                   placeholder="اكتب نبذة مختصرة عنك"
@@ -76,7 +76,7 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
                 <input
                   type="number"
                   min="0"
-                  className="w-full px-3 py-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full px-3 py-2 rounded bg-white dark:bg-gray-900 text-emerald-900 dark:text-white border border-emerald-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   value={experience}
                   onChange={e => setExperience(e.target.value)}
                   placeholder="عدد سنوات الخبرة"
@@ -88,7 +88,7 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
                 <input
                   type="file"
                   accept="image/*"
-                  className="w-full text-white"
+                  className="w-full text-emerald-900 dark:text-white"
                   onChange={e => setAvatar(e.target.files?.[0] || null)}
                 />
               </div>
@@ -97,7 +97,7 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
                 <input
                   type="file"
                   accept="video/*"
-                  className="w-full text-white"
+                  className="w-full text-emerald-900 dark:text-white"
                   onChange={e => setVideo(e.target.files?.[0] || null)}
                 />
               </div>
@@ -109,7 +109,7 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
         <label className="block mb-1 text-right">البريد الإلكتروني</label>
         <input
           type="email"
-          className="w-full px-3 py-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          className="w-full px-3 py-2 rounded bg-white dark:bg-gray-900 text-emerald-900 dark:text-white border border-emerald-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           value={email}
           onChange={e => setEmail(e.target.value)}
           placeholder="example@email.com"
@@ -120,7 +120,7 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
         <label className="block mb-1 text-right">كلمة المرور</label>
         <input
           type="password"
-          className="w-full px-3 py-2 rounded bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+          className="w-full px-3 py-2 rounded bg-white dark:bg-gray-900 text-emerald-900 dark:text-white border border-emerald-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           value={password}
           onChange={e => setPassword(e.target.value)}
           placeholder="••••••••"
@@ -129,7 +129,7 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
       </div>
       {error && <div className="text-red-500 text-sm text-center">{error}</div>}
       {success && <div className="text-green-500 text-sm text-center">{success}</div>}
-      <button type="submit" className="w-full py-2 rounded bg-blue-700 hover:bg-blue-800 transition text-white font-semibold mt-2">
+      <button type="submit" className="w-full py-2 rounded bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-800 dark:hover:bg-emerald-900 transition text-white font-semibold mt-2">
         {mode === 'login' ? 'دخول' : 'إنشاء حساب'}
       </button>
     </form>

@@ -26,7 +26,7 @@ export default function Navbar() {
   return (
     <nav dir="rtl" className="w-full bg-white dark:bg-gray-900 text-emerald-900 dark:text-white py-4 px-2 sm:px-6 flex flex-col sm:flex-row items-center justify-between shadow-md transition-colors duration-300 border-b border-accent">
       <div className="flex items-center gap-2 mb-2 sm:mb-0">
-        <span className="text-3xl font-bold tracking-tight text-accent">كُتّاب <span className="text-emerald-700">|</span> KOTTAB</span>
+        <span className="text-3xl font-bold tracking-tight text-accent">كُتّاب <span className="text-emerald-700 dark:text-emerald-400">|</span> KOTTAB</span>
       </div>
       <ul className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-lg font-bold w-full sm:w-auto text-center">
         <li><a href="/" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">الرئيسية</a></li>
@@ -43,7 +43,7 @@ export default function Navbar() {
         >
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
-        <a href="/auth/login" className="px-3 py-1 rounded bg-accent hover:bg-emerald-700 transition text-white font-bold">دخول</a>
+        <a href="/auth/login" className="px-3 py-1 rounded bg-accent hover:bg-emerald-700 dark:hover:bg-emerald-600 transition text-white font-bold">دخول</a>
         <a href="/auth/signup" className="px-3 py-1 rounded bg-emerald-200 dark:bg-emerald-700 hover:bg-emerald-300 dark:hover:bg-emerald-800 transition text-emerald-900 dark:text-white font-bold">حساب جديد</a>
       </div>
     </nav>
