@@ -4,6 +4,7 @@
   "description": "- تمكين المعلمين المستقلين من الوصول لطلاب محتاجين لتعلم القرآن.",
   "main": "index.js",
   "scripts": {
+    "dev": "next dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
