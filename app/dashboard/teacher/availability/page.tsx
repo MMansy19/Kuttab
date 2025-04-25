@@ -1,24 +1,25 @@
 import React from 'react';
+import AvailabilityCalendar from '../../components/AvailabilityCalendar';
 
-export default function TeacherAvailabilityPage() {
+const mockSlots = [
+  '2025-04-28 18:00',
+  '2025-04-29 17:00',
+  '2025-04-30 19:30',
+];
+
+export default function AvailabilityPage() {
+  const [selectedSlot, setSelectedSlot] = React.useState<string | undefined>();
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <form className="w-full max-w-md p-8 bg-white rounded shadow-md space-y-4 rtl">
-        <h2 className="text-2xl font-bold text-center">تحديد أوقات التوفر</h2>
-        <select className="input input-bordered w-full" name="dayOfWeek" required>
-          <option value="0">الأحد</option>
-          <option value="1">الإثنين</option>
-          <option value="2">الثلاثاء</option>
-          <option value="3">الأربعاء</option>
-          <option value="4">الخميس</option>
-          <option value="5">الجمعة</option>
-          <option value="6">السبت</option>
-        </select>
-        <input className="input input-bordered w-full" name="startTime" type="time" required />
-        <input className="input input-bordered w-full" name="endTime" type="time" required />
-        <input className="input input-bordered w-full" name="maxNum" type="number" min="1" placeholder="عدد الطلاب الأقصى" />
-        <button className="btn btn-primary w-full" type="submit">حفظ</button>
-      </form>
+    <div className="py-8">
+      <AvailabilityCalendar
+        availableSlots={mockSlots}
+        selectedSlot={selectedSlot}
+        onSelect={setSelectedSlot}
+      />
+      {selectedSlot && (
+        <div className="text-center text-green-400 mt-4">تم اختيار الموعد: {selectedSlot}</div>
+      )}
     </div>
   );
 }
