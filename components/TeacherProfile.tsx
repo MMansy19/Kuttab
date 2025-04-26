@@ -1,6 +1,6 @@
-import type { Teacher } from '../types';
 import React from 'react';
 import { FaUserCircle } from 'react-icons/fa';
+import type { Teacher } from '../types';
 
 interface TeacherProfileProps {
   teacher: Teacher & {
@@ -11,21 +11,23 @@ interface TeacherProfileProps {
   };
 }
 
-export default function TeacherProfile({ teacher }: TeacherProfileProps) {
+const TeacherAvatar: React.FC<{ avatarUrl?: string; name: string }> = ({ avatarUrl, name }) => (
+  avatarUrl ? (
+    <img
+      src={avatarUrl}
+      alt={name}
+      className="w-24 h-24 rounded-full border-2 border-emerald-300 dark:border-emerald-700 object-cover bg-gray-100 dark:bg-gray-900"
+    />
+  ) : (
+    <FaUserCircle className="w-24 h-24 text-gray-400" />
+  )
+);
+
+const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher }) => {
   return (
-    <div className={`bg-white dark:bg-gray-800 text-gray-900 dark:text-white
-    rounded-xl shadow-lg p-8 flex flex-col gap-4 transition-colors duration-300 
-    max-w-2xl mx-auto mt-8 border border-gray-200 dark:border-gray-700`}>
+    <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl shadow-lg p-8 flex flex-col gap-4 transition-colors duration-300 max-w-2xl mx-auto mt-8 border border-gray-200 dark:border-gray-700">
       <div className="flex items-center gap-6 mb-4 relative">
-        {teacher.avatarUrl ? (
-          <img
-            src={teacher.avatarUrl}
-            alt={teacher.name}
-            className="w-24 h-24 rounded-full border-2 border-emerald-300 dark:border-emerald-700 object-cover bg-gray-100 dark:bg-gray-900"
-          />
-        ) : (
-          <FaUserCircle className="w-24 h-24 text-gray-400" />
-        )}
+        <TeacherAvatar avatarUrl={teacher.avatarUrl} name={teacher.name} />
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{teacher.name}</h2>
           <div className="text-lg text-emerald-700 dark:text-emerald-300 mb-1">{teacher.subjects?.join('، ')}</div>
@@ -72,4 +74,6 @@ export default function TeacherProfile({ teacher }: TeacherProfileProps) {
       )}
     </div>
   );
-}
+};
+
+export default TeacherProfile;

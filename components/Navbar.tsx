@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 function getInitialTheme() {
   if (typeof window !== 'undefined' && window.localStorage) {
@@ -29,11 +30,11 @@ export default function Navbar() {
         <span className="text-3xl font-bold tracking-tight text-accent">كُتّاب <span className="text-emerald-700 dark:text-emerald-400">|</span> KOTTAB</span>
       </div>
       <ul className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-lg font-bold w-full sm:w-auto text-center">
-        <li><a href="/" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">الرئيسية</a></li>
-        <li><a href="/about" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">عن المنصة</a></li>
-        <li><a href="/teachers" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">المعلمون</a></li>
-        <li><a href="/donate" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">تبرع</a></li>
-        <li><a href="/contact" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">تواصل</a></li>
+        <li><Link href="/" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">الرئيسية</Link></li>
+        <li><Link href="/about" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">عن المنصة</Link></li>
+        <li><Link href="/teachers" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">المعلمون</Link></li>
+        <li><Link href="/donate" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">تبرع</Link></li>
+        <li><Link href="/contact" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">تواصل</Link></li>
       </ul>
       <div className="flex items-center gap-2 mt-2 sm:mt-0">
         {/* make theme only dark (NEED TO BE CHANGED) */}
@@ -49,12 +50,12 @@ export default function Navbar() {
             </svg>
             ) : (
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 9.003 0 008.354-5.646z" />
             </svg>
             )}
         </button> */}
-        <a href="/auth/login" className="px-3 py-1 rounded bg-accent hover:bg-emerald-700 dark:hover:bg-emerald-600 transition text-white font-bold">دخول</a>
-        <a href="/auth/signup" className="px-3 py-1 rounded bg-emerald-200 dark:bg-emerald-700 hover:bg-emerald-300 dark:hover:bg-emerald-800 transition text-emerald-900 dark:text-white font-bold">حساب جديد</a>
+        <Link href="/auth/login" className="px-3 py-1 rounded bg-accent hover:bg-emerald-700 dark:hover:bg-emerald-600 transition text-white font-bold">دخول</Link>
+        <Link href="/auth/signup" className="px-3 py-1 rounded bg-emerald-200 dark:bg-emerald-700 hover:bg-emerald-300 dark:hover:bg-emerald-800 transition text-emerald-900 dark:text-white font-bold">حساب جديد</Link>
       </div>
     </nav>
   );

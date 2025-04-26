@@ -1,14 +1,30 @@
-import React from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
+import TeacherBooking from '@/components/booking/TeacherBooking';
+import { useParams } from 'next/navigation';
 
 export default function BookTeacherPage() {
+  const params = useParams();
+  const teacherId = params.teacherId as string;
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate data loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <form className="w-full max-w-md p-8 bg-white rounded shadow-md space-y-4 rtl">
-        <h2 className="text-2xl font-bold text-center">حجز موعد مع معلم</h2>
-        <input className="input input-bordered w-full" name="date" type="date" required />
-        <input className="input input-bordered w-full" name="timeSlot" type="text" placeholder="الوقت (مثال: 10:00-11:00)" required />
-        <button className="btn btn-primary w-full" type="submit">حجز</button>
-      </form>
+    <div className="min-h-screen bg-gray-950 py-8">
+      {isLoading ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : (
+        <TeacherBooking teacherId={teacherId} />
+      )}
     </div>
   );
 }

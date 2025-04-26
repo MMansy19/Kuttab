@@ -1,0 +1,9 @@
+.text_control {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.text_control:hover {
+  overflow: visible;
+  white-space: normal;
+}
