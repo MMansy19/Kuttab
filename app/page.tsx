@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { FaBook, FaUserGraduate, FaCalendarAlt, FaGlobe, FaAward, FaMedal, FaLaptop, FaComment, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+import { FaBook, FaUserGraduate, FaCalendarAlt, FaGlobe, FaAward, FaMedal, FaLaptop, FaComment, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaUserCircle } from "react-icons/fa";
 
 export default function Home() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -12,19 +12,19 @@ export default function Home() {
     {
       name: "أحمد محمود",
       role: "طالب",
-      image: "/images/testimonial-1.jpg",
+      image: "",
       text: "منصة كتّاب ساعدتني كثيراً في تعلم القرآن الكريم والتجويد. المعلمون هنا محترفون وصبورون."
     },
     {
       name: "فاطمة علي",
       role: "والدة طالب",
-      image: "/images/testimonial-2.jpg",
+      image: "",
       text: "ابني أصبح يحب تعلم القرآن بفضل المعلمين المتميزين في كتّاب. أنا سعيدة جداً بالتقدم الذي حققه."
     },
     {
       name: "محمد السيد",
       role: "معلم",
-      image: "/images/testimonial-3.jpg",
+      image: "",
       text: "كتّاب منصة رائعة تتيح لي الوصول إلى طلاب من جميع أنحاء العالم وتمكنني من نشر علمي بكل سهولة."
     }
   ];
@@ -347,13 +347,19 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-emerald-300 dark:border-emerald-700">
-                    <Image 
-                      src={testimonials[activeTestimonial].image} 
-                      alt={testimonials[activeTestimonial].name}
-                      width={60}
-                      height={60}
-                      className="w-full h-full object-cover"
-                    />
+                    {testimonials[activeTestimonial].image ? (
+                      <Image 
+                        src={testimonials[activeTestimonial].image} 
+                        alt={testimonials[activeTestimonial].name}
+                        width={60}
+                        height={60}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-600">
+                        <FaUserCircle className="w-14 h-14" />
+                      </div>
+                    )}
                   </div>
                   <div>
                     <div className="font-bold text-gray-900 dark:text-white">{testimonials[activeTestimonial].name}</div>

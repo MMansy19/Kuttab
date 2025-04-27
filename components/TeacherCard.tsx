@@ -1,10 +1,10 @@
 "use client";
-
 import type { Teacher } from '../types';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaUserCircle, FaEye, FaCalendarCheck, FaStar } from 'react-icons/fa';
+import { FaUserCircle, FaEye, FaCalendarCheck, FaStar, FaQuran, FaUserGraduate } from 'react-icons/fa';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface TeacherCardProps {
   teacher: Teacher;
@@ -44,11 +44,15 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
     >
       <div className="flex items-center gap-4 w-full relative">
         {teacher.avatarUrl ? (
-          <img
-            src={teacher.avatarUrl}
-            alt={teacher.name}
-            className="w-16 h-16 rounded-full border-2 border-emerald-300 dark:border-emerald-700 object-cover bg-gray-100 dark:bg-gray-900"
-          />
+          <div className="w-16 h-16 rounded-full border-2 border-emerald-300 dark:border-emerald-700 overflow-hidden">
+            <Image
+              src={teacher.avatarUrl}
+              alt={teacher.name}
+              width={64}
+              height={64}
+              className="object-cover bg-gray-100 dark:bg-gray-900"
+            />
+          </div>
         ) : (
           <FaUserCircle className="w-16 h-16 text-gray-400" />
         )}
@@ -61,12 +65,22 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
               <span className="font-bold">{teacher.rating?.toFixed(1) ?? '0.0'}</span>
             </div>
           </div>
+          {teacher.specialization && (
+            <div className="flex items-center mt-1 gap-1 text-blue-600 dark:text-blue-400 text-sm">
+              <FaUserGraduate className="h-3 w-3 mr-1" />
+              <span>{teacher.specialization}</span>
+            </div>
+          )}
         </div>
       </div>
-      <p className="mt-2 text-gray-700 dark:text-gray-300">{teacher.bio}</p>
+      <p className="mt-2 text-gray-700 dark:text-gray-300 text-sm">{teacher.bio}</p>
+      
       <div className="flex flex-wrap gap-2 mt-2">
-        {teacher.tags?.map(tag => (
-          <span key={tag} className="px-3 py-1 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 text-xs font-semibold">{tag}</span>
+        {teacher.subjects?.map(subject => (
+          <span key={subject} className="px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 text-xs font-semibold flex items-center">
+            <FaQuran className="mr-1 h-3 w-3" />
+            {subject}
+          </span>
         ))}
       </div>
       
@@ -115,6 +129,13 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
         <div className="absolute top-2 left-4">
           <span className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 text-xs font-medium px-2.5 py-1 rounded">
             {teacher.price} ريال
+          </span>
+        </div>
+      )}
+      {!teacher.isPaid && (
+        <div className="absolute top-2 left-4">
+          <span className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs font-medium px-2.5 py-1 rounded">
+            مجاني
           </span>
         </div>
       )}
