@@ -188,9 +188,12 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
   // Form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     
     try {
+      setIsSubmitting(true);
+      setErrors({});
+      setSuccess('');
+      
       const validationErrors: ValidationError = {};
       
       // For signup step 1, only validate the step 1 fields
@@ -273,10 +276,27 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
         // Success message
         setSuccess(mode === 'login' ? 'تم تسجيل الدخول بنجاح' : 'تم إنشاء الحساب بنجاح');
         
-        // Redirect based on role
+        // Role-based redirect logic
         if (mode === 'login' || (mode === 'signup' && step === 2)) {
-          window.location.href = role === 'TEACHER' ? '/dashboard/teacher' : 
-                               role === 'ADMIN' ? '/dashboard/admin' : '/dashboard/user';
+          // Determine which dashboard to redirect to based on user role
+          const dashboardPath = 
+            role === 'TEACHER' ? '/dashboard/teacher' : 
+            role === 'ADMIN' ? '/dashboard/admin' : 
+            '/dashboard/user';
+          
+          // Save user data in localStorage (in a real app, you'd use a more secure approach with JWT)
+          localStorage.setItem('kottab_user', JSON.stringify({
+            role,
+            name,
+            email,
+            isAuthenticated: true
+          }));
+          
+          // Show success message before redirecting
+          setTimeout(() => {
+            // Navigate to appropriate dashboard
+            window.location.href = dashboardPath;
+          }, 1000);
         }
       }
     } catch (error) {
