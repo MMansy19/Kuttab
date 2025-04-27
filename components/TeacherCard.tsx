@@ -70,7 +70,7 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
         ))}
       </div>
       
-      <div className="w-full flex gap-3 mt-3 sm:flex-col flex-row lg:flex-col xl:flex-row">
+      <div className="w-full flex gap-3 mt-3 sm:flex-col flex-row">
         <button
           className={`flex-1 py-3 px-4 rounded-lg flex items-center justify-center gap-2 ${
             loadingProfile ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-700'

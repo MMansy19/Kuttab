@@ -397,7 +397,7 @@ export default function TeachersPage() {
             )}
           </div>
           
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
             {filteredTeachers.length === 0 ? (
               <div className="col-span-full text-center p-10 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow">
                 <div className="mx-auto w-24 h-24 mb-6 flex items-center justify-center rounded-full bg-red-50 dark:bg-red-900/20">
