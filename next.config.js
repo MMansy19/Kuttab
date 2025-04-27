@@ -12,7 +12,7 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   images: {
-    domains: ['images.unsplash.com'], // Add any domains you use for images
+    domains: ['images.unsplash.com', 'img.icons8.com'], // Added icons8 domain
   },
 };
 

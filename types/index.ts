@@ -11,7 +11,7 @@ export interface Teacher {
   name: string;
   bio: string;
   subjects: string[];
-  rating: number;
+  rating: number; 
   avatarUrl?: string;
   availableSlots: string[]; // ISO date strings
   experience: number; // in years
@@ -20,6 +20,19 @@ export interface Teacher {
   price?: number; // price per lesson in currency units, required if isPaid is true
   videoUrl?: string; // URL to a video introduction
   gender: 'male' | 'female';
+  specialization?: string;
+  joinedDate?: string;
+  education?: string;
+  certifications?: string[];
+  teachingApproach?: string;
+  contactInfo?: {
+    email?: string;
+    phone?: string;
+    whatsapp?: string;
+    telegram?: string;
+  };
+  languages?: string[];
+  achievements?: string[];
 }
 
 export interface Booking {

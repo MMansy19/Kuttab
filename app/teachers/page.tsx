@@ -60,8 +60,14 @@ const testimonials = [
   }
 ];
 
-// UI Components
-const FilterButton = ({ selected, onClick, children }) => (
+// UI Components props interfaces
+interface FilterButtonProps {
+  selected: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}
+
+const FilterButton: React.FC<FilterButtonProps> = ({ selected, onClick, children }) => (
   <button
     className={`flex-1 py-2 text-center ${
       selected ? 'bg-emerald-600 text-white' : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-white'
@@ -72,7 +78,14 @@ const FilterButton = ({ selected, onClick, children }) => (
   </button>
 );
 
-const FilterSelect = ({ label, value, onChange, options }) => (
+interface FilterSelectProps {
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: React.ReactNode;
+}
+
+const FilterSelect: React.FC<FilterSelectProps> = ({ label, value, onChange, options }) => (
   <div className="space-y-2">
     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{label}</label>
     <select
@@ -85,7 +98,17 @@ const FilterSelect = ({ label, value, onChange, options }) => (
   </div>
 );
 
-const RangeFilter = ({ label, value, onChange, min, max, step, displaySuffix }) => (
+interface RangeFilterProps {
+  label: string;
+  value: number;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  min: number;
+  max: number;
+  step: number;
+  displaySuffix: string;
+}
+
+const RangeFilter: React.FC<RangeFilterProps> = ({ label, value, onChange, min, max, step, displaySuffix }) => (
   <div className="space-y-2">
     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{label}</label>
     <div className="px-2">
@@ -109,7 +132,11 @@ const RangeFilter = ({ label, value, onChange, min, max, step, displaySuffix }) 
   </div>
 );
 
-const StarDisplay = ({ rating }) => (
+interface StarDisplayProps {
+  rating: number;
+}
+
+const StarDisplay: React.FC<StarDisplayProps> = ({ rating }) => (
   <div className="flex items-center text-yellow-500">
     {[1, 2, 3, 4, 5].map((star) => (
       <span key={star} className={`text-lg ${star <= rating ? 'text-yellow-500' : 'text-gray-300 dark:text-gray-600'}`}>
@@ -119,7 +146,14 @@ const StarDisplay = ({ rating }) => (
   </div>
 );
 
-const TestimonialCard = ({ initial, name, color, text }) => (
+interface TestimonialCardProps {
+  initial: string;
+  name: string;
+  color: string;
+  text: string;
+}
+
+const TestimonialCard: React.FC<TestimonialCardProps> = ({ initial, name, color, text }) => (
   <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-6 rounded-lg">
     <div className="flex items-center gap-4 mb-4">
       <div className={`w-10 h-10 rounded-full bg-${color}-100 flex items-center justify-center mr-3`}>
@@ -252,6 +286,22 @@ export default function TeachersPage() {
     router.push(`/book/${teacherId}`);
   };
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+  };
+
+  const handleSubjectFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilter(f => ({ ...f, subject: e.target.value }));
+  };
+
+  const handleGenderFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilter(f => ({ ...f, gender: e.target.value }));
+  };
+
+  const handlePriceFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(f => ({ ...f, experience: parseInt(e.target.value) }));
+  };
+
   // Close sort dropdown when clicking outside
   React.useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -352,7 +402,7 @@ export default function TeachersPage() {
             <FilterSelect 
               label="المادة"
               value={filter.subject}
-              onChange={e => setFilter(f => ({ ...f, subject: e.target.value }))}
+              onChange={handleSubjectFilterChange}
               options={(
                 <>
                   <option value="all">كل المواد</option>
@@ -403,7 +453,7 @@ export default function TeachersPage() {
             <RangeFilter
               label="الحد الأدنى للخبرة (سنوات)"
               value={filter.experience}
-              onChange={e => setFilter(f => ({ ...f, experience: Number(e.target.value) }))}
+              onChange={handlePriceFilterChange}
               min={0}
               max={20}
               step={1}
@@ -454,7 +504,7 @@ export default function TeachersPage() {
                 className="rounded-full border border-gray-300 dark:border-gray-600 px-4 py-3 w-full text-right pr-10 bg-white dark:bg-gray-800 text-gray-800 dark:text-white shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
                 placeholder="ابحث باسم المعلم أو المادة..."
                 value={search}
-                onChange={e => setSearch(e.target.value)}
+                onChange={handleSearchChange}
                 dir="rtl"
               />
               <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />

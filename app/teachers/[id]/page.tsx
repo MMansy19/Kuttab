@@ -50,15 +50,17 @@ export default function TeacherProfilePage() {
   const slotsByWeek: Record<string, string[]> = {};
   teacher.availableSlots?.forEach((slot) => {
     const date = new Date(slot.replace(" ", "T"));
+    // Fix the arithmetic operation by using proper number types
+    const startOfYear = new Date(date.getFullYear(), 0, 1);
+    const days = Math.floor(
+      (date.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000)
+    );
+    const weekNum = Math.ceil(
+      (days + startOfYear.getDay() + 1) / 7
+    );
+    
     // Get ISO week string: yyyy-Www
-    const week = `${date.getFullYear()}-W${String(
-      Math.ceil(
-        ((date - new Date(date.getFullYear(), 0, 1)) / 86400000 +
-          new Date(date.getFullYear(), 0, 1).getDay() +
-          1) /
-          7
-      )
-    ).padStart(2, "0")}`;
+    const week = `${date.getFullYear()}-W${String(weekNum).padStart(2, "0")}`;
     if (!slotsByWeek[week]) slotsByWeek[week] = [];
     slotsByWeek[week].push(slot);
   });
@@ -396,56 +398,67 @@ export default function TeacherProfilePage() {
                 </div>
 
                 {/* Contact info section */}
-                {showContactInfo && teacher.contactInfo && (
+                {showContactInfo && (
                   <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                     <h4 className="font-bold text-gray-900 dark:text-white mb-4">
                       معلومات التواصل
                     </h4>
-                    <div className="space-y-3">
-                      {teacher.contactInfo.email && (
-                        <a
-                          href={`mailto:${teacher.contactInfo.email}`}
-                          className="flex items-center gap-3 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400"
-                        >
-                          <FaEnvelope className="text-emerald-600 dark:text-emerald-400" />
-                          <span dir="ltr">{teacher.contactInfo.email}</span>
-                        </a>
-                      )}
+                    {teacher.contactInfo ? (
+                      <div className="space-y-3">
+                        {teacher.contactInfo.email && (
+                          <a
+                            href={`mailto:${teacher.contactInfo.email}`}
+                            className="flex items-center gap-3 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400"
+                          >
+                            <FaEnvelope className="text-emerald-600 dark:text-emerald-400" />
+                            <span dir="ltr">{teacher.contactInfo.email}</span>
+                          </a>
+                        )}
 
-                      {teacher.contactInfo.phone && (
-                        <a
-                          href={`tel:${teacher.contactInfo.phone}`}
-                          className="flex items-center gap-3 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400"
-                        >
-                          <FaPhone className="text-emerald-600 dark:text-emerald-400" />
-                          <span dir="ltr">{teacher.contactInfo.phone}</span>
-                        </a>
-                      )}
+                        {teacher.contactInfo.phone && (
+                          <a
+                            href={`tel:${teacher.contactInfo.phone}`}
+                            className="flex items-center gap-3 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400"
+                          >
+                            <FaPhone className="text-emerald-600 dark:text-emerald-400" />
+                            <span dir="ltr">{teacher.contactInfo.phone}</span>
+                          </a>
+                        )}
 
-                      {teacher.contactInfo.whatsapp && (
-                        <a
-                          href={`https://wa.me/${teacher.contactInfo.whatsapp.replace(/[^0-9]/g, '')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-3 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400"
-                        >
-                          <FaWhatsapp className="text-emerald-600 dark:text-emerald-400" />
-                          <span dir="ltr">{teacher.contactInfo.whatsapp}</span>
-                        </a>
-                      )}
+                        {teacher.contactInfo.whatsapp && (
+                          <a
+                            href={`https://wa.me/${teacher.contactInfo.whatsapp.replace(/[^0-9]/g, '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-3 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400"
+                          >
+                            <FaWhatsapp className="text-emerald-600 dark:text-emerald-400" />
+                            <span dir="ltr">{teacher.contactInfo.whatsapp}</span>
+                          </a>
+                        )}
 
-                      {teacher.contactInfo.telegram && (
-                        <a
-                          href={`https://t.me/${teacher.contactInfo.telegram.replace('@', '')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-3 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400"
-                        >
-                          <FaTelegram className="text-emerald-600 dark:text-emerald-400" />
-                          <span dir="ltr">{teacher.contactInfo.telegram}</span>
-                        </a>
-                      )}
-                    </div>
+                        {teacher.contactInfo.telegram && (
+                          <a
+                            href={`https://t.me/${teacher.contactInfo.telegram.replace('@', '')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-3 text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400"
+                          >
+                            <FaTelegram className="text-emerald-600 dark:text-emerald-400" />
+                            <span dir="ltr">{teacher.contactInfo.telegram}</span>
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 text-center">
+                        <p className="text-yellow-800 dark:text-yellow-300">
+                          لا تتوفر معلومات الاتصال لهذا المعلم حالياً
+                        </p>
+                        <p className="text-gray-600 dark:text-gray-400 mt-2 text-sm">
+                          يمكنك التسجيل وحجز جلسة مع المعلم للتواصل معه
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
 
