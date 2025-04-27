@@ -1,110 +1,77 @@
 import { useState } from "react";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Typography,
-  Rating,
-  Button,
-  Box,
-  Slide,
-} from "@mui/material";
+import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 
 interface RatingCompProps {
-  text: string;
-  variant: "text" | "outlined" | "contained";
-  doctor: { name: string; title: string };
-  setDoctorRating: (value: number | null) => void;
+  rating: number;
+  size?: "sm" | "md" | "lg";
+  interactive?: boolean;
+  onChange?: (value: number) => void;
 }
 
 const RatingComp: React.FC<RatingCompProps> = ({
-  text,
-  variant,
-  doctor,
-  setDoctorRating,
+  rating,
+  size = "md",
+  interactive = false,
+  onChange,
 }) => {
-  const [open, setOpen] = useState(false);
-
-  // Rating state for multiple categories
-  const [ratings, setRatings] = useState({
-    communication: 0,
-    understanding: 0,
-    solutions: 0,
-    commitment: 0,
-  });
-
-  const handleRatingChange =
-    (name: string) => (_: any, value: number | null) => {
-      setRatings((prev) => ({ ...prev, [name]: value }));
-    };
-
-  const handleSubmit = () => {
-    setOpen(false);
-    const averageRating =
-      (ratings.communication +
-        ratings.understanding +
-        ratings.solutions +
-        ratings.commitment) /
-      4;
-    setDoctorRating(averageRating);
+  const [hoverRating, setHoverRating] = useState<number | null>(null);
+  
+  // Calculate star size based on the size prop
+  const getStarSize = () => {
+    switch(size) {
+      case "sm": return 14;
+      case "lg": return 24;
+      default: return 18; // Medium is default
+    }
   };
 
-  const renderRatingField = (label: string, name: string) => (
-    <Box textAlign="center" mb={2}>
-      <Typography variant="body1">{label}</Typography>
-      <Rating
-        value={ratings[name as keyof typeof ratings]}
-        size="large"
-        precision={0.5}
-        onChange={handleRatingChange(name)}
-      />
-    </Box>
-  );
+  // Star color
+  const starColor = "text-yellow-400";
+  const starSize = getStarSize();
+  
+  const renderStar = (position: number) => {
+    const displayRating = hoverRating !== null && interactive ? hoverRating : rating;
+    
+    const isHalfStar = displayRating - position >= 0.25 && displayRating - position < 0.75;
+    const isFullStar = displayRating - position >= 0.75;
+    
+    const handleMouseEnter = () => {
+      if (interactive) setHoverRating(position);
+    };
+    
+    const handleMouseLeave = () => {
+      if (interactive) setHoverRating(null);
+    };
+    
+    const handleClick = () => {
+      if (interactive && onChange) onChange(position);
+    };
+
+    const starProps = {
+      size: starSize,
+      className: `${starColor} ${interactive ? "cursor-pointer" : ""}`,
+      onMouseEnter: handleMouseEnter,
+      onMouseLeave: handleMouseLeave,
+      onClick: handleClick
+    };
+
+    if (isFullStar) {
+      return <FaStar {...starProps} />;
+    } else if (isHalfStar) {
+      return <FaStarHalfAlt {...starProps} />;
+    } else {
+      return <FaRegStar {...starProps} className={`text-gray-300 ${interactive ? "cursor-pointer" : ""}`} />;
+    }
+  };
 
   return (
-    <>
-      <Button variant={variant} onClick={() => setOpen(true)}>
-        {text}
-      </Button>
-
-      <Dialog
-        open={open}
-        onClose={() => setOpen(false)}
-        TransitionComponent={Slide}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>
-          <Box display="flex" justifyContent="space-between">
-            <Typography variant="h6" className="text-blue-600 font-semibold">
-              {doctor.name}
-            </Typography>
-            <Typography variant="body1">Title: {doctor.title}</Typography>
-          </Box>
-        </DialogTitle>
-
-        <DialogContent>
-          {renderRatingField("Communication", "communication")}
-          {renderRatingField("Understanding", "understanding")}
-          {renderRatingField("Providing Solutions", "solutions")}
-          {renderRatingField("Commitment", "commitment")}
-        </DialogContent>
-
-        <Box display="flex" justifyContent="flex-end" gap={2} p={2}>
-          <Button onClick={() => setOpen(false)} color="secondary">
-            Cancel
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit}
-            disabled={Object.values(ratings).some((rating) => rating === 0)}
-          >
-            Submit
-          </Button>
-        </Box>
-      </Dialog>
-    </>
+    <div className="flex gap-1 items-center">
+      {[1, 2, 3, 4, 5].map((position) => (
+        <div key={position}>
+          {renderStar(position)}
+        </div>
+      ))}
+    </div>
   );
 };
 
