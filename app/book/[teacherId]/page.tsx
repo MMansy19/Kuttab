@@ -145,8 +145,7 @@ export default function BookTeacherPage() {
             endTime: slotEndDate.toISOString(),
             type: 'private' as const,
             maxParticipants: slot.maxNum || 1,
-            bookedCount: 0,
-            status: 'available'
+            booked: 0, // Using 'booked' instead of 'bookedCount' to match SlotType definition
           });
         }
       });

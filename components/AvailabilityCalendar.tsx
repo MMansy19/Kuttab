@@ -200,6 +200,15 @@ export default function AvailabilityCalendar({
     
     let newSlots: SlotType[] = [];
 
+    // Check for time conflicts before creating slots
+    const hasConflict = checkTimeConflicts(startHour, startMinute, endHour, endMinute, editingSlot.recurringDays);
+    
+    if (hasConflict) {
+      if (!confirm('هناك تعارض مع مواعيد أخرى. هل ترغب في المتابعة على أي حال؟')) {
+        return;
+      }
+    }
+
     if (editingSlot.isRecurring) {
       // Create recurring slots
       editingSlot.recurringDays.forEach(day => {
@@ -241,6 +250,56 @@ export default function AvailabilityCalendar({
     setEditingSlot(null);
   };
 
+  // Check for time conflicts with existing slots
+  const checkTimeConflicts = (startHour: number, startMinute: number, endHour: number, endMinute: number, recurringDays?: number[]): boolean => {
+    // For a non-recurring slot, check only the current day
+    if (!recurringDays || recurringDays.length === 0) {
+      const newStartTime = new Date();
+      const newEndTime = new Date();
+      newStartTime.setHours(startHour, startMinute, 0);
+      newEndTime.setHours(endHour, endMinute, 0);
+      
+      return localSlots.some(slot => {
+        const slotStartTime = parseISO(slot.startTime);
+        const slotEndTime = parseISO(slot.endTime);
+        
+        // Check if dates are the same day
+        if (!isSameDay(newStartTime, slotStartTime)) return false;
+        
+        // Check time overlap
+        return (
+          (isAfter(newStartTime, slotStartTime) && isBefore(newStartTime, slotEndTime)) || // New start time is during an existing slot
+          (isAfter(newEndTime, slotStartTime) && isBefore(newEndTime, slotEndTime)) || // New end time is during an existing slot
+          (isBefore(newStartTime, slotStartTime) && isAfter(newEndTime, slotEndTime)) // New slot completely contains an existing slot
+        );
+      });
+    }
+    
+    // For recurring slots, check conflicts for each day of the week
+    return recurringDays.some(day => {
+      return localSlots.some(slot => {
+        // Skip non-recurring slots or recurring slots on different days
+        if (!slot.isRecurring || !slot.recurringDays?.includes(day)) return false;
+        
+        // Check time overlap
+        const slotStartHour = parseISO(slot.startTime).getHours();
+        const slotStartMinute = parseISO(slot.startTime).getMinutes();
+        const slotEndHour = parseISO(slot.endTime).getHours();
+        const slotEndMinute = parseISO(slot.endTime).getMinutes();
+        
+        return (
+          (startHour > slotStartHour || (startHour === slotStartHour && startMinute >= slotStartMinute)) && 
+          (startHour < slotEndHour || (startHour === slotEndHour && startMinute < slotEndMinute))
+        ) || (
+          (endHour > slotStartHour || (endHour === slotStartHour && endMinute > slotStartMinute)) && 
+          (endHour < slotEndHour || (endHour === slotEndHour && endMinute <= slotEndMinute))
+        ) || (
+          startHour <= slotStartHour && endHour >= slotEndHour
+        );
+      });
+    });
+  };
+
   return (
     <div className="w-full rounded-lg overflow-hidden dark:bg-gray-800 bg-white shadow-md transition-all duration-300">
       {/* Calendar Header */}
@@ -257,10 +316,10 @@ export default function AvailabilityCalendar({
             <>
               {isEditing ? (
                 <Button 
-                  variant="white" 
+                  variant="outline" 
                   rounded="full" 
                   size="sm" 
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 bg-white text-emerald-700"
                   onClick={handleSaveChanges}
                   disabled={isSaving}
                 >
@@ -281,10 +340,10 @@ export default function AvailabilityCalendar({
                 </Button>
               ) : (
                 <Button 
-                  variant="white" 
+                  variant="outline" 
                   rounded="full" 
                   size="sm" 
-                  className="flex items-center gap-1"
+                    className="flex items-center gap-1 bg-white text-emerald-700"
                   onClick={() => setIsEditing(true)}
                 >
                   <FaPlus size={14} />
@@ -662,7 +721,7 @@ export default function AvailabilityCalendar({
                 </Button>
                 
                 <Button
-                  variant="primary"
+                  variant="success"
                   onClick={handleSaveSlot}
                 >
                   {editMode === 'add' ? 'إضافة الموعد' : 'حفظ التعديلات'}

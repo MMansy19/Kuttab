@@ -193,26 +193,27 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
     try {
       const validationErrors: ValidationError = {};
       
-      // Validate email
-      try {
-        emailSchema.parse(email);
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          validationErrors.email = error.errors[0].message;
+      // For signup step 1, only validate the step 1 fields
+      if (mode === 'signup' && step === 1) {
+        // Validate email
+        try {
+          emailSchema.parse(email);
+        } catch (error) {
+          if (error instanceof z.ZodError) {
+            validationErrors.email = error.errors[0].message;
+          }
         }
-      }
-      
-      // Validate password
-      try {
-        passwordSchema.parse(password);
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          validationErrors.password = error.errors[0].message;
+        
+        // Validate password
+        try {
+          passwordSchema.parse(password);
+        } catch (error) {
+          if (error instanceof z.ZodError) {
+            validationErrors.password = error.errors[0].message;
+          }
         }
-      }
-      
-      // Validate name if signup
-      if (mode === 'signup') {
+        
+        // Validate name
         try {
           nameSchema.parse(name);
         } catch (error) {
@@ -221,36 +222,62 @@ export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
           }
         }
         
-        // Validate teacher bio if applicable
-        if (role === 'TEACHER' && !bio) {
-          validationErrors.bio = "يرجى إدخال نبذة تعريفية";
+        // Check if we have any validation errors
+        if (Object.keys(validationErrors).length > 0) {
+          setErrors(validationErrors);
+          throw new Error("Validation failed");
         }
+        
+        // If step 1 validation passes, move to step 2 
+        setStep(2);
+        setIsSubmitting(false);
+        return; // Exit early
       }
       
-      if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors);
-        throw new Error("Validation failed");
-      }
-      
-      // Mock authentication process with timeout to simulate network request
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Success message
-      setSuccess(mode === 'login' ? 'تم تسجيل الدخول بنجاح' : 'تم إنشاء الحساب بنجاح');
-      
-      // Reset form if signup
-      if (mode === 'signup') {
-        if (step === 2) {
-          // Reset form or redirect
+      // For signup step 2 or login, continue with normal validation
+      if (mode === 'login' || mode === 'signup' && step === 2) {
+        // Validate email
+        try {
+          emailSchema.parse(email);
+        } catch (error) {
+          if (error instanceof z.ZodError) {
+            validationErrors.email = error.errors[0].message;
+          }
+        }
+        
+        // Validate password
+        try {
+          passwordSchema.parse(password);
+        } catch (error) {
+          if (error instanceof z.ZodError) {
+            validationErrors.password = error.errors[0].message;
+          }
+        }
+        
+        // For signup step 2, validate additional fields if needed
+        if (mode === 'signup' && step === 2) {
+          // Validate teacher bio if applicable
+          if (role === 'TEACHER' && !bio) {
+            validationErrors.bio = "يرجى إدخال نبذة تعريفية";
+          }
+        }
+        
+        if (Object.keys(validationErrors).length > 0) {
+          setErrors(validationErrors);
+          throw new Error("Validation failed");
+        }
+        
+        // Mock authentication process with timeout to simulate network request
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Success message
+        setSuccess(mode === 'login' ? 'تم تسجيل الدخول بنجاح' : 'تم إنشاء الحساب بنجاح');
+        
+        // Redirect based on role
+        if (mode === 'login' || (mode === 'signup' && step === 2)) {
           window.location.href = role === 'TEACHER' ? '/dashboard/teacher' : 
-                                role === 'ADMIN' ? '/dashboard/admin' : '/dashboard/user';
-        } else {
-          setStep(2); // Move to next step in signup form
+                               role === 'ADMIN' ? '/dashboard/admin' : '/dashboard/user';
         }
-      } else {
-        // Redirect based on role for login
-        window.location.href = role === 'TEACHER' ? '/dashboard/teacher' : 
-                              role === 'ADMIN' ? '/dashboard/admin' : '/dashboard/user';
       }
     } catch (error) {
       console.error(error);

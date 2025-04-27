@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { z } from 'zod';
 import { Teacher } from '@/types';
 import { cn } from '@/utils/cn';
-import { debounce } from '@/utils/debounce';
+import debounce from '@/utils/debounce'; // Fix: Use default import for debounce
 import { FaPlus, FaTrash, FaTimes, FaCheck, FaSave, FaVideo, FaImage, FaUndo } from 'react-icons/fa';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -118,8 +118,9 @@ export default function TeacherProfileEditor({ teacher, onSave }: TeacherProfile
       autoSave();
     }
     
+    // No need for cleanup as our debounce implementation doesn't have a cancel method
     return () => {
-      autoSave.cancel();
+      // Nothing to clean up
     };
   }, [isDirty, autoSave]);
 
@@ -223,6 +224,18 @@ export default function TeacherProfileEditor({ teacher, onSave }: TeacherProfile
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("حجم الملف كبير جدًا. الحد الأقصى هو 5 ميجابايت.");
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert("يُرجى اختيار ملف صورة صالح.");
+        return;
+      }
+
       // Process image file
       const reader = new FileReader();
       reader.onload = () => {
@@ -237,6 +250,18 @@ export default function TeacherProfileEditor({ teacher, onSave }: TeacherProfile
   const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file size (50MB max)
+      if (file.size > 50 * 1024 * 1024) {
+        alert("حجم الفيديو كبير جدًا. الحد الأقصى هو 50 ميجابايت.");
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('video/')) {
+        alert("يُرجى اختيار ملف فيديو صالح.");
+        return;
+      }
+
       // Process video file
       const reader = new FileReader();
       reader.onload = () => {
@@ -550,37 +575,65 @@ export default function TeacherProfileEditor({ teacher, onSave }: TeacherProfile
                   </div>
                   
                   <div>
-                    <div className="flex items-center justify-end gap-2 mb-3">
-                      <input
-                        type="checkbox"
-                        id="isPaid"
-                        name="isPaid"
-                        checked={formData.isPaid || false}
-                        onChange={handleInputChange}
-                        className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-                      />
-                      <label htmlFor="isPaid" className="text-gray-700 dark:text-gray-300">خدمة مدفوعة</label>
-                    </div>
-                    
-                    {formData.isPaid && (
-                      <div>
-                        <label className="block mb-1 text-right text-gray-700 dark:text-gray-300">سعر الجلسة (بالريال)</label>
+                    <label className="block mb-1 text-right text-gray-700 dark:text-gray-300">الجنس</label>
+                    <div className="flex justify-end gap-4 mt-2">
+                      <label className="flex items-center gap-2">
                         <input
-                          type="number"
-                          name="price"
-                          min="0"
-                          className={cn(
-                            "w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
-                            errors.price ? "border-red-500 focus:border-red-500" : "border-gray-300 dark:border-gray-700"
-                          )}
-                          value={formData.price || ''}
+                          type="radio"
+                          name="gender"
+                          value="male"
+                          checked={formData.gender === "male"}
                           onChange={handleInputChange}
-                          dir="rtl"
+                          className="w-4 h-4 text-emerald-600 border-gray-300 focus:ring-emerald-500"
                         />
-                        {errors.price && <p className="mt-1 text-red-500 text-sm text-right">{errors.price}</p>}
-                      </div>
-                    )}
+                        <span className="text-gray-700 dark:text-gray-300">ذكر</span>
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="gender"
+                          value="female"
+                          checked={formData.gender === "female"}
+                          onChange={handleInputChange}
+                          className="w-4 h-4 text-emerald-600 border-gray-300 focus:ring-emerald-500"
+                        />
+                        <span className="text-gray-700 dark:text-gray-300">أنثى</span>
+                      </label>
+                    </div>
                   </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center justify-end gap-2 mb-3">
+                    <input
+                      type="checkbox"
+                      id="isPaid"
+                      name="isPaid"
+                      checked={formData.isPaid || false}
+                      onChange={handleInputChange}
+                      className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                    />
+                    <label htmlFor="isPaid" className="text-gray-700 dark:text-gray-300">خدمة مدفوعة</label>
+                  </div>
+                    
+                  {formData.isPaid && (
+                    <div>
+                      <label className="block mb-1 text-right text-gray-700 dark:text-gray-300">سعر الجلسة (بالريال)</label>
+                      <input
+                        type="number"
+                        name="price"
+                        min="0"
+                        className={cn(
+                          "w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
+                          errors.price ? "border-red-500 focus:border-red-500" : "border-gray-300 dark:border-gray-700"
+                        )}
+                        value={formData.price || ''}
+                        onChange={handleInputChange}
+                        dir="rtl"
+                      />
+                      {errors.price && <p className="mt-1 text-red-500 text-sm text-right">{errors.price}</p>}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
