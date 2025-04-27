@@ -1,137 +1,201 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+
+import React from 'react';
+import { FaCheckCircle, FaCreditCard, FaPaypal, FaMoneyBillWave, FaLock } from 'react-icons/fa';
+import { Button } from '../ui/Button';
+import { cn } from '@/utils/cn';
 
 interface ConfirmDialogProps {
-  visible: boolean;
   onConfirm: () => void;
   onCancel: () => void;
-  loading?: boolean;
-  notes?: string;
-  setNotes: (notes: string) => void;
+  isSubmitting: boolean;
+  error: string | null;
+  price: number;
+  duration: number;
+  discount?: number;
 }
 
-const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
-  visible,
-  onConfirm,
-  onCancel,
-  loading,
-  notes = "",
-  setNotes,
-}) => {
-  const modalRef = useRef<HTMLDivElement>(null);
+type PaymentMethod = 'card' | 'paypal' | 'bank';
+
+export default function ConfirmDialog({ 
+  onConfirm, 
+  onCancel, 
+  isSubmitting, 
+  error, 
+  price, 
+  duration,
+  discount = 0
+}: ConfirmDialogProps) {
+  const [paymentMethod, setPaymentMethod] = React.useState<PaymentMethod>('card');
+  const [agreed, setAgreed] = React.useState(false);
   
-  // Handle click outside to close
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node) && !loading) {
-        onCancel();
-      }
-    };
-    
-    if (visible) {
-      document.addEventListener('mousedown', handleClickOutside);
-      // Prevent scrolling when modal is open
-      document.body.style.overflow = 'hidden';
-    }
-    
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.body.style.overflow = '';
-    };
-  }, [visible, onCancel, loading]);
-
-  // Handle escape key
-  useEffect(() => {
-    const handleEscKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && !loading) {
-        onCancel();
-      }
-    };
-    
-    if (visible) {
-      window.addEventListener('keydown', handleEscKey);
-    }
-    
-    return () => {
-      window.removeEventListener('keydown', handleEscKey);
-    };
-  }, [visible, onCancel, loading]);
-
-  if (!visible) return null;
+  // Calculate session price
+  const calculatePrice = () => {
+    const basePrice = (price * duration) / 60; // price per hour converted to duration
+    const discountAmount = basePrice * (discount / 100);
+    return basePrice - discountAmount;
+  };
+  
+  const finalPrice = calculatePrice();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-75 transition-opacity duration-300">
-      <div 
-        ref={modalRef}
-        className="bg-gray-900 rounded-lg shadow-xl max-w-md mx-4 w-full border border-gray-800 transform transition-all duration-300"
-        style={{
-          animation: "modalFade 0.3s ease-out",
-        }}
-      >
-        <div className="p-6">
-          <h2 className="text-xl font-semibold text-white border-b border-gray-800 pb-3 mb-4">
-            تأكيد الحجز
-          </h2>
-          
-          <p className="my-4 text-center text-gray-300">
-            هل أنت متأكد من رغبتك في إرسال طلب الحجز هذا؟
-          </p>
-          
-          <div className="mb-4">
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-300 mb-2">
-              ملاحظات (اختياري)
-            </label>
-            <textarea
-              id="notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="يمكنك كتابة ملاحظات أو استفسارات خاصة بالحجز..."
-              className="w-full bg-gray-800 text-white border border-gray-700 rounded-md p-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-colors duration-200"
-              rows={4}
-              disabled={loading}
-            />
+    <div className="w-full">
+      <h2 className="text-2xl font-bold mb-4 text-center text-gray-900 dark:text-white">
+        تأكيد الحجز
+      </h2>
+      
+      {/* Pricing Summary */}
+      <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 mb-6">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-gray-600 dark:text-gray-400">رسوم الجلسة ({duration} دقيقة)</span>
+          <span className="font-medium">{price} ريال / ساعة</span>
+        </div>
+        
+        {discount > 0 && (
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-green-600 dark:text-green-400">خصم</span>
+            <span className="font-medium text-green-600 dark:text-green-400">- {discount}%</span>
           </div>
-          
-          <div className="flex items-center justify-end gap-3 mt-6">
-            <button
-              onClick={onCancel}
-              disabled={loading}
-              className="px-4 py-2 rounded-md bg-gray-700 text-white hover:bg-gray-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-500"
-            >
-              إلغاء
-            </button>
-            <button
-              onClick={onConfirm}
-              disabled={loading}
-              className="px-4 py-2 rounded-md bg-emerald-600 text-white hover:bg-emerald-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-emerald-500 flex items-center"
-            >
-              {loading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  جاري الإرسال...
-                </>
-              ) : (
-                'تأكيد الحجز'
-              )}
-            </button>
-          </div>
+        )}
+        
+        <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+        
+        <div className="flex justify-between items-center">
+          <span className="font-bold text-gray-900 dark:text-white">الإجمالي</span>
+          <span className="font-bold text-lg">{finalPrice.toFixed(2)} ريال</span>
         </div>
       </div>
       
-      <style jsx global>{`
-        @keyframes modalFade {
-          from {
-            opacity: 0;
-            transform: translateY(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
+      {/* Payment Methods */}
+      <div className="mb-6">
+        <h3 className="font-medium mb-3 text-gray-900 dark:text-white text-right">
+          اختر طريقة الدفع
+        </h3>
+        
+        <div className="space-y-2">
+          {/* Credit Card */}
+          <button
+            type="button"
+            onClick={() => setPaymentMethod('card')}
+            className={cn(
+              "w-full flex items-center justify-between p-3 rounded-lg border transition-colors",
+              paymentMethod === 'card'
+                ? "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500"
+                : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <FaCreditCard className={paymentMethod === 'card' ? "text-emerald-500" : "text-gray-400"} />
+              <span className="text-gray-900 dark:text-white">بطاقة ائتمان</span>
+            </div>
+            
+            {paymentMethod === 'card' && (
+              <FaCheckCircle className="text-emerald-500" />
+            )}
+          </button>
+          
+          {/* PayPal */}
+          <button
+            type="button"
+            onClick={() => setPaymentMethod('paypal')}
+            className={cn(
+              "w-full flex items-center justify-between p-3 rounded-lg border transition-colors",
+              paymentMethod === 'paypal'
+                ? "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500"
+                : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <FaPaypal className={paymentMethod === 'paypal' ? "text-emerald-500" : "text-gray-400"} />
+              <span className="text-gray-900 dark:text-white">PayPal</span>
+            </div>
+            
+            {paymentMethod === 'paypal' && (
+              <FaCheckCircle className="text-emerald-500" />
+            )}
+          </button>
+          
+          {/* Bank Transfer */}
+          <button
+            type="button"
+            onClick={() => setPaymentMethod('bank')}
+            className={cn(
+              "w-full flex items-center justify-between p-3 rounded-lg border transition-colors",
+              paymentMethod === 'bank'
+                ? "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500"
+                : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <FaMoneyBillWave className={paymentMethod === 'bank' ? "text-emerald-500" : "text-gray-400"} />
+              <span className="text-gray-900 dark:text-white">تحويل بنكي</span>
+            </div>
+            
+            {paymentMethod === 'bank' && (
+              <FaCheckCircle className="text-emerald-500" />
+            )}
+          </button>
+        </div>
+        
+        {/* Secure payment badge */}
+        <div className="flex items-center justify-center gap-1 mt-4 text-sm text-gray-500">
+          <FaLock size={12} />
+          <span>معاملات آمنة ومشفرة</span>
+        </div>
+      </div>
+      
+      {/* Terms Agreement */}
+      <div className="mb-6">
+        <div className="flex items-center gap-2 text-right">
+          <input
+            type="checkbox"
+            id="terms"
+            checked={agreed}
+            onChange={(e) => setAgreed(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+          />
+          <label htmlFor="terms" className="text-sm text-gray-600 dark:text-gray-400">
+            أوافق على <a href="#" className="text-emerald-600 hover:underline">شروط الاستخدام</a> و <a href="#" className="text-emerald-600 hover:underline">سياسة الإلغاء</a>
+          </label>
+        </div>
+      </div>
+      
+      {/* Error Message */}
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-400 rounded-md text-sm text-right">
+          {error}
+        </div>
+      )}
+      
+      {/* Action Buttons */}
+      <div className="flex justify-between">
+        <Button
+          variant="outline"
+          onClick={onCancel}
+          disabled={isSubmitting}
+        >
+          العودة
+        </Button>
+        
+        <Button
+          variant="primary"
+          onClick={onConfirm}
+          disabled={!agreed || isSubmitting}
+          className="min-w-[120px]"
+        >
+          {isSubmitting ? (
+            <>
+              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              جاري التأكيد...
+            </>
+          ) : (
+            'تأكيد الحجز'
+          )}
+        </Button>
+      </div>
     </div>
   );
-};
-
-export default ConfirmDialog;
+}

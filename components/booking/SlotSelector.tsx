@@ -1,123 +1,159 @@
-import React, { useMemo } from "react";
+"use client";
 
-interface Slot {
-  time: string;
-  id: number;
-  type: string;
-}
+import React from 'react';
+import { SlotType } from '../AvailabilityCalendar';
+import { parseISO, format } from 'date-fns';
+import { ar } from 'date-fns/locale';
+import { FaUser, FaUsers, FaRegClock, FaCheckCircle } from 'react-icons/fa';
+import { cn } from '@/utils/cn';
 
 interface SlotSelectorProps {
-  selectedDate: {
-    date: string;
-    slots: Slot[];
-  } | null;
-  selectedSlot: string | null;
-  handleSlotSelect: (slot: { time: string; type: string }) => void;
-  availableDates: {
-    date: string;
-    slots: Slot[];
-  }[];
+  slots: SlotType[];
+  selectedSlotId?: string;
+  onSelectSlot: (slot: SlotType) => void;
 }
 
-// Separate component for individual time slot
-const TimeSlot: React.FC<{
-  slot: Slot;
-  isSelected: boolean;
-  onSelect: () => void;
-}> = ({ slot, isSelected, onSelect }) => (
-  <div className="flex flex-col gap-1">
-    <button
-      key={slot.id}
-      onClick={onSelect}
-      className={`p-3 rounded-lg border text-center transition-colors duration-200 ${
-        isSelected
-          ? "bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-800"
-          : "bg-gray-800 hover:bg-gray-700 text-white border-gray-600"
-      }`}
-      aria-label={`Select time slot at ${slot.time}`}
-    >
-      {slot.time}
-    </button>
-    <p
-      className={`text-xs text-center font-semibold ${
-        isSelected ? "text-emerald-400" : "text-gray-400"
-      }`}
-    >
-      {slot.type}
-    </p>
-  </div>
-);
-
-// Component to display when no slots are available
-const NoSlotsMessage: React.FC<{ message: string }> = ({ message }) => (
-  <div className="flex flex-col items-center justify-center py-8">
-    <div className="w-16 h-16 mb-4 text-gray-500 opacity-50">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    </div>
-    <p className="text-gray-400 text-center text-sm md:text-base">{message}</p>
-  </div>
-);
-
-const SlotSelector: React.FC<SlotSelectorProps> = ({
-  selectedDate,
-  selectedSlot,
-  handleSlotSelect,
-  availableDates,
-}) => {
-  const isLoading = useMemo(() => 
-    availableDates.length === 1 && availableDates[0].date === "loading", 
-    [availableDates]
-  );
-
-  const hasNoAvailableDates = useMemo(() => 
-    availableDates.length === 0, 
-    [availableDates]
-  );
+export default function SlotSelector({ slots, selectedSlotId, onSelectSlot }: SlotSelectorProps) {
+  // Group slots by type (private or group)
+  const privateSlots = slots.filter(slot => slot.type === 'private' || !slot.type);
+  const groupSlots = slots.filter(slot => slot.type === 'group');
+  
+  // Format time for display
+  const formatTime = (dateString: string) => {
+    try {
+      const date = parseISO(dateString);
+      return format(date, 'h:mm a', { locale: ar });
+    } catch (error) {
+      return '';
+    }
+  };
+  
+  // Calculate slot availability (how many seats are left)
+  const getAvailability = (slot: SlotType) => {
+    if (!slot.maxParticipants || slot.maxParticipants === 1) return null;
+    
+    const booked = slot.booked || 0;
+    const available = slot.maxParticipants - booked;
+    
+    return {
+      available,
+      total: slot.maxParticipants,
+      isFull: available <= 0
+    };
+  };
 
   return (
-    <div className="flex gap-4 flex-col bg-gray-900 rounded-lg shadow-lg p-4 border border-gray-800">
-      <div className="flex justify-between items-center mb-4 border-b border-gray-800 pb-3">
-        <h3 className="text-sm lg:text-xl font-semibold text-white">اختر الموعد المناسب</h3>
-        {selectedDate?.slots?.length ? (
-          <div className="text-emerald-500 font-bold text-xs lg:text-base">
-            {selectedDate.slots.length} مواعيد متاحة
+    <div className="w-full">
+      {/* Private Sessions */}
+      {privateSlots.length > 0 && (
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <FaUser className="text-emerald-500" />
+            <h3 className="font-semibold text-gray-900 dark:text-white">جلسات خاصة</h3>
           </div>
-        ) : null}
-      </div>
-
-      {hasNoAvailableDates ? (
-        <NoSlotsMessage message="لا توجد مواعيد متاحة للحجز في الوقت الحالي. يرجى المحاولة لاحقاً." />
-      ) : isLoading ? (
-        <div className="flex items-center justify-center py-8">
-          <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-emerald-500 mr-2">جاري تحميل المواعيد المتاحة...</p>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {privateSlots.map(slot => (
+              <button
+                key={slot.id}
+                type="button"
+                onClick={() => onSelectSlot(slot)}
+                className={cn(
+                  "p-3 rounded-lg border transition-colors flex flex-col items-center justify-center hover:border-emerald-500",
+                  selectedSlotId === slot.id
+                    ? "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-500"
+                    : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+                )}
+              >
+                <div className="flex items-center gap-1 mb-1">
+                  <FaRegClock className="text-emerald-500" size={12} />
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    {formatTime(slot.startTime)}
+                  </span>
+                </div>
+                
+                {selectedSlotId === slot.id && (
+                  <FaCheckCircle className="text-emerald-500 mt-2" size={16} />
+                )}
+              </button>
+            ))}
+          </div>
         </div>
-      ) : (
-        <div className="overflow-y-auto scrollbar-thin scrollbar-thumb-emerald-600 scrollbar-track-gray-800 h-52 py-2">
-          {selectedDate ? (
-            selectedDate.slots?.length > 0 ? (
-              <div className="grid gap-3 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {selectedDate.slots.map((slot) => (
-                  <TimeSlot 
-                    key={slot.id}
-                    slot={slot}
-                    isSelected={selectedSlot === slot.time}
-                    onSelect={() => handleSlotSelect(slot)}
-                  />
-                ))}
-              </div>
-            ) : (
-              <NoSlotsMessage message="لا توجد مواعيد متاحة في هذا اليوم، يرجى اختيار يوم آخر." />
-            )
-          ) : (
-            <NoSlotsMessage message="اختر تاريخاً لرؤية المواعيد المتاحة." />
-          )}
+      )}
+      
+      {/* Group Sessions */}
+      {groupSlots.length > 0 && (
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <FaUsers className="text-blue-500" />
+            <h3 className="font-semibold text-gray-900 dark:text-white">جلسات جماعية</h3>
+          </div>
+          
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            {groupSlots.map(slot => {
+              const availability = getAvailability(slot);
+              const isFull = availability?.isFull || false;
+              
+              return (
+                <button
+                  key={slot.id}
+                  type="button"
+                  disabled={isFull}
+                  onClick={() => !isFull && onSelectSlot(slot)}
+                  className={cn(
+                    "p-3 rounded-lg border transition-colors flex flex-col items-center relative",
+                    selectedSlotId === slot.id
+                      ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500"
+                      : isFull
+                      ? "bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 opacity-60 cursor-not-allowed"
+                      : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-blue-500"
+                  )}
+                >
+                  <div className="flex items-center gap-1 mb-1">
+                    <FaRegClock className="text-blue-500" size={12} />
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {formatTime(slot.startTime)}
+                    </span>
+                  </div>
+                  
+                  {availability && (
+                    <div className={cn(
+                      "text-xs mt-1",
+                      isFull ? "text-red-500" : "text-gray-500 dark:text-gray-400"
+                    )}>
+                      {isFull
+                        ? "مكتمل"
+                        : `${availability.available}/${availability.total} متاح`}
+                    </div>
+                  )}
+                  
+                  {selectedSlotId === slot.id && (
+                    <FaCheckCircle className="text-blue-500 mt-2" size={16} />
+                  )}
+                  
+                  {isFull && (
+                    <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-gray-900/10 dark:bg-black/40">
+                      <span className="text-xs font-medium text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800 px-2 py-1 rounded">
+                        مكتمل
+                      </span>
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      
+      {/* Empty state */}
+      {slots.length === 0 && (
+        <div className="text-center py-8">
+          <FaRegClock className="mx-auto text-gray-400 text-4xl mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">
+            لا توجد مواعيد متاحة في هذا اليوم
+          </p>
         </div>
       )}
     </div>
   );
-};
-
-export default SlotSelector;
+}

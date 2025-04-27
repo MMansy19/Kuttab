@@ -97,7 +97,7 @@ export default function TeacherProfilePage() {
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       {/* Hero section with teacher name and image */}
       <div className="relative bg-gradient-to-r from-emerald-800 to-blue-800 text-white">
-        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.svg')] opacity-10"></div>
+        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-10"></div>
         <div className="container mx-auto px-4 py-20 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="mb-8 md:mb-0 text-center md:text-right">

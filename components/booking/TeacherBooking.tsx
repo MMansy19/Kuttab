@@ -1,285 +1,358 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
-import BookingSummary from "@/components/booking/BookingSummary";
-import SlotSelector from "@/components/booking/SlotSelector";
-import WeekCalendar from "@/components/booking/WeekCalendar";
-import { Teacher } from "@/types";
 
-// Helper component to display teacher information
-const TeacherInfo: React.FC<{ teacher: Teacher }> = ({ teacher }) => {
-  return (
-    <div className="bg-gray-900 rounded-lg p-5 shadow-lg border border-gray-800">
-      <div className="flex items-center gap-4 mb-3">
-        {teacher.avatarUrl ? (
-          <img
-            src={teacher.avatarUrl}
-            alt={teacher.name}
-            className="w-16 h-16 rounded-full object-cover border-2 border-emerald-600"
-          />
-        ) : (
-          <div className="w-16 h-16 bg-emerald-800 rounded-full flex items-center justify-center text-white text-xl font-bold">
-            {teacher.name.charAt(0)}
-          </div>
-        )}
-        <div>
-          <h2 className="text-xl font-bold text-white">{teacher.name}</h2>
-          <div className="flex items-center gap-2 mt-1">
-            <div className="text-sm text-emerald-400">{teacher.subjects.join(', ')}</div>
-            <div className="bg-gray-800 px-2 py-0.5 rounded-full text-xs text-yellow-400 font-semibold flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 mr-1">
-                <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
-              </svg>
-              {teacher.rating}
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="text-gray-300 text-sm mt-3 line-clamp-3">{teacher.bio}</div>
-      
-      <div className="flex flex-wrap gap-2 mt-3">
-        {teacher.isPaid && (
-          <div className="bg-blue-900 text-blue-200 px-3 py-1 rounded-full text-xs">
-            {teacher.price} ريال / الجلسة
-          </div>
-        )}
-        <div className="bg-emerald-900 text-emerald-200 px-3 py-1 rounded-full text-xs">
-          {teacher.experience} سنوات خبرة
-        </div>
-      </div>
-    </div>
-  );
-};
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Teacher } from '@/types';
+import { FaArrowLeft, FaArrowRight, FaCheckCircle, FaCalendarAlt, FaClock, FaUserAlt } from 'react-icons/fa';
+import { SlotType } from '../AvailabilityCalendar';
+import { format, parseISO, addMinutes, differenceInMinutes } from 'date-fns';
+import { ar } from 'date-fns/locale';
+import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
+import { TeacherProfileCard } from '../teacher/TeacherProfileCard';
+import AvailabilityCalendar from '../AvailabilityCalendar';
+import DateSelector from './DateSelector';
+import SlotSelector from './SlotSelector';
+import DetailsSelector from './DetailsSelector';
+import ConfirmDialog from './ConfirmDialog';
+import BookingSummary from './BookingSummary';
 
-// Session type selector component
-const SessionTypeSelector: React.FC<{
-  selectedType: string;
-  onChange: (type: string) => void;
-}> = ({ selectedType, onChange }) => {
-  const sessionTypes = useMemo(() => [
-    { id: "quran", label: "تلاوة القرآن" },
-    { id: "tajweed", label: "تجويد" },
-    { id: "memorization", label: "حفظ" },
-    { id: "other", label: "أخرى" },
-  ], []);
+interface TeacherBookingProps {
+  teacher: Teacher;
+  availabilitySlots: SlotType[];
+}
 
-  return (
-    <div className="bg-gray-900 rounded-lg p-5 shadow-lg border border-gray-800">
-      <h3 className="text-lg font-semibold text-white mb-3 border-b border-gray-800 pb-2">
-        نوع الجلسة
-      </h3>
-      <div className="grid grid-cols-2 gap-3">
-        {sessionTypes.map((type) => (
-          <button
-            key={type.id}
-            onClick={() => onChange(type.id)}
-            className={`py-2 px-3 rounded-lg transition-colors duration-200 ${
-              selectedType === type.id
-                ? "bg-emerald-600 text-white"
-                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
-          >
-            {type.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-};
+type BookingStep = 'date' | 'time' | 'details' | 'confirm' | 'success';
 
-// Duration selector component
-const DurationSelector: React.FC<{
-  selectedDuration: number;
-  onChange: (duration: number) => void;
-}> = ({ selectedDuration, onChange }) => {
-  const durations = useMemo(() => [
-    { value: 30, label: "30 دقيقة" },
-    { value: 45, label: "45 دقيقة" },
-    { value: 60, label: "60 دقيقة" },
-  ], []);
-
-  return (
-    <div className="bg-gray-900 rounded-lg p-5 shadow-lg border border-gray-800">
-      <h3 className="text-lg font-semibold text-white mb-3 border-b border-gray-800 pb-2">
-        مدة الجلسة
-      </h3>
-      <div className="flex gap-3">
-        {durations.map((duration) => (
-          <button
-            key={duration.value}
-            onClick={() => onChange(duration.value)}
-            className={`flex-1 py-2 px-3 rounded-lg transition-colors duration-200 ${
-              selectedDuration === duration.value
-                ? "bg-emerald-600 text-white"
-                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
-          >
-            {duration.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const TeacherBooking: React.FC<{ teacherId?: string }> = ({ teacherId }) => {
-  const searchParams = useSearchParams();
-  const [teacher, setTeacher] = useState<Teacher | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+export default function TeacherBooking({ teacher, availabilitySlots }: TeacherBookingProps) {
+  // State
+  const [currentStep, setCurrentStep] = useState<BookingStep>('date');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedSlot, setSelectedSlot] = useState<SlotType | null>(null);
+  const [bookingDetails, setBookingDetails] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: '',
+    participantCount: 1,
+    goal: '',
+    level: 'beginner' as 'beginner' | 'intermediate' | 'advanced',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
+  const [bookingId, setBookingId] = useState<string | null>(null);
   
-  // Booking state
-  const [selectedDuration, setSelectedDuration] = useState<number>(60);
-  const [selectedType, setSelectedType] = useState<string>("quran");
-  const [selectedDate, setSelectedDate] = useState<{
-    date: string;
-    slots: { time: string; id: number; type: string }[];
-  } | null>(null);
-  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-  
-  // Available dates and slots
-  const [availableDates, setAvailableDates] = useState<{
-    date: string;
-    slots: { time: string; id: number; type: string }[];
-  }[]>([{ date: "loading", slots: [] }]);
-  
-  const [bookedDates, setBookedDates] = useState<string[]>([]);
+  const router = useRouter();
 
-  // Fetch teacher data
-  useEffect(() => {
-    const fetchTeacher = async () => {
-      setLoading(true);
-      
-      try {
-        // For demo purposes, using static data. In production, this would be an API call.
-        const teachersJson = await import('@/data/teachers');
-        const teachers = teachersJson.default;
-        
-        // Get teacher ID either from props or URL
-        const id = teacherId || searchParams.get('id');
-        
-        if (!id) {
-          throw new Error("Teacher ID not provided");
-        }
-        
-        const foundTeacher = teachers.find(t => t.id === id);
-        
-        if (!foundTeacher) {
-          throw new Error("Teacher not found");
-        }
-        
-        setTeacher(foundTeacher);
-        
-        // Transform availableSlots into the format expected by the calendar components
-        const formattedDates = transformTeacherAvailability(foundTeacher.availableSlots);
-        setAvailableDates(formattedDates);
-      } catch (error) {
-        console.error("Error fetching teacher:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchTeacher();
-  }, [teacherId, searchParams]);
+  // Filter slots based on selected date
+  const filteredSlots = selectedDate 
+    ? availabilitySlots.filter(slot => {
+        const slotDate = parseISO(slot.startTime);
+        return (
+          slotDate.getDate() === selectedDate.getDate() &&
+          slotDate.getMonth() === selectedDate.getMonth() &&
+          slotDate.getFullYear() === selectedDate.getFullYear()
+        );
+      })
+    : [];
 
-  // Transform teacher available slots to calendar format
-  const transformTeacherAvailability = (slots: string[]) => {
-    // Group slots by day of the week
-    const slotsByDay: Record<string, { time: string; id: number; type: string }[]> = {};
-    
-    slots.forEach((slot, index) => {
-      const [dateStr, timeStr] = slot.split(' ');
-      const date = new Date(dateStr);
-      const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
-      
-      if (!slotsByDay[dayName]) {
-        slotsByDay[dayName] = [];
-      }
-      
-      slotsByDay[dayName].push({
-        time: timeStr,
-        id: index,
-        type: "standard" // Default type
-      });
-    });
-    
-    // Convert to array format needed by calendar
-    return Object.entries(slotsByDay).map(([date, slots]) => ({
-      date,
-      slots
-    }));
+  // Handle slot selection
+  const handleSelectSlot = (slot: SlotType) => {
+    setSelectedSlot(slot);
+    setCurrentStep('details');
   };
 
   // Handle date selection
-  const handleDateSelect = (dateObj: {
-    date: string;
-    slots: { time: string; id: number; type: string }[];
-  }) => {
+  const handleSelectDate = (date: Date) => {
+    setSelectedDate(date);
     setSelectedSlot(null);
-    setSelectedDate(dateObj);
+    setCurrentStep('time');
   };
 
-  // Handle time slot selection
-  const handleSlotSelect = (slot: { time: string; type: string }) => {
-    setSelectedSlot(slot.time);
+  // Handle details submission
+  const handleDetailsSubmit = (details: typeof bookingDetails) => {
+    setBookingDetails(details);
+    setCurrentStep('confirm');
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  // Handle booking confirmation
+  const handleConfirmBooking = async () => {
+    if (!selectedSlot) return;
+    
+    setIsSubmitting(true);
+    setBookingError(null);
+    
+    try {
+      // Mock API call to book the slot
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Generate a mock booking ID
+      const mockBookingId = `BK-${Date.now().toString().slice(-8)}`;
+      setBookingId(mockBookingId);
+      
+      setBookingConfirmed(true);
+      setCurrentStep('success');
+    } catch (error) {
+      console.error("Booking failed:", error);
+      setBookingError("حدث خطأ أثناء تأكيد الحجز. يرجى المحاولة مرة أخرى.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-  if (!teacher) {
-    return (
-      <div className="text-center p-8 text-red-500">
-        لم يتم العثور على المعلم
-      </div>
-    );
-  }
+  // Handle navigation to previous step
+  const goToPreviousStep = () => {
+    switch (currentStep) {
+      case 'time':
+        setCurrentStep('date');
+        break;
+      case 'details':
+        setCurrentStep('time');
+        break;
+      case 'confirm':
+        setCurrentStep('details');
+        break;
+      default:
+        break;
+    }
+  };
+
+  // Calculate session duration
+  const calculateSessionDuration = () => {
+    if (!selectedSlot) return 0;
+    
+    const startTime = parseISO(selectedSlot.startTime);
+    const endTime = parseISO(selectedSlot.endTime);
+    
+    return differenceInMinutes(endTime, startTime);
+  };
+
+  // Format slot time for display
+  const formatSlotTime = (dateString: string) => {
+    try {
+      const date = parseISO(dateString);
+      return format(date, 'h:mm a', { locale: ar });
+    } catch (error) {
+      return '';
+    }
+  };
 
   return (
-    <div className="flex flex-col xl:flex-row gap-6 p-4 bg-gray-950 text-white max-w-7xl mx-auto">
-      {/* Left column - Teacher info and booking summary */}
-      <div className="flex flex-col gap-4 w-full xl:w-1/3">
-        <TeacherInfo teacher={teacher} />
-        <SessionTypeSelector 
-          selectedType={selectedType} 
-          onChange={setSelectedType}
-        />
-        <DurationSelector 
-          selectedDuration={selectedDuration} 
-          onChange={setSelectedDuration} 
-        />
-        <BookingSummary
-          selectedSlot={selectedSlot}
-          selectedDuration={selectedDuration}
-          selectedType={selectedType}
-          teacher={teacher}
-          selectedDate={selectedDate}
-        />
-      </div>
-
-      {/* Right column - Calendar and slot selection */}
-      <div className="flex flex-col gap-4 w-full xl:w-2/3">
-        <WeekCalendar
-          selectedDate={selectedDate}
-          handleDateSelect={handleDateSelect}
-          availableDates={availableDates}
-          bookedDates={bookedDates}
-        />
-        <SlotSelector
-          selectedDate={selectedDate}
-          selectedSlot={selectedSlot}
-          handleSlotSelect={handleSlotSelect}
-          availableDates={availableDates}
-        />
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left side - Teacher info */}
+        <div className="w-full lg:w-1/3">
+          <div className="sticky top-24">
+            <TeacherProfileCard 
+              teacher={teacher} 
+              variant="default" 
+              showBookButton={false}
+              showViewProfileButton={true} 
+            />
+            
+            {(currentStep === 'confirm' || currentStep === 'success') && (
+              <Card className="mt-4 p-4">
+                <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-3 text-center">
+                  ملخص الحجز
+                </h3>
+                <BookingSummary 
+                  teacherName={teacher.name}
+                  date={selectedDate}
+                  slot={selectedSlot}
+                  details={bookingDetails}
+                  duration={calculateSessionDuration()}
+                />
+              </Card>
+            )}
+          </div>
+        </div>
+        
+        {/* Right side - Booking flow */}
+        <div className="w-full lg:w-2/3">
+          {/* Step indicator */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between">
+              {['date', 'time', 'details', 'confirm'].map((step, index) => (
+                <React.Fragment key={step}>
+                  {/* Step dot */}
+                  <div className="flex flex-col items-center">
+                    <div 
+                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        currentStep === step
+                          ? 'bg-emerald-500 text-white'
+                          : currentStep === 'success' || 
+                            (index === 0 && currentStep === 'time') ||
+                            (index <= 1 && currentStep === 'details') ||
+                            (index <= 2 && currentStep === 'confirm')
+                            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                            : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400'
+                      }`}
+                    >
+                      {index + 1}
+                    </div>
+                    <span className="text-sm mt-1 text-gray-600 dark:text-gray-400">
+                      {step === 'date' && 'التاريخ'}
+                      {step === 'time' && 'الوقت'}
+                      {step === 'details' && 'التفاصيل'}
+                      {step === 'confirm' && 'التأكيد'}
+                    </span>
+                  </div>
+                  
+                  {/* Connecting line */}
+                  {index < 3 && (
+                    <div 
+                      className={`flex-1 h-0.5 mx-2 ${
+                        (index === 0 && (currentStep === 'time' || currentStep === 'details' || currentStep === 'confirm' || currentStep === 'success')) ||
+                        (index === 1 && (currentStep === 'details' || currentStep === 'confirm' || currentStep === 'success')) ||
+                        (index === 2 && (currentStep === 'confirm' || currentStep === 'success'))
+                          ? 'bg-emerald-500'
+                          : 'bg-gray-300 dark:bg-gray-700'
+                      }`}
+                    />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+          
+          {/* Step content */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            {/* Date Selection */}
+            {currentStep === 'date' && (
+              <div className="animate-fadeIn">
+                <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white text-center">
+                  اختر تاريخ الجلسة
+                </h2>
+                <DateSelector 
+                  onSelectDate={handleSelectDate}
+                  selectedDate={selectedDate}
+                  availableDates={availabilitySlots ? availabilitySlots.map(slot => parseISO(slot.startTime)) : []}
+                />
+              </div>
+            )}
+            
+            {/* Time Selection */}
+            {currentStep === 'time' && selectedDate && (
+              <div className="animate-fadeIn">
+                <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white text-center">
+                  اختر وقت الجلسة
+                </h2>
+                <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
+                  {format(selectedDate, 'eeee d MMMM yyyy', { locale: ar })}
+                </p>
+                
+                {filteredSlots.length === 0 ? (
+                  <div className="text-center py-12">
+                    <FaClock className="mx-auto text-gray-400 text-4xl mb-4" />
+                    <p className="text-gray-600 dark:text-gray-400">
+                      لا توجد مواعيد متاحة في هذا التاريخ
+                    </p>
+                    <Button
+                      variant="outline"
+                      className="mt-4"
+                      onClick={() => setCurrentStep('date')}
+                    >
+                      <FaArrowRight className="ml-2 rtl:rotate-180" />
+                      اختر تاريخ آخر
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <SlotSelector 
+                      slots={filteredSlots}
+                      onSelectSlot={handleSelectSlot}
+                    />
+                    
+                    <div className="mt-6 flex justify-between">
+                      <Button
+                        variant="outline"
+                        onClick={goToPreviousStep}
+                      >
+                        <FaArrowRight className="ml-2 rtl:rotate-180" />
+                        العودة للتاريخ
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+            
+            {/* Details Input */}
+            {currentStep === 'details' && selectedSlot && (
+              <div className="animate-fadeIn">
+                <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white text-center">
+                  أدخل تفاصيل الحجز
+                </h2>
+                <div className="flex items-center justify-center gap-2 mb-6 text-gray-600 dark:text-gray-400">
+                  <FaCalendarAlt className="text-emerald-500" />
+                  <span>{format(parseISO(selectedSlot.startTime), 'eeee d MMMM', { locale: ar })}</span>
+                  <span className="mx-2">•</span>
+                  <FaClock className="text-emerald-500" />
+                  <span>
+                    {formatSlotTime(selectedSlot.startTime)} - {formatSlotTime(selectedSlot.endTime)}
+                  </span>
+                </div>
+                
+                <DetailsSelector
+                  initialValues={bookingDetails}
+                  onSubmit={handleDetailsSubmit}
+                  onBack={goToPreviousStep}
+                  isGroupSession={selectedSlot.type === 'group'}
+                  maxParticipants={selectedSlot.maxParticipants}
+                />
+              </div>
+            )}
+            
+            {/* Confirmation */}
+            {currentStep === 'confirm' && selectedSlot && (
+              <div className="animate-fadeIn">
+                <ConfirmDialog 
+                  onConfirm={handleConfirmBooking}
+                  onCancel={goToPreviousStep}
+                  isSubmitting={isSubmitting}
+                  error={bookingError}
+                  price={teacher.price || 0}
+                  duration={calculateSessionDuration()}
+                />
+              </div>
+            )}
+            
+            {/* Success */}
+            {currentStep === 'success' && bookingConfirmed && (
+              <div className="animate-fadeIn text-center py-8">
+                <div className="w-16 h-16 mx-auto bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
+                  <FaCheckCircle className="text-green-600 dark:text-green-400 text-3xl" />
+                </div>
+                <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">
+                  تم تأكيد الحجز بنجاح
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400 mb-2">
+                  رقم الحجز: {bookingId}
+                </p>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                  تم إرسال تفاصيل الحجز إلى بريدك الإلكتروني
+                </p>
+                
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button
+                    variant="outline"
+                    onClick={() => router.push('/dashboard/user')}
+                  >
+                    الذهاب للوحة التحكم
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => router.push('/teachers')}
+                  >
+                    تصفح المعلمين
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
-};
-
-export default TeacherBooking;
+}

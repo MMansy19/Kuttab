@@ -56,7 +56,7 @@ export default function Home() {
     <main className="overflow-hidden">
       {/* Hero Section with Islamic Pattern Overlay */}
       <section className="relative min-h-[90vh] flex items-center">
-        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.svg')] opacity-10 bg-repeat"></div>
+        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-10 bg-repeat"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/70 via-blue-900/70 to-gray-900/70"></div>
         
         <div className="container mx-auto px-4 py-16 z-10 relative">
@@ -117,7 +117,7 @@ export default function Home() {
               <div className="relative bg-gradient-to-br from-emerald-900 to-blue-900 rounded-xl p-2 shadow-2xl z-10">
                 <div className="rounded-lg overflow-hidden border-2 border-white/20 shadow-inner">
                   <Image 
-                    src="/images/quran-learning.jpg" 
+                    src="/images/learn-quran2.avif"
                     alt="تعليم القرآن" 
                     width={600} 
                     height={600} 
@@ -181,7 +181,7 @@ export default function Home() {
           
           {/* CTA Banner */}
           <div className="mt-16 relative overflow-hidden rounded-2xl">
-            <div className="absolute inset-0 bg-[url('/images/islamic-pattern.svg')] opacity-5 bg-repeat"></div>
+            <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-5 bg-repeat"></div>
             <div className="bg-gradient-to-r from-emerald-600 to-blue-700 p-8 md:p-12 text-center relative z-10">
               <h3 className="text-2xl md:text-3xl font-bold mb-4 text-white">ابدأ رحلتك التعليمية اليوم</h3>
               <p className="text-lg text-emerald-50 mb-8 max-w-2xl mx-auto">
@@ -200,7 +200,7 @@ export default function Home() {
       
       {/* About Us Section */}
       <section id="about" className="py-20 bg-gray-50 dark:bg-gray-800 overflow-hidden relative">
-        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.svg')] opacity-5 bg-repeat"></div>
+        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-5 bg-repeat"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="lg:w-1/2">
@@ -210,7 +210,7 @@ export default function Home() {
                   <div className="space-y-4">
                     <div className="rounded-lg overflow-hidden shadow-xl h-40 transform translate-y-8 border-4 border-white dark:border-gray-700">
                       <Image
-                        src="/images/about-1.jpg"
+                        src="/images/learn-quran.jpg"
                         alt="تعليم القرآن"
                         width={300}
                         height={300}
@@ -219,7 +219,7 @@ export default function Home() {
                     </div>
                     <div className="rounded-lg overflow-hidden shadow-xl h-64 border-4 border-white dark:border-gray-700">
                       <Image
-                        src="/images/about-2.jpg"
+                        src="/images/learn-online.png"
                         alt="جلسات تعليمية"
                         width={300}
                         height={300}
@@ -230,7 +230,7 @@ export default function Home() {
                   <div className="space-y-4">
                     <div className="rounded-lg overflow-hidden shadow-xl h-64 border-4 border-white dark:border-gray-700">
                       <Image
-                        src="/images/about-3.jpg"
+                        src="/images/kid-learns-online.png"
                         alt="معلمون"
                         width={300}
                         height={300}
@@ -239,7 +239,7 @@ export default function Home() {
                     </div>
                     <div className="rounded-lg overflow-hidden shadow-xl h-40 transform translate-y-0 border-4 border-white dark:border-gray-700">
                       <Image
-                        src="/images/about-4.jpg"
+                        src="/images/man-reading.avif"
                         alt="التعلم عن بعد"
                         width={300}
                         height={300}
@@ -323,7 +323,7 @@ export default function Home() {
       
       {/* Testimonials Section */}
       <section className="py-20 bg-white dark:bg-gray-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.svg')] opacity-5 bg-repeat"></div>
+        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-5 bg-repeat"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <div className="inline-block bg-emerald-100 dark:bg-emerald-900/30 px-4 py-1 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
@@ -403,7 +403,7 @@ export default function Home() {
       
       {/* Contact Section */}
       <section id="contact" className="py-20 bg-gray-50 dark:bg-gray-800 relative">
-        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.svg')] opacity-5 bg-repeat"></div>
+        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-5 bg-repeat"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <div className="inline-block bg-emerald-100 dark:bg-emerald-900/30 px-4 py-1 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
@@ -526,7 +526,7 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-emerald-700 to-blue-800 text-white relative">
-        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.svg')] opacity-10 bg-repeat"></div>
+        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-10 bg-repeat"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left md:max-w-lg">

@@ -319,7 +319,7 @@ export default function TeachersPage() {
     <>
       {/* Hero Banner Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.svg')] opacity-10 bg-repeat"></div>
+        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-10 bg-repeat"></div>
         <div className="bg-gradient-to-r from-emerald-800 via-emerald-700 to-blue-800 text-white py-16 px-4 relative z-10">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col lg:flex-row items-center justify-between">
@@ -341,7 +341,7 @@ export default function TeachersPage() {
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-emerald-500 rounded-full opacity-20 blur-2xl"></div>
                 <div className="relative z-10 w-full h-full rounded-xl overflow-hidden border-4 border-white/30 shadow-xl">
                   <Image 
-                    src="/images/quran-teacher.jpg" 
+                    src="/images/man-reading.avif"
                     alt="معلم القرآن"
                     width={400}
                     height={400}
