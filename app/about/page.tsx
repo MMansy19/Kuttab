@@ -1,6 +1,6 @@
 import React from "react";
 import Image from 'next/image';
-import { FaQuran, FaMicrophone, FaUserGraduate, FaGlobe } from "react-icons/fa";
+import { FaMicrophone, FaUserGraduate, FaGlobe } from "react-icons/fa";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card, CardContent } from "@/components/ui/Card";
 
@@ -21,7 +21,7 @@ export default function AboutPage() {
           <div className="flex justify-center">
             <div className="relative w-24 h-24 md:w-32 md:h-32 animate-float">
               <Image 
-                src="/images/quran-icon.png" 
+                src="https://img.icons8.com/fluency/96/quran.png" 
                 alt="Quran Icon" 
                 width={128} 
                 height={128}
@@ -55,7 +55,12 @@ export default function AboutPage() {
           <Card variant="raised" className="text-center">
             <CardContent className="p-6">
               <div className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaQuran size={32} />
+                <Image 
+                  src="https://img.icons8.com/color/48/quran.png" 
+                  alt="Quran Icon" 
+                  width={32} 
+                  height={32}
+                />
               </div>
               <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">تعلم القرآن الكريم</h3>
               <p className="text-gray-600 dark:text-gray-400">

@@ -1,9 +1,29 @@
 import React from "react";
-import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaWhatsapp, FaUserGraduate, FaQuestion } from "react-icons/fa";
+import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaWhatsapp, FaUserGraduate, FaQuestion, FaChevronDown } from "react-icons/fa";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import faqsData from "@/data/static/faqs.json";
+
+// FAQ Accordion Item Component
+const FAQItem = ({ faq }: { faq: { id: string; question: string; answer: string } }) => {
+  return (
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg mb-4 overflow-hidden">
+      <details className="group">
+        <summary className="flex items-center justify-between cursor-pointer p-6">
+          <h3 className="font-bold text-lg text-gray-900 dark:text-white">{faq.question}؟</h3>
+          <span className="ml-2 text-emerald-600 dark:text-emerald-400 transition-transform duration-300 group-open:rotate-180">
+            <FaChevronDown />
+          </span>
+        </summary>
+        <div className="px-6 pb-6 pt-0 text-gray-600 dark:text-gray-400 border-t border-gray-100 dark:border-gray-700">
+          <p>{faq.answer}</p>
+        </div>
+      </details>
+    </div>
+  );
+};
 
 export default function ContactPage() {
   return (
@@ -146,34 +166,10 @@ export default function ContactPage() {
         />
         
         <div className="max-w-3xl mx-auto mt-12">
-          <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2">كيف يمكنني البدء في تعلم القرآن الكريم؟</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                يمكنك البدء من خلال إنشاء حساب في منصتنا، ثم اختيار المعلم المناسب لك وحجز موعد للبدء في الدروس الخاصة بك.
-              </p>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2">هل يمكنني تجربة المنصة قبل الدفع؟</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                نعم، نقدم درسًا تجريبيًا مجانيًا مع أي معلم تختاره لتجربة المنصة والتأكد من أنها تناسب احتياجاتك التعليمية.
-              </p>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2">ما هي مؤهلات المعلمين لديكم؟</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                جميع معلمينا حاصلون على إجازات معتمدة في تلاوة وتعليم القرآن الكريم، ولديهم خبرة تدريسية لا تقل عن سنتين. يخضع المعلمون أيضًا لعملية تقييم صارمة قبل انضمامهم للمنصة.
-              </p>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-              <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2">كيف يمكنني تغيير أو إلغاء موعد درس؟</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                يمكنك تغيير أو إلغاء المواعيد من خلال لوحة التحكم الخاصة بك، مع مراعاة سياسة الإلغاء التي تتطلب إشعارًا قبل 24 ساعة على الأقل من موعد الدرس.
-              </p>
-            </div>
+          <div className="space-y-2">
+            {faqsData.faqs.map(faq => (
+              <FAQItem key={faq.id} faq={faq} />
+            ))}
           </div>
           
           <div className="mt-8 text-center">

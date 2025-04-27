@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 function getInitialTheme() {
   if (typeof window !== 'undefined' && window.localStorage) {
@@ -27,7 +28,10 @@ export default function Navbar() {
   return (
     <nav dir="rtl" className="w-full bg-white dark:bg-gray-900 text-emerald-900 dark:text-white py-4 px-2 sm:px-6 flex flex-col sm:flex-row items-center justify-between shadow-md transition-colors duration-300 border-b border-accent">
       <div className="flex items-center gap-2 mb-2 sm:mb-0">
-        <span className="text-3xl font-bold tracking-tight text-accent">كُتّاب <span className="text-emerald-700 dark:text-emerald-400">|</span> KOTTAB</span>
+        <div className="flex items-center">
+          <Image src="/images/logo.svg" alt="كُتّاب" width={40} height={40} className="mr-2" />
+          <span className="text-3xl font-bold tracking-tight text-accent">كُتّاب <span className="text-emerald-700 dark:text-emerald-400">|</span> KOTTAB</span>
+        </div>
       </div>
       <ul className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-lg font-bold w-full sm:w-auto text-center">
         <li><Link href="/" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">الرئيسية</Link></li>
@@ -50,7 +54,7 @@ export default function Navbar() {
             </svg>
             ) : (
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 9.003 0 008.354-5.646z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 9.003 0 0012 21a9.003 9.003 9.003 9.003-5.646z" />
             </svg>
             )}
         </button> */}
