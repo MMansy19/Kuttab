@@ -4,9 +4,9 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FaBell, FaCheck, FaTrash } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
-import Card from "@/components/ui/Card";
-import Button from "@/components/ui/Button";
-import Badge from "@/components/ui/Badge";
+import {Card} from "@/components/ui/Card";
+import {Button} from "@/components/ui/Button";
+import {Badge} from "@/components/ui/Badge";
 
 interface Notification {
   id: string;
@@ -241,14 +241,15 @@ export default function NotificationsPage() {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <span className="sr-only">جاري التحميل...</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded-md">
-        Error: {error}
+      <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded-md" dir="rtl">
+        خطأ: {error}
       </div>
     );
   }
@@ -256,16 +257,17 @@ export default function NotificationsPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Notifications</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white" dir="rtl">الإشعارات</h1>
         {metadata && metadata.unreadCount > 0 && (
           <Button 
             variant="outline" 
             size="sm" 
             onClick={markAllAsRead} 
             className="flex items-center gap-2"
+            dir="rtl"
           >
             <FaCheck size={14} />
-            <span>Mark all as read</span>
+            <span>تعليم الكل كمقروءة</span>
           </Button>
         )}
       </div>
@@ -280,7 +282,7 @@ export default function NotificationsPage() {
               : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
-          All
+          الكل
         </button>
         <button
           onClick={() => handleTabChange("unread")}
@@ -290,9 +292,9 @@ export default function NotificationsPage() {
               : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
-          Unread
+          غير مقروءة
           {metadata && metadata.unreadCount > 0 && (
-            <span className="ml-2 bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300 text-xs font-medium px-2 py-0.5 rounded-full">
+            <span className="mr-2 bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300 text-xs font-medium px-2 py-0.5 rounded-full">
               {metadata.unreadCount}
             </span>
           )}
@@ -304,13 +306,13 @@ export default function NotificationsPage() {
         {notifications.length === 0 ? (
           <Card className="p-6 text-center">
             <FaBell className="mx-auto text-gray-400 dark:text-gray-600 text-4xl mb-2" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">
-              No notifications
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1" dir="rtl">
+              لا توجد إشعارات
             </h3>
-            <p className="text-gray-500 dark:text-gray-400">
+            <p className="text-gray-500 dark:text-gray-400" dir="rtl">
               {selectedTab === "unread" 
-                ? "You have no unread notifications." 
-                : "You have no notifications at this time."}
+                ? "ليس لديك إشعارات غير مقروءة." 
+                : "ليس لديك أي إشعارات في الوقت الحالي."}
             </p>
           </Card>
         ) : (
@@ -329,29 +331,31 @@ export default function NotificationsPage() {
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex justify-between items-center">
-                    <h3 className="font-medium text-gray-900 dark:text-white">
+                    <h3 className="font-medium text-gray-900 dark:text-white" dir="rtl">
                       {notification.title}
                     </h3>
-                    <Badge variant={getNotificationBadgeVariant(notification.type)}>
-                      {notification.type}
+                    <Badge variant={getNotificationBadgeVariant(notification.type)} dir="rtl">
+                      {notification.type === "BOOKING" ? "حجز" : 
+                       notification.type === "REVIEW" ? "تقييم" : 
+                       notification.type === "SYSTEM" ? "النظام" : notification.type}
                     </Badge>
                   </div>
-                  <p className="text-gray-600 dark:text-gray-400 mt-1">
+                  <p className="text-gray-600 dark:text-gray-400 mt-1" dir="rtl">
                     {notification.message}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-2" dir="rtl">
                     {formatDistanceToNow(new Date(notification.createdAt), {
                       addSuffix: true,
                     })}
                   </p>
                 </div>
                 
-                <div className="flex space-x-2 ml-4">
+                <div className="flex space-x-2 mr-4">
                   {!notification.isRead && (
                     <button
                       onClick={() => markAsRead(notification.id)}
                       className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"
-                      title="Mark as read"
+                      title="تعليم كمقروءة"
                     >
                       <FaCheck size={14} />
                     </button>
@@ -359,7 +363,7 @@ export default function NotificationsPage() {
                   <button
                     onClick={() => deleteNotification(notification.id)}
                     className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400"
-                    title="Delete notification"
+                    title="حذف الإشعار"
                   >
                     <FaTrash size={14} />
                   </button>
@@ -379,8 +383,9 @@ export default function NotificationsPage() {
               size="sm"
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
+              dir="rtl"
             >
-              Previous
+              السابق
             </Button>
             
             {Array.from({ length: metadata.totalPages }, (_, i) => i + 1).map(
@@ -401,8 +406,9 @@ export default function NotificationsPage() {
               size="sm"
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === metadata.totalPages}
+              dir="rtl"
             >
-              Next
+              التالي
             </Button>
           </div>
         </div>

@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import Card from "@/components/ui/Card";
-import Button from "@/components/ui/Button";
+import {Card} from "@/components/ui/Card";
+import {Button} from "@/components/ui/Button";
 import AvailabilityCalendar from "@/components/AvailabilityCalendar";
 
 interface TimeSlot {
@@ -112,14 +112,15 @@ export default function AvailabilityPage() {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        <span className="sr-only">جاري التحميل...</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded-md">
-        Error: {error}
+      <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded-md" dir="rtl">
+        خطأ: {error}
       </div>
     );
   }
@@ -127,22 +128,23 @@ export default function AvailabilityPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Availability</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white" dir="rtl">إدارة الجدول الزمني</h1>
       </div>
       
       {successMessage && (
-        <div className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-4 rounded-md">
-          {successMessage}
+        <div className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-4 rounded-md" dir="rtl">
+          {successMessage === "Your availability schedule has been saved successfully!" ? 
+            "تم حفظ جدولك الزمني بنجاح!" : successMessage}
         </div>
       )}
       
       <Card className="p-6">
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Weekly Schedule</h2>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white" dir="rtl">الجدول الأسبوعي</h2>
           </div>
-          <p className="text-gray-600 dark:text-gray-400">
-            Set your regular weekly availability for teaching. Students will only be able to book lessons during these times.
+          <p className="text-gray-600 dark:text-gray-400" dir="rtl">
+            حدد أوقات تواجدك الأسبوعية المخصصة للتدريس. سيتمكن الطلاب من حجز الدروس خلال هذه الأوقات فقط.
           </p>
           
           <AvailabilityCalendar 
@@ -154,12 +156,12 @@ export default function AvailabilityPage() {
       </Card>
       
       <Card className="p-6">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Tips for Setting Your Schedule</h2>
-        <div className="space-y-3 text-gray-600 dark:text-gray-400">
-          <p>• Set consistent hours each day to make it easier for students to remember when you're available.</p>
-          <p>• Consider including some evening or weekend hours to accommodate students with daytime commitments.</p>
-          <p>• You can always update your schedule as needed, but try to give students advance notice of any changes.</p>
-          <p>• If you need to take a break from teaching, use the "Pause Bookings" feature on your dashboard instead of removing all your available hours.</p>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4" dir="rtl">نصائح لإعداد جدولك</h2>
+        <div className="space-y-3 text-gray-600 dark:text-gray-400" dir="rtl">
+          <p>• حدد ساعات ثابتة كل يوم لتسهيل تذكر الطلاب لمواعيدك.</p>
+          <p>• فكر في إضافة بعض الساعات المسائية أو خلال عطلة نهاية الأسبوع لاستيعاب الطلاب ذوي الالتزامات النهارية.</p>
+          <p>• يمكنك دائمًا تحديث جدولك حسب الحاجة، ولكن حاول إخطار الطلاب مسبقًا بأي تغييرات.</p>
+          <p>• إذا كنت بحاجة إلى أخذ استراحة من التدريس، استخدم ميزة "إيقاف الحجوزات" في لوحة التحكم بدلاً من إزالة جميع الساعات المتاحة.</p>
         </div>
       </Card>
     </div>

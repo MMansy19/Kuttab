@@ -4,8 +4,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { FaRegClock, FaPlus, FaTimes, FaSave } from 'react-icons/fa';
 import { format } from 'date-fns';
 import { cn } from '@/utils/cn';
-import Button from './ui/Button';
-import Badge from './ui/Badge';
+import {Button} from './ui/Button';
+import {Badge} from './ui/Badge';
 
 interface TimeSlot {
   id?: string;
@@ -102,7 +102,7 @@ export default function AvailabilityCalendar({
     
     // Validate time (end time should be after start time)
     if (editingSlot.endTime <= editingSlot.startTime) {
-      alert("End time must be after start time");
+      alert("يجب أن يكون وقت الانتهاء بعد وقت البدء");
       return;
     }
     
@@ -116,7 +116,7 @@ export default function AvailabilityCalendar({
     );
     
     if (overlappingSlot) {
-      alert("This time slot overlaps with an existing slot");
+      alert("هذه الفترة الزمنية تتداخل مع فترة موجودة بالفعل");
       return;
     }
     
@@ -139,7 +139,7 @@ export default function AvailabilityCalendar({
 
   const formatTime = (time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
-    const period = hours >= 12 ? 'PM' : 'AM';
+    const period = hours >= 12 ? 'م' : 'ص';
     const hour12 = hours % 12 || 12;
     return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`;
   };
@@ -152,15 +152,16 @@ export default function AvailabilityCalendar({
           onClick={() => onSave(slots)} 
           disabled={isSaving}
           className="flex items-center gap-2"
+          dir="rtl"
         >
           {isSaving ? (
             <>
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-              Saving...
+              جاري الحفظ...
             </>
           ) : (
             <>
-              <FaSave /> Save Schedule
+              <FaSave /> حفظ الجدول
             </>
           )}
         </Button>
@@ -171,20 +172,21 @@ export default function AvailabilityCalendar({
         {DAYS.map((day, index) => (
           <div key={day} className="border rounded-lg p-4 dark:border-gray-700">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">{DAY_NAMES[index]}</h3>
+              <h3 className="text-lg font-medium" dir="rtl">{DAY_NAMES[index]}</h3>
               <Button 
                 variant="outline" 
                 size="sm" 
                 onClick={() => handleAddSlot(index)}
                 className="flex items-center gap-1"
+                dir="rtl"
               >
-                <FaPlus size={12} /> Add Slot
+                <FaPlus size={12} /> إضافة فترة
               </Button>
             </div>
             
             {slotsByDay[index].length === 0 ? (
-              <p className="text-gray-500 dark:text-gray-400 text-center py-4">
-                No availability set for this day
+              <p className="text-gray-500 dark:text-gray-400 text-center py-4" dir="rtl">
+                لم يتم تحديد أوقات متاحة لهذا اليوم
               </p>
             ) : (
               <div className="space-y-2">
@@ -199,7 +201,7 @@ export default function AvailabilityCalendar({
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      <Badge variant="success">Available</Badge>
+                      <Badge variant="success" dir="rtl">متاح</Badge>
                       
                       <button 
                         onClick={() => handleEditSlot(slot)}
@@ -232,8 +234,8 @@ export default function AvailabilityCalendar({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">
-                {editingSlot.id ? 'Edit Time Slot' : 'Add Time Slot'}
+              <h3 className="text-lg font-medium" dir="rtl">
+                {editingSlot.id ? 'تعديل الفترة الزمنية' : 'إضافة فترة زمنية'}
               </h3>
               <button 
                 onClick={() => setShowModal(false)}
@@ -245,12 +247,13 @@ export default function AvailabilityCalendar({
             
             <div className="space-y-4">
               <div>
-                <label className="block mb-1 text-sm font-medium">Day</label>
+                <label className="block mb-1 text-sm font-medium text-right" dir="rtl">اليوم</label>
                 <select 
                   value={editingSlot.dayOfWeek}
                   onChange={(e) => setEditingSlot({...editingSlot, dayOfWeek: Number(e.target.value)})}
-                  className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900"
+                  className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-right"
                   disabled={editingSlot.id !== undefined}
+                  dir="rtl"
                 >
                   {DAY_NAMES.map((day, index) => (
                     <option key={day} value={index}>{day}</option>
@@ -260,11 +263,12 @@ export default function AvailabilityCalendar({
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-1 text-sm font-medium">Start Time</label>
+                  <label className="block mb-1 text-sm font-medium text-right" dir="rtl">وقت البدء</label>
                   <select 
                     value={editingSlot.startTime}
                     onChange={(e) => setEditingSlot({...editingSlot, startTime: e.target.value})}
                     className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900"
+                    dir="rtl"
                   >
                     {timeOptions.map(time => (
                       <option key={`start-${time}`} value={time}>{formatTime(time)}</option>
@@ -273,11 +277,12 @@ export default function AvailabilityCalendar({
                 </div>
                 
                 <div>
-                  <label className="block mb-1 text-sm font-medium">End Time</label>
+                  <label className="block mb-1 text-sm font-medium text-right" dir="rtl">وقت الانتهاء</label>
                   <select 
                     value={editingSlot.endTime}
                     onChange={(e) => setEditingSlot({...editingSlot, endTime: e.target.value})}
                     className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900"
+                    dir="rtl"
                   >
                     {timeOptions
                       .filter(time => time > editingSlot.startTime)
@@ -294,10 +299,11 @@ export default function AvailabilityCalendar({
               <Button 
                 variant="outline" 
                 onClick={() => setShowModal(false)}
+                dir="rtl"
               >
-                Cancel
+                إلغاء
               </Button>
-              <Button onClick={handleSaveSlot}>Save</Button>
+              <Button onClick={handleSaveSlot} dir="rtl">حفظ</Button>
             </div>
           </div>
         </div>

@@ -19,7 +19,7 @@ function getPrismaClient() {
     return prisma
   } catch (error) {
     console.error('Error initializing Prisma client:', error)
-    throw new Error('Database connection failed')
+    // throw new Error('Database connection failed')
   }
 }
 
