@@ -195,12 +195,14 @@ const AuthForm = ({ type }: AuthFormProps) => {
           body: JSON.stringify(formData),
         });
 
+        // Check if the response is OK before trying to parse JSON
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null);
+          const errorMessage = errorData?.error || `فشل في التسجيل (${response.status})`;
+          throw new Error(errorMessage);
+        }
+
         const data = await response.json();
-
-        // if (!response.ok) {
-        //   throw new Error(data.error || "فشل في التسجيل");
-        // }
-
         setSuccess("تم إنشاء الحساب بنجاح! جاري تسجيل الدخول...");
 
         // Auto sign in after registration

@@ -12,7 +12,7 @@ function getPrismaClient() {
     if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
     
     // Test connection
-    prisma.$connect().catch(e => {
+    prisma.$connect().catch((e: Error) => {
       console.error('Failed to connect to database:', e)
     })
     

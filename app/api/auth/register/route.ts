@@ -1,118 +1,77 @@
-import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { z } from "zod";
-import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import { NextRequest, NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
+import prisma from '@/lib/prisma';
+import { z } from 'zod';
 
-// User registration validation schema
+// Define validation schema for registration
 const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  role: z.enum(["USER", "TEACHER"]).default("USER"),
-  gender: z.enum(["MALE", "FEMALE"]).optional(),
-  bio: z.string().optional(),
+  name: z.string().min(2, "يجب أن يكون الاسم على الأقل حرفين"),
+  email: z.string().email("بريد إلكتروني غير صالح"),
+  password: z.string().min(8, "يجب أن تكون كلمة المرور 8 أحرف على الأقل"),
+  role: z.enum(["USER", "TEACHER"]),
+  gender: z.enum(["MALE", "FEMALE"]),
 });
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json();
+    const body = await req.json();
     
     // Validate request body
-    const result = registerSchema.safeParse(body);
-    
-    if (!result.success) {
+    try {
+      registerSchema.parse(body);
+    } catch (error) {
+      return NextResponse.json({ error: "بيانات غير صالحة", details: error }, { status: 400 });
+    }
+
+    const { name, email, password, role, gender } = body;
+
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
       return NextResponse.json(
-        { error: "Invalid input", details: result.error.format() },
-        { status: 400 }
+        { error: "البريد الإلكتروني مستخدم بالفعل" },
+        { status: 409 }
       );
     }
-    
-    const { name, email, password, role, gender, bio } = result.data;
-    
-    try {
-      // Check if user already exists
-      const existingUser = await prisma.user.findUnique({
-        where: { email },
-      });
-      
-      if (existingUser) {
-        return NextResponse.json(
-          { error: "User already exists with this email" },
-          { status: 409 }
-        );
-      }
-      
-      // Hash the password
-      const hashedPassword = await bcrypt.hash(password, 12);
-      
-      // Create the user
-      const user = await prisma.user.create({
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Create new user
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        role,
+        gender,
+      },
+    });
+
+    // If registering as TEACHER, create a teacher profile
+    if (role === "TEACHER") {
+      await prisma.teacherProfile.create({
         data: {
-          name,
-          email,
-          password: hashedPassword,
-          role,
-          gender,
-          bio,
+          userId: user.id,
         },
       });
-      
-      // If user is a teacher, create a teacher profile
-      if (role === "TEACHER") {
-        await prisma.teacherProfile.create({
-          data: {
-            userId: user.id,
-          },
-        });
-      }
-      
-      // Return the created user (excluding password)
-      const { password: _, ...userWithoutPassword } = user;
-      
-      return NextResponse.json(
-        { message: "User registered successfully", user: userWithoutPassword },
-        { status: 201 }
-      );
-    } catch (dbError) {
-      console.error("Database operation error:", dbError);
-      
-      // Handle specific Prisma errors
-      if (dbError instanceof Prisma.PrismaClientKnownRequestError) {
-        // The .code property can be accessed in a type-safe manner
-        if (dbError.code === 'P2002') {
-          return NextResponse.json(
-            { error: "A user with this email already exists" },
-            { status: 409 }
-          );
-        }
-      }
-      
-      if (dbError instanceof Prisma.PrismaClientInitializationError) {
-        return NextResponse.json(
-          { error: "Database connection failed. Please try again later." },
-          { status: 503 }
-        );
-      }
-      
-      return NextResponse.json(
-        { error: "Database operation failed" },
-        { status: 500 }
-      );
     }
-  } catch (error) {
+
+    // Return success response without password
+    const { password: _, ...userWithoutPassword } = user;
+    
+    return NextResponse.json({
+      message: "تم إنشاء المستخدم بنجاح",
+      user: userWithoutPassword,
+    }, { status: 201 });
+    
+  } catch (error: any) {
     console.error("Registration error:", error);
-    
-    // Check if it's a JSON parsing error
-    if (error instanceof SyntaxError && error.message.includes('JSON')) {
-      return NextResponse.json(
-        { error: "Invalid JSON in the request body" },
-        { status: 400 }
-      );
-    }
-    
     return NextResponse.json(
-      { error: "An unexpected error occurred during registration" },
+      { error: "حدث خطأ أثناء تسجيل المستخدم" },
       { status: 500 }
     );
   }

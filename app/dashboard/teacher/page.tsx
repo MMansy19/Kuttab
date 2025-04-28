@@ -240,7 +240,7 @@ export default function TeacherDashboard() {
             </div>
             <Button
               onClick={handleToggleAvailability}
-              variant={teacherProfile.isAvailable ? "destructive" : "default"}
+              variant={teacherProfile.isAvailable ? "danger" : "default"}
               dir="rtl"
             >
               {teacherProfile.isAvailable
