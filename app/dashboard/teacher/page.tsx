@@ -1,119 +1,373 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import TeacherProfileEditor from '@/components/teacher/TeacherProfileEditor';
-import { Teacher } from '@/types';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import { showSuccess, showWarning } from "@/utils/toast";
 
-// This would typically come from an API or auth context
-// For the demo, we'll initialize with example data
-const mockTeacherData: Teacher = {
-  id: "t-1",
-  name: "د. خالد المصري",
-  bio: "معلم قرآن كريم وتجويد بخبرة أكثر من 15 عاماً في التعليم. حاصل على إجازة في رواية حفص عن عاصم وإجازة في القراءات العشر الصغرى.",
-  subjects: ["القرآن الكريم", "التجويد", "القراءات العشر"],
-  rating: 4.9,
-  experience: 15,
-  gender: "male",
-  specialization: "القراءات العشر الصغرى",
-  isPaid: true,
-  price: 150,
-  availableSlots: [],
-  education: "دكتوراه في علوم القرآن والتفسير",
-  certifications: ["إجازة في رواية حفص عن عاصم", "إجازة في القراءات العشر الصغرى"],
-  languages: ["العربية", "الإنجليزية"],
-  teachingApproach: "أعتمد على الفهم والممارسة المستمرة مع متابعة دقيقة للطلاب",
-  contactInfo: {
-    email: "khalid@example.com",
-    phone: "+966500000000",
-    whatsapp: "+966500000000"
-  },
-  achievements: ["تخريج أكثر من 200 طالب حافظ للقرآن"],
-};
+interface TeacherProfile {
+  id: string;
+  specialization: string | null;
+  yearsOfExperience: number | null;
+  isAvailable: boolean;
+  approvalStatus: string;
+  averageRating: number | null;
+  reviewCount: number;
+}
 
-export default function TeacherProfilePage() {
-  const [teacher, setTeacher] = useState<Teacher>(mockTeacherData);
-  const [isLoading, setIsLoading] = useState(false);
-  const [saveStatus, setSaveStatus] = useState<string | null>(null);
+interface Booking {
+  id: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  status: string;
+  user: {
+    name: string;
+    image: string | null;
+  };
+}
 
-  // In a real app, this would fetch data from an API
+export default function TeacherDashboard() {
+  const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const loginSuccess = searchParams?.get("loginSuccess");
+  const notification = searchParams?.get("notification");
+
+  const [teacherProfile, setTeacherProfile] = useState<TeacherProfile | null>(null);
+  const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    // Fetch teacher data from API
-    // setTeacher(data)
-  }, []);
+    // Show welcome notification on login success
+    if (loginSuccess === "true" && session?.user?.name) {
+      showSuccess(`مرحباً بك ${session.user.name}! تم تسجيل دخولك إلى لوحة تحكم المعلم.`);
+    }
 
-  const handleSaveProfile = async (updatedTeacher: Teacher) => {
-    try {
-      setIsLoading(true);
-      
-      // In a real application, this would be an API call to save the teacher data
-      console.log("Saving teacher data:", updatedTeacher);
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      setTeacher(updatedTeacher);
-      setSaveStatus("success");
-      
-      // Clear status after 3 seconds
-      setTimeout(() => {
-        setSaveStatus(null);
-      }, 3000);
-      
-      return Promise.resolve();
-    } catch (error) {
-      console.error("Error saving teacher profile:", error);
-      setSaveStatus("error");
-      return Promise.reject(error);
-    } finally {
-      setIsLoading(false);
+    // Show notification if user attempted to access unauthorized area
+    if (notification === "unauthorized_access") {
+      showWarning("لا يمكنك الوصول إلى الصفحة المطلوبة. تم توجيهك إلى لوحة التحكم الخاصة بك.");
+    }
+  }, [loginSuccess, notification, session]);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setIsLoading(true);
+
+        // Fetch the teacher profile data
+        const profileResponse = await fetch(`/api/users/${session?.user.id}`);
+        if (!profileResponse.ok) {
+          throw new Error("فشل في جلب ملف المعلم");
+        }
+        const profileData = await profileResponse.json();
+        setTeacherProfile(profileData.teacherProfile);
+
+        // Fetch bookings
+        const bookingsResponse = await fetch("/api/bookings");
+        if (!bookingsResponse.ok) {
+          throw new Error("فشل في جلب الحجوزات");
+        }
+
+        const bookingsData = await bookingsResponse.json();
+
+        const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+        // Filter upcoming bookings
+        const upcoming = bookingsData.data.filter((booking: Booking) =>
+          (booking.date > today ||
+            (booking.date === today && booking.status !== "COMPLETED" && booking.status !== "CANCELLED")) &&
+          (booking.status === "SCHEDULED" || booking.status === "CONFIRMED")
+        );
+
+        setUpcomingBookings(upcoming);
+      } catch (err: any) {
+        setError(err.message || "حدث خطأ ما");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (session?.user.id) {
+      fetchDashboardData();
+    }
+  }, [session]);
+
+  const getStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case "SCHEDULED":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
+      case "CONFIRMED":
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+      case "COMPLETED":
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300";
+      case "CANCELLED":
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
+      case "NO_SHOW":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
     }
   };
 
-  return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">الملف الشخصي</h1>
-        
-        <div className="flex gap-3">
-          <Link href="/dashboard/teacher/availability">
-            <Button variant="outline" className="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-              </svg>
-              إدارة المواعيد
-            </Button>
-          </Link>
-          
-          <Link href={`/teachers/${teacher.id}`} target="_blank">
-            <Button variant="outline" className="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-              </svg>
-              عرض صفحتي
-            </Button>
-          </Link>
-        </div>
+  const getApprovalStatusBadgeColor = (status: string) => {
+    switch (status) {
+      case "PENDING":
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
+      case "APPROVED":
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
+      case "REJECTED":
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
+    }
+  };
+
+  const handleToggleAvailability = async () => {
+    try {
+      if (!teacherProfile) return;
+
+      const response = await fetch(`/api/teachers/${teacherProfile.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          isAvailable: !teacherProfile.isAvailable,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update availability");
+      }
+
+      const updatedProfile = await response.json();
+      setTeacherProfile(updatedProfile.profile);
+    } catch (err: any) {
+      setError(err.message || "An error occurred");
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
-      
-      {saveStatus === "success" && (
-        <div className="mb-6 p-3 bg-green-100 text-green-800 rounded-md dark:bg-green-900/30 dark:text-green-400">
-          تم حفظ الملف الشخصي بنجاح
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded-md" dir="rtl">
+        خطأ: {error}
+      </div>
+    );
+  }
+
+  if (!teacherProfile) {
+    return (
+      <div className="bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 p-4 rounded-md" dir="rtl">
+        لم يتم العثور على ملف المعلم. يرجى التواصل مع الدعم.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white" dir="rtl">لوحة تحكم المعلم</h1>
+        <Link href="/dashboard/teacher/profile">
+          <Button variant="outline">تعديل الملف الشخصي</Button>
+        </Link>
+      </div>
+
+      {/* Profile Status Card */}
+      <Card className="p-6">
+        <div className="flex justify-between items-start">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white" dir="rtl">حالة الملف الشخصي</h2>
+            <div className="mt-2 flex items-center">
+              <Badge className={getApprovalStatusBadgeColor(teacherProfile.approvalStatus)}>
+                {teacherProfile.approvalStatus === "PENDING" ? "قيد المراجعة" : 
+                 teacherProfile.approvalStatus === "APPROVED" ? "تمت الموافقة" : 
+                 teacherProfile.approvalStatus === "REJECTED" ? "مرفوض" : teacherProfile.approvalStatus}
+              </Badge>
+              {teacherProfile.approvalStatus === "PENDING" && (
+                <p className="mr-3 text-sm text-gray-600 dark:text-gray-400" dir="rtl">
+                  يتم مراجعة ملفك الشخصي من قبل فريقنا.
+                </p>
+              )}
+              {teacherProfile.approvalStatus === "REJECTED" && (
+                <p className="mr-3 text-sm text-red-600 dark:text-red-400" dir="rtl">
+                  تم رفض ملفك الشخصي. يرجى تحديث معلوماتك وإعادة التقديم.
+                </p>
+              )}
+            </div>
+            <div className="mt-4">
+              <h3 className="font-medium text-gray-700 dark:text-gray-300" dir="rtl">التخصص</h3>
+              <p className="mt-1 text-gray-600 dark:text-gray-400" dir="rtl">
+                {teacherProfile.specialization || "غير محدد"}
+              </p>
+            </div>
+            <div className="mt-2">
+              <h3 className="font-medium text-gray-700 dark:text-gray-300" dir="rtl">الخبرة</h3>
+              <p className="mt-1 text-gray-600 dark:text-gray-400" dir="rtl">
+                {teacherProfile.yearsOfExperience
+                  ? `${teacherProfile.yearsOfExperience} سنوات`
+                  : "غير محدد"}
+              </p>
+            </div>
+            <div className="mt-2">
+              <h3 className="font-medium text-gray-700 dark:text-gray-300" dir="rtl">التقييم</h3>
+              <p className="mt-1 text-gray-600 dark:text-gray-400" dir="rtl">
+                {teacherProfile.averageRating
+                  ? `${teacherProfile.averageRating.toFixed(1)} نجوم (${teacherProfile.reviewCount} تقييم)`
+                  : "لا توجد تقييمات حتى الآن"}
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center">
+              <div className={`w-3 h-3 rounded-full ml-2 ${teacherProfile.isAvailable ? 'bg-green-500' : 'bg-red-500'}`}></div>
+              <span className="text-sm font-medium" dir="rtl">
+                {teacherProfile.isAvailable ? 'متاح للحجز' : 'غير متاح للحجز'}
+              </span>
+            </div>
+            <Button
+              onClick={handleToggleAvailability}
+              variant={teacherProfile.isAvailable ? "destructive" : "default"}
+              dir="rtl"
+            >
+              {teacherProfile.isAvailable
+                ? "إيقاف الحجوزات"
+                : "قبول الحجوزات"}
+            </Button>
+
+            <Link href="/dashboard/teacher/availability">
+              <Button className="w-full" variant="outline" dir="rtl">
+                إدارة الجدول
+              </Button>
+            </Link>
+          </div>
         </div>
-      )}
-      
-      {saveStatus === "error" && (
-        <div className="mb-6 p-3 bg-red-100 text-red-800 rounded-md dark:bg-red-900/30 dark:text-red-400">
-          حدث خطأ أثناء حفظ الملف الشخصي، يرجى المحاولة مرة أخرى
+      </Card>
+
+      {/* Upcoming Sessions */}
+      <section>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white" dir="rtl">الجلسات القادمة</h2>
+          <Link href="/dashboard/teacher/bookings">
+            <Button variant="ghost" dir="rtl">عرض كل الحجوزات</Button>
+          </Link>
         </div>
-      )}
-      
-      <TeacherProfileEditor 
-        teacher={teacher} 
-        onSave={handleSaveProfile} 
-      />
+
+        {upcomingBookings.length === 0 ? (
+          <Card className="p-6">
+            <p className="text-gray-600 dark:text-gray-400 text-center" dir="rtl">
+              ليس لديك أي جلسات تعليمية قادمة.
+            </p>
+            {teacherProfile.approvalStatus !== "APPROVED" && (
+              <p className="text-yellow-600 dark:text-yellow-400 text-center mt-2" dir="rtl">
+                يجب الموافقة على ملفك الشخصي قبل أن تتمكن من استقبال الحجوزات.
+              </p>
+            )}
+            {!teacherProfile.isAvailable && teacherProfile.approvalStatus === "APPROVED" && (
+              <p className="text-yellow-600 dark:text-yellow-400 text-center mt-2" dir="rtl">
+                أنت حالياً غير متاح لاستقبال الحجوزات. قم بتغيير حالة التوفر للبدء في استقبال الحجوزات.
+              </p>
+            )}
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            {upcomingBookings.map((booking) => (
+              <Card key={booking.id} className="p-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-4">
+                    <div className="h-12 w-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                      {booking.user.image ? (
+                        <img
+                          src={booking.user.image}
+                          alt={booking.user.name}
+                          className="h-12 w-12 rounded-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-xl font-bold text-gray-500 dark:text-gray-400">
+                          {booking.user.name.charAt(0)}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-white" dir="rtl">
+                        {booking.user.name}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400" dir="rtl">
+                        {new Date(booking.date).toLocaleDateString('ar-SA')} • {booking.startTime} - {booking.endTime}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Badge className={getStatusBadgeColor(booking.status)}>
+                      {booking.status === "SCHEDULED" ? "مجدول" : 
+                       booking.status === "CONFIRMED" ? "مؤكد" : 
+                       booking.status === "COMPLETED" ? "مكتمل" : 
+                       booking.status === "CANCELLED" ? "ملغي" : 
+                       booking.status === "NO_SHOW" ? "لم يحضر" : booking.status}
+                    </Badge>
+                    <Link href={`/dashboard/teacher/bookings/${booking.id}`}>
+                      <Button
+                        variant={booking.status === "SCHEDULED" ? "default" : "outline"}
+                        size="sm"
+                        dir="rtl"
+                      >
+                        {booking.status === "SCHEDULED" ? "تأكيد" : "عرض"}
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Quick Links */}
+      <section className="mt-8">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4" dir="rtl">روابط سريعة</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="p-4">
+            <h3 className="font-medium text-gray-800 dark:text-white mb-2" dir="rtl">عرض الملف الشخصي</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3" dir="rtl">
+              شاهد كيف يظهر ملفك الشخصي للطلاب.
+            </p>
+            <Link href={`/teachers/${teacherProfile.id}`}>
+              <Button variant="outline" size="sm" className="w-full" dir="rtl">عرض الملف العام</Button>
+            </Link>
+          </Card>
+          <Card className="p-4">
+            <h3 className="font-medium text-gray-800 dark:text-white mb-2" dir="rtl">تقييماتي</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3" dir="rtl">
+              اطلع على آراء طلابك.
+            </p>
+            <Link href={`/dashboard/teacher/reviews`}>
+              <Button variant="outline" size="sm" className="w-full" dir="rtl">عرض التقييمات</Button>
+            </Link>
+          </Card>
+          <Card className="p-4">
+            <h3 className="font-medium text-gray-800 dark:text-white mb-2" dir="rtl">سجل التدريس</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3" dir="rtl">
+              عرض جلسات التدريس السابقة.
+            </p>
+            <Link href="/dashboard/teacher/bookings?status=COMPLETED">
+              <Button variant="outline" size="sm" className="w-full" dir="rtl">عرض السجل</Button>
+            </Link>
+          </Card>
+        </div>
+      </section>
     </div>
   );
 }

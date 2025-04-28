@@ -1,102 +1,167 @@
 "use client";
 
-import React, { useState } from 'react';
-import AvailabilityCalendar, { SlotType } from '@/components/AvailabilityCalendar';
-import { Button } from '@/components/ui/Button';
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
+import AvailabilityCalendar from "@/components/AvailabilityCalendar";
 
-// Mock slots for the availability calendar using the SlotType format
-const mockSlots: SlotType[] = [
-  {
-    id: "slot-1",
-    startTime: "2025-04-28T18:00:00.000Z",
-    endTime: "2025-04-28T19:00:00.000Z",
-    maxParticipants: 1,
-    type: 'private'
-  },
-  {
-    id: "slot-2",
-    startTime: "2025-04-29T17:00:00.000Z",
-    endTime: "2025-04-29T18:00:00.000Z",
-    maxParticipants: 5,
-    type: 'group'
-  },
-  {
-    id: "slot-3",
-    startTime: "2025-04-30T19:30:00.000Z", 
-    endTime: "2025-04-30T20:30:00.000Z",
-    maxParticipants: 1,
-    isRecurring: true,
-    recurringDays: [3], // Wednesday
-    type: 'private'
-  }
-];
+interface TimeSlot {
+  id?: string;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+  isAvailable: boolean;
+}
+
+interface TeacherProfile {
+  id: string;
+}
 
 export default function AvailabilityPage() {
-  const [slots, setSlots] = useState<SlotType[]>(mockSlots);
-  const [selectedSlot, setSelectedSlot] = useState<SlotType | null>(null);
+  const { data: session } = useSession();
+  const [teacherProfile, setTeacherProfile] = useState<TeacherProfile | null>(null);
+  const [availabilities, setAvailabilities] = useState<TimeSlot[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleSaveSlots = async (updatedSlots: SlotType[]) => {
+  useEffect(() => {
+    const fetchTeacherProfile = async () => {
+      if (!session?.user.id) return;
+      
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        // Fetch the teacher profile
+        const profileResponse = await fetch(`/api/users/${session.user.id}`);
+        if (!profileResponse.ok) {
+          throw new Error("Failed to fetch teacher profile");
+        }
+        const profileData = await profileResponse.json();
+        
+        if (!profileData.teacherProfile) {
+          throw new Error("Teacher profile not found");
+        }
+        
+        setTeacherProfile(profileData.teacherProfile);
+        
+        // Fetch the teacher's availabilities
+        const availabilityResponse = await fetch(`/api/teachers/${profileData.teacherProfile.id}/availability`);
+        if (!availabilityResponse.ok) {
+          throw new Error("Failed to fetch availabilities");
+        }
+        const availabilityData = await availabilityResponse.json();
+        
+        // If no availabilities found, create a default set
+        if (!availabilityData.length) {
+          // Default to no availabilities - teacher will need to set them
+          setAvailabilities([]);
+        } else {
+          setAvailabilities(availabilityData);
+        }
+      } catch (err: any) {
+        setError(err.message || "An error occurred");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTeacherProfile();
+  }, [session]);
+
+  const handleSaveAvailability = async (slots: TimeSlot[]) => {
     try {
+      if (!teacherProfile) return;
+      
       setIsSaving(true);
-      // In a real application, you would call an API to save the slots
-      console.log("Saving slots:", updatedSlots);
+      setError(null);
+      setSuccessMessage(null);
       
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const response = await fetch(`/api/teachers/${teacherProfile.id}/availability`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(slots),
+      });
       
-      setSlots(updatedSlots);
-      setSaveSuccess(true);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to save availability");
+      }
       
-      // Reset success message after 3 seconds
-      setTimeout(() => setSaveSuccess(false), 3000);
+      const data = await response.json();
+      setAvailabilities(data.availabilities);
+      setSuccessMessage("Your availability schedule has been saved successfully!");
       
-      return Promise.resolve();
-    } catch (error) {
-      console.error("Error saving slots:", error);
-      return Promise.reject(error);
+      // Hide the success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+    } catch (err: any) {
+      setError(err.message || "An error occurred");
     } finally {
       setIsSaving(false);
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded-md">
+        Error: {error}
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">إدارة المواعيد المتاحة</h1>
-        
-        <Link href="/dashboard/teacher">
-          <Button variant="outline" className="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
-            </svg>
-            الرجوع للملف الشخصي
-          </Button>
-        </Link>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Availability</h1>
       </div>
       
-      {saveSuccess && (
-        <div className="mb-6 p-3 bg-green-100 text-green-800 rounded-md dark:bg-green-900/30 dark:text-green-400">
-          تم حفظ المواعيد بنجاح
+      {successMessage && (
+        <div className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-4 rounded-md">
+          {successMessage}
         </div>
       )}
       
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-        <div className="p-4 md:p-6">
-          <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
-            يمكنك من هنا تحديد الأوقات التي تكون متاحًا فيها للتدريس. يمكنك إضافة مواعيد فردية أو متكررة، وتحديد الحد الأقصى للمشاركين في كل موعد.
+      <Card className="p-6">
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Weekly Schedule</h2>
+          </div>
+          <p className="text-gray-600 dark:text-gray-400">
+            Set your regular weekly availability for teaching. Students will only be able to book lessons during these times.
           </p>
           
           <AvailabilityCalendar 
-            slots={slots}
-            onSave={handleSaveSlots}
-            onSelect={setSelectedSlot}
-            editable={true}
+            initialAvailability={availabilities}
+            onSave={handleSaveAvailability}
+            isSaving={isSaving}
           />
         </div>
-      </div>
+      </Card>
+      
+      <Card className="p-6">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Tips for Setting Your Schedule</h2>
+        <div className="space-y-3 text-gray-600 dark:text-gray-400">
+          <p>• Set consistent hours each day to make it easier for students to remember when you're available.</p>
+          <p>• Consider including some evening or weekend hours to accommodate students with daytime commitments.</p>
+          <p>• You can always update your schedule as needed, but try to give students advance notice of any changes.</p>
+          <p>• If you need to take a break from teaching, use the "Pause Bookings" feature on your dashboard instead of removing all your available hours.</p>
+        </div>
+      </Card>
     </div>
   );
 }

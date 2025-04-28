@@ -1,0 +1,183 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id                    String                @id @default(cuid())
+  name                  String?
+  email                 String?               @unique
+  emailVerified         DateTime?
+  password              String?
+  image                 String?
+  bio                   String?               @db.Text
+  gender                String?
+  role                  Role                  @default(USER)
+  isActive              Boolean               @default(true)
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  accounts              Account[]
+  sessions              Session[]
+  bookingsAsUser        Booking[]             @relation("UserBookings")
+  teacherProfile        TeacherProfile?
+  receivedReviews       Review[]              @relation("TeacherReviews")
+  givenReviews          Review[]              @relation("UserReviews")
+  notificationsReceived Notification[]        @relation("NotificationReceiver")
+  notificationsSent     Notification[]        @relation("NotificationSender")
+  availability          TeacherAvailability[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model TeacherProfile {
+  id                String         @id @default(cuid())
+  userId            String         @unique
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specialization    String?
+  videoUrl          String?
+  yearsOfExperience Int?
+  approvalStatus    ApprovalStatus @default(PENDING)
+  isAvailable       Boolean        @default(true)
+  averageRating     Float          @default(0)
+  reviewCount       Int            @default(0)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  bookings          Booking[]
+}
+
+model TeacherAvailability {
+  id          String   @id @default(cuid())
+  teacherId   String
+  teacher     User     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  dayOfWeek   Int // 0-6 for Sunday-Saturday
+  startTime   DateTime
+  endTime     DateTime
+  isRecurring Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([teacherId, dayOfWeek, startTime, endTime])
+}
+
+model Booking {
+  id               String         @id @default(cuid())
+  userId           String
+  user             User           @relation("UserBookings", fields: [userId], references: [id])
+  teacherProfileId String
+  teacherProfile   TeacherProfile @relation(fields: [teacherProfileId], references: [id])
+  startTime        DateTime
+  endTime          DateTime
+  status           BookingStatus  @default(PENDING)
+  notes            String?
+  meetingLink      String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  canceledBy       String?
+  cancelReason     String?
+  reviews          Review[]
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  userId    String // User who wrote the review
+  user      User     @relation("UserReviews", fields: [userId], references: [id], onDelete: Cascade)
+  teacherId String // Teacher being reviewed
+  teacher   User     @relation("TeacherReviews", fields: [teacherId], references: [id], onDelete: Cascade)
+  rating    Int
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([bookingId, userId])
+}
+
+model Notification {
+  id         String           @id @default(cuid())
+  type       NotificationType
+  title      String
+  message    String
+  isRead     Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+  receiverId String
+  receiver   User             @relation("NotificationReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  senderId   String?
+  sender     User?            @relation("NotificationSender", fields: [senderId], references: [id], onDelete: SetNull)
+  entityId   String? // ID of related entity (booking, review, etc.)
+  entityType String? // Type of related entity
+}
+
+enum Role {
+  USER
+  TEACHER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELED
+  COMPLETED
+  NO_SHOW
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum NotificationType {
+  BOOKING_REQUEST
+  BOOKING_CONFIRMED
+  BOOKING_CANCELED
+  BOOKING_REMINDER
+  REVIEW_RECEIVED
+  ACCOUNT_UPDATE
+  ADMIN_MESSAGE
+}

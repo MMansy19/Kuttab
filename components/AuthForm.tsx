@@ -1,764 +1,549 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from 'react';
-import { z } from 'zod';
-import { FaGoogle, FaFacebook, FaApple, FaEye, FaEyeSlash } from 'react-icons/fa';
-import debounce from '../utils/debounce';
-import { cn } from '../utils/cn';
-import Image from 'next/image';
-import Link from 'next/link';
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { z } from "zod";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { 
+  FiUser, 
+  FiMail, 
+  FiLock, 
+  FiEye, 
+  FiEyeOff, 
+  FiUserPlus, 
+  FiLogIn, 
+  FiBook, 
+  FiAward,
+} from "react-icons/fi";
+import { FaGoogle, FaFacebook, FaMale, FaFemale } from "react-icons/fa";
 
 // Form validation schemas
-const emailSchema = z.string().email({ message: "البريد الإلكتروني غير صالح" });
-const passwordSchema = z
-  .string()
-  .min(8, { message: "كلمة المرور يجب أن تكون 8 أحرف على الأقل" })
-  .refine(value => /[A-Z]/.test(value), { message: "يجب أن تحتوي على حرف كبير واحد على الأقل" })
-  .refine(value => /[0-9]/.test(value), { message: "يجب أن تحتوي على رقم واحد على الأقل" })
-  .refine(value => /[^A-Za-z0-9]/.test(value), { message: "يجب أن تحتوي على رمز خاص واحد على الأقل" });
-const nameSchema = z.string().min(3, { message: "الاسم يجب أن يكون 3 أحرف على الأقل" });
+const loginSchema = z.object({
+  email: z.string().email("بريد إلكتروني غير صالح"),
+  password: z.string().min(1, "كلمة المرور مطلوبة"),
+});
 
-type ValidationError = {
-  email?: string;
-  password?: string;
-  name?: string;
-  bio?: string;
+const registerSchema = z.object({
+  name: z.string().min(2, "يجب أن يكون الاسم على الأقل حرفين"),
+  email: z.string().email("بريد إلكتروني غير صالح"),
+  password: z.string().min(8, "يجب أن تكون كلمة المرور 8 أحرف على الأقل"),
+  role: z.enum(["USER", "TEACHER"]),
+  gender: z.enum(["MALE", "FEMALE"]),
+});
+
+type UserRole = "USER" | "TEACHER";
+type UserGender = "MALE" | "FEMALE";
+
+type AuthFormProps = {
+  type: "login" | "signup";
 };
 
-export default function AuthForm({ mode }: { mode: 'login' | 'signup' }) {
-  // Form states
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
-  const [role, setRole] = useState<'USER' | 'TEACHER' | 'ADMIN'>('USER');
-  const [bio, setBio] = useState('');
-  const [gender, setGender] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const AuthForm = ({ type }: AuthFormProps) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "USER" as UserRole,
+    gender: "MALE" as UserGender,
+  });
+  const [formErrors, setFormErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
 
-  // Refs for files
-  const avatarRef = useRef<HTMLInputElement>(null);
-  const videoRef = useRef<HTMLInputElement>(null);
-
-  // UI states
-  const [errors, setErrors] = useState<ValidationError>({});
-  const [success, setSuccess] = useState('');
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
-  const [videoPreview, setVideoPreview] = useState<string | null>(null);
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [isDragOver, setIsDragOver] = useState(false);
-
-  // Password strength calculation
-  const calculatePasswordStrength = useCallback((password: string) => {
-    if (!password) return 0;
+  // Calculate password strength
+  const calculatePasswordStrength = (password: string) => {
+    if (password.length === 0) return 0;
     
-    let strength = 0;
-    
+    let score = 0;
     // Length check
-    if (password.length >= 8) strength += 25;
+    if (password.length >= 8) score += 1;
+    if (password.length >= 12) score += 1;
     
-    // Character variety checks
-    if (/[A-Z]/.test(password)) strength += 25;
-    if (/[0-9]/.test(password)) strength += 25;
-    if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+    // Complexity checks
+    if (/[A-Z]/.test(password)) score += 1;
+    if (/[a-z]/.test(password)) score += 1;
+    if (/[0-9]/.test(password)) score += 1;
+    if (/[^A-Za-z0-9]/.test(password)) score += 1;
     
-    setPasswordStrength(strength);
-  }, []);
-
-  // Debounced validation
-  const validateEmailDebounced = useCallback(
-    debounce((email: string) => {
-      try {
-        emailSchema.parse(email);
-        setErrors(prev => ({ ...prev, email: undefined }));
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          setErrors(prev => ({ ...prev, email: error.errors[0].message }));
-        }
-      }
-    }, 500),
-    []
-  );
-
-  const validatePasswordDebounced = useCallback(
-    debounce((password: string) => {
-      try {
-        passwordSchema.parse(password);
-        setErrors(prev => ({ ...prev, password: undefined }));
-      } catch (error) {
-        if (error instanceof z.ZodError) {
-          setErrors(prev => ({ ...prev, password: error.errors[0].message }));
-        }
-      }
-      calculatePasswordStrength(password);
-    }, 500),
-    [calculatePasswordStrength]
-  );
-
-  // Handle input changes
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value);
-    validateEmailDebounced(value);
+    return Math.min(score, 5); // Maximum strength is 5
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setPassword(value);
-    validatePasswordDebounced(value);
+  const getStrengthText = () => {
+    const strengthTexts = ["ضعيفة جداً", "ضعيفة", "متوسطة", "جيدة", "قوية", "ممتازة"];
+    return strengthTexts[passwordStrength];
+  };
+  
+  const getStrengthColor = () => {
+    const colors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-blue-500", "bg-green-500", "bg-emerald-600"];
+    return colors[passwordStrength];
   };
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setName(value);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
     
+    // Clear specific error when field is being edited
+    setFormErrors(prev => ({ ...prev, [name]: "" }));
+    
+    // Calculate password strength if password field is changed
+    if (name === "password") {
+      setPasswordStrength(calculatePasswordStrength(value));
+    }
+  };
+
+  const validateField = (name: string, value: string) => {
+    let errorMessage = "";
+    
+    switch (name) {
+      case "name":
+        if (value.length < 2) errorMessage = "يجب أن يكون الاسم على الأقل حرفين";
+        break;
+      case "email":
+        if (!value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) errorMessage = "بريد إلكتروني غير صالح";
+        break;
+      case "password":
+        if (value.length < 8) errorMessage = "يجب أن تكون كلمة المرور 8 أحرف على الأقل";
+        break;
+    }
+    
+    setFormErrors(prev => ({ ...prev, [name]: errorMessage }));
+    return !errorMessage;
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    validateField(name, value);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+    setSuccess(null);
+    
+    // Validate all fields before submission
+    let isValid = true;
+    
+    if (type === "signup") {
+      isValid = validateField("name", formData.name) && isValid;
+    }
+    isValid = validateField("email", formData.email) && isValid;
+    isValid = validateField("password", formData.password) && isValid;
+    
+    if (!isValid) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      nameSchema.parse(value);
-      setErrors(prev => ({ ...prev, name: undefined }));
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setErrors(prev => ({ ...prev, name: error.errors[0].message }));
+      if (type === "login") {
+        // Validate login data
+        loginSchema.parse({ email: formData.email, password: formData.password });
+
+        // Sign in with NextAuth
+        const result = await signIn("credentials", {
+          redirect: false,
+          email: formData.email,
+          password: formData.password,
+          callbackUrl: decodeURIComponent(callbackUrl),
+        });
+
+        if (result?.error) {
+          throw new Error(result.error);
+        }
+
+        // Show success message before redirect
+        setSuccess("تم تسجيل الدخول بنجاح! جاري التحويل...");
+        
+        // Redirect will be handled by middleware based on role
+        router.refresh();
+
+        // Short timeout to show success message
+        setTimeout(() => {
+          if (result?.url) {
+            // Use the URL returned by NextAuth if available
+            router.push(result.url);
+          } else {
+            // Fallback to dashboard, middleware will handle proper redirection
+            router.push("/dashboard");
+          }
+        }, 800);
+        
+      } else {
+        // Validate signup data
+        registerSchema.parse(formData);
+
+        // Register new user
+        const response = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await response.json();
+
+        // if (!response.ok) {
+        //   throw new Error(data.error || "فشل في التسجيل");
+        // }
+
+        setSuccess("تم إنشاء الحساب بنجاح! جاري تسجيل الدخول...");
+
+        // Auto sign in after registration
+        const signInResult = await signIn("credentials", {
+          redirect: false,
+          email: formData.email,
+          password: formData.password,
+          callbackUrl: decodeURIComponent(callbackUrl),
+        });
+
+        if (signInResult?.error) {
+          throw new Error(signInResult.error);
+        }
+
+        // Redirect will be handled by middleware based on role
+        router.refresh();
+        
+        // Short timeout to show success message
+        setTimeout(() => {
+          if (signInResult?.url) {
+            router.push(signInResult.url);
+          } else {
+            router.push("/dashboard");
+          }
+        }, 800);
       }
-    }
-  };
-
-  // File handling
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setAvatarFile(file);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setAvatarPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleVideoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setVideoFile(file);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setVideoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Drag and drop handling
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragOver(false);
-  };
-
-  const handleDrop = (e: React.DragEvent, type: 'avatar' | 'video') => {
-    e.preventDefault();
-    setIsDragOver(false);
-    
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      if (type === 'avatar' && file.type.startsWith('image/')) {
-        setAvatarFile(file);
-        const reader = new FileReader();
-        reader.onload = () => {
-          setAvatarPreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      } else if (type === 'video' && file.type.startsWith('video/')) {
-        setVideoFile(file);
-        const reader = new FileReader();
-        reader.onload = () => {
-          setVideoPreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-  };
-
-  // Form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      setIsSubmitting(true);
-      setErrors({});
-      setSuccess('');
-      
-      const validationErrors: ValidationError = {};
-      
-      // For signup step 1, only validate the step 1 fields
-      if (mode === 'signup' && step === 1) {
-        // Validate email
-        try {
-          emailSchema.parse(email);
-        } catch (error) {
-          if (error instanceof z.ZodError) {
-            validationErrors.email = error.errors[0].message;
-          }
-        }
-        
-        // Validate password
-        try {
-          passwordSchema.parse(password);
-        } catch (error) {
-          if (error instanceof z.ZodError) {
-            validationErrors.password = error.errors[0].message;
-          }
-        }
-        
-        // Validate name
-        try {
-          nameSchema.parse(name);
-        } catch (error) {
-          if (error instanceof z.ZodError) {
-            validationErrors.name = error.errors[0].message;
-          }
-        }
-        
-        // Check if we have any validation errors
-        if (Object.keys(validationErrors).length > 0) {
-          setErrors(validationErrors);
-          throw new Error("Validation failed");
-        }
-        
-        // If step 1 validation passes, move to step 2 
-        setStep(2);
-        setIsSubmitting(false);
-        return; // Exit early
-      }
-      
-      // For signup step 2 or login, continue with normal validation
-      if (mode === 'login' || mode === 'signup' && step === 2) {
-        // Validate email
-        try {
-          emailSchema.parse(email);
-        } catch (error) {
-          if (error instanceof z.ZodError) {
-            validationErrors.email = error.errors[0].message;
-          }
-        }
-        
-        // Validate password
-        try {
-          passwordSchema.parse(password);
-        } catch (error) {
-          if (error instanceof z.ZodError) {
-            validationErrors.password = error.errors[0].message;
-          }
-        }
-        
-        // For signup step 2, validate additional fields if needed
-        if (mode === 'signup' && step === 2) {
-          // Validate teacher bio if applicable
-          if (role === 'TEACHER' && !bio) {
-            validationErrors.bio = "يرجى إدخال نبذة تعريفية";
-          }
-        }
-        
-        if (Object.keys(validationErrors).length > 0) {
-          setErrors(validationErrors);
-          throw new Error("Validation failed");
-        }
-        
-        // Mock authentication process with timeout to simulate network request
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Success message
-        setSuccess(mode === 'login' ? 'تم تسجيل الدخول بنجاح' : 'تم إنشاء الحساب بنجاح');
-        
-        // Role-based redirect logic
-        if (mode === 'login' || (mode === 'signup' && step === 2)) {
-          // Determine which dashboard to redirect to based on user role
-          const dashboardPath = 
-            role === 'TEACHER' ? '/dashboard/teacher' : 
-            role === 'ADMIN' ? '/dashboard/admin' : 
-            '/dashboard/user';
-          
-          // Save user data in localStorage (in a real app, you'd use a more secure approach with JWT)
-          localStorage.setItem('kottab_user', JSON.stringify({
-            role,
-            name,
-            email,
-            isAuthenticated: true
-          }));
-          
-          // Show success message before redirecting
-          setTimeout(() => {
-            // Navigate to appropriate dashboard
-            window.location.href = dashboardPath;
-          }, 1000);
-        }
-      }
-    } catch (error) {
-      console.error(error);
+    } catch (err: any) {
+      setError(err.message || "حدث خطأ ما");
+      setSuccess(null);
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
 
-  // Social login handlers
-  const handleGoogleLogin = () => {
-    window.alert('سيتم تفعيل تسجيل الدخول عبر Google قريباً');
-  };
-
-  const handleFacebookLogin = () => {
-    window.alert('سيتم تفعيل تسجيل الدخول عبر Facebook قريباً');
-  };
-
-  const handleAppleLogin = () => {
-    window.alert('سيتم تفعيل تسجيل الدخول عبر Apple قريباً');
-  };
+  // Handle callbackUrl value from query string
+  useEffect(() => {
+    // Log the callback URL for debugging
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('Callback URL:', callbackUrl);
+    }
+  }, [callbackUrl]);
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="dark:bg-gray-800 bg-white rounded-xl shadow-xl p-8 w-full transition-all duration-300">
-        <div className="flex justify-center mb-6">
-          <div className="h-16 w-16 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-            {mode === 'login' ? (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-              </svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-              </svg>
+    <div dir="rtl" className="w-full max-w-md mx-auto p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
+      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">
+        {type === "login" ? "تسجيل الدخول" : "إنشاء حساب جديد"}
+      </h2>
+
+      {type === "signup" && (
+        <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
+          انضم إلى مجتمع كُتّاب اليوم وابدأ رحلتك التعليمية
+        </p>
+      )}
+
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-3 rounded-md mb-4 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-3 rounded-md mb-4 flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+          {success}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {type === "signup" && (
+          <div className="space-y-2">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              الاسم الكامل
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-500">
+                <FiUser className="h-5 w-5" />
+              </div>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                value={formData.name}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                placeholder="أدخل اسمك الكامل"
+                required
+                className={`w-full pr-10 ${formErrors.name ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                disabled={isLoading}
+              />
+            </div>
+            {formErrors.name && (
+              <p className="mt-1 text-sm text-red-600">{formErrors.name}</p>
             )}
           </div>
+        )}
+
+        <div className="space-y-2">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            البريد الإلكتروني
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-500">
+              <FiMail className="h-5 w-5" />
+            </div>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder="your.email@example.com"
+              required
+              className={`w-full pr-10 ${formErrors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+              disabled={isLoading}
+            />
+          </div>
+          {formErrors.email && (
+            <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
+          )}
         </div>
-        
-        <h2 className="text-2xl font-bold mb-4 text-center text-gray-900 dark:text-white">
-          {mode === 'login' ? 'تسجيل الدخول' : step === 1 ? 'إنشاء حساب' : 'استكمال معلومات الحساب'}
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
-          {mode === 'login' 
-            ? 'أدخل بياناتك للوصول إلى حسابك' 
-            : step === 1 
-              ? 'قم بإنشاء حساب جديد للاستفادة من خدماتنا' 
-              : 'أضف المزيد من التفاصيل إلى ملفك الشخصي'}
-        </p>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {mode === 'signup' && step === 1 && (
-            <>
-              <div>
-                <label className="block mb-1 text-right text-gray-700 dark:text-gray-300">الاسم الكامل</label>
-                <input
-                  type="text"
-                  className={cn(
-                    "w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
-                    errors.name ? "border-red-500 focus:border-red-500" : "border-emerald-300 dark:border-gray-700"
-                  )}
-                  value={name}
-                  onChange={handleNameChange}
-                  placeholder="أدخل اسمك الكامل"
-                  dir="rtl"
-                />
-                {errors.name && <p className="mt-1 text-red-500 text-sm text-right">{errors.name}</p>}
-              </div>
-              
-              <div>
-                <label className="block mb-1 text-right text-gray-700 dark:text-gray-300">الجنس</label>
-                <div className="grid grid-cols-2 gap-4">
-                  <button 
-                    type="button"
-                    onClick={() => setGender('male')}
-                    className={cn(
-                      "px-4 py-3 rounded-lg border-2 transition-all flex items-center justify-center gap-2",
-                      gender === 'male' 
-                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300" 
-                        : "border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
-                    )}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span>ذكر</span>
-                  </button>
-                  <button 
-                    type="button"
-                    onClick={() => setGender('female')}
-                    className={cn(
-                      "px-4 py-3 rounded-lg border-2 transition-all flex items-center justify-center gap-2",
-                      gender === 'female' 
-                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300" 
-                        : "border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
-                    )}
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span>أنثى</span>
-                  </button>
-                </div>
-              </div>
-              
-              <div>
-                <label className="block mb-1 text-right text-gray-700 dark:text-gray-300">نوع الحساب</label>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setRole('USER')}
-                    className={cn(
-                      "px-3 py-2 rounded-lg border-2 transition-all text-sm",
-                      role === 'USER' 
-                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300" 
-                        : "border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
-                    )}
-                  >
-                    طالب
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setRole('TEACHER')}
-                    className={cn(
-                      "px-3 py-2 rounded-lg border-2 transition-all text-sm",
-                      role === 'TEACHER' 
-                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300" 
-                        : "border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
-                    )}
-                  >
-                    معلم
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setRole('ADMIN')}
-                    className={cn(
-                      "px-3 py-2 rounded-lg border-2 transition-all text-sm",
-                      role === 'ADMIN' 
-                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300" 
-                        : "border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
-                    )}
-                  >
-                    مسؤول
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
-          
-          {mode === 'signup' && step === 2 && (
-            <>
-              {role === 'TEACHER' && (
-                <>
-                  <div>
-                    <label className="block mb-1 text-right text-gray-700 dark:text-gray-300">نبذة تعريفية</label>
-                    <textarea
-                      className={cn(
-                        "w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
-                        errors.bio ? "border-red-500 focus:border-red-500" : "border-emerald-300 dark:border-gray-700"
-                      )}
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value)}
-                      placeholder="اكتب نبذة مختصرة عنك ومؤهلاتك في تعليم القرآن والعلوم الإسلامية"
-                      dir="rtl"
-                      rows={4}
-                    />
-                    {errors.bio && <p className="mt-1 text-red-500 text-sm text-right">{errors.bio}</p>}
-                    <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 text-right">
-                      {bio.length}/500 حرف
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {gender === 'male' && (
-                      <div>
-                        <label className="block mb-1 text-right text-gray-700 dark:text-gray-300">صورة شخصية</label>
-                        <div 
-                          className={cn(
-                            "border-2 border-dashed rounded-lg p-4 text-center transition-all",
-                            isDragOver ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20" : "border-gray-300 dark:border-gray-700"
-                          )}
-                          onDragOver={handleDragOver}
-                          onDragLeave={handleDragLeave}
-                          onDrop={(e) => handleDrop(e, 'avatar')}
-                        >
-                          {avatarPreview ? (
-                            <div className="relative w-40 h-40 mx-auto">
-                              <Image 
-                                src={avatarPreview} 
-                                alt="Avatar preview" 
-                                fill
-                                className="object-cover rounded-lg"
-                              />
-                              <button 
-                                type="button"
-                                onClick={() => setAvatarPreview(null)}
-                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          ) : (
-                            <>
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">اسحب وأفلت الصورة هنا أو</p>
-                              <button 
-                                type="button"
-                                onClick={() => avatarRef.current?.click()}
-                                className="mt-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
-                              >
-                                اختر صورة
-                              </button>
-                            </>
-                          )}
-                          <input 
-                            ref={avatarRef}
-                            type="file" 
-                            accept="image/*" 
-                            onChange={handleAvatarChange}
-                            className="hidden"
-                          />
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div>
-                      <label className="block mb-1 text-right text-gray-700 dark:text-gray-300">فيديو تعريفي (اختياري)</label>
-                      <div 
-                        className={cn(
-                          "border-2 border-dashed rounded-lg p-4 text-center transition-all",
-                          isDragOver ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20" : "border-gray-300 dark:border-gray-700"
-                        )}
-                        onDragOver={handleDragOver}
-                        onDragLeave={handleDragLeave}
-                        onDrop={(e) => handleDrop(e, 'video')}
-                      >
-                        {videoPreview ? (
-                          <div className="relative w-full mx-auto">
-                            <video 
-                              src={videoPreview}
-                              controls
-                              className="w-full h-auto rounded-lg"
-                            />
-                            <button 
-                              type="button"
-                              onClick={() => setVideoPreview(null)}
-                              className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                            >
-                              ×
-                            </button>
-                          </div>
-                        ) : (
-                          <>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">اسحب وأفلت الفيديو هنا أو</p>
-                            <button 
-                              type="button"
-                              onClick={() => videoRef.current?.click()}
-                              className="mt-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
-                            >
-                              اختر فيديو
-                            </button>
-                          </>
-                        )}
-                        <input 
-                          ref={videoRef}
-                          type="file" 
-                          accept="video/*" 
-                          onChange={handleVideoChange}
-                          className="hidden"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </>
-          )}
 
-          {/* Always visible fields */}
-          {(mode === 'login' || step === 1) && (
-            <>
-              <div>
-                <label className="block mb-1 text-right text-gray-700 dark:text-gray-300">البريد الإلكتروني</label>
-                <input
-                  type="email"
-                  className={cn(
-                    "w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
-                    errors.email ? "border-red-500 focus:border-red-500" : "border-emerald-300 dark:border-gray-700"
-                  )}
-                  value={email}
-                  onChange={handleEmailChange}
-                  placeholder="example@email.com"
-                  dir="rtl"
-                />
-                {errors.email && <p className="mt-1 text-red-500 text-sm text-right">{errors.email}</p>}
-              </div>
-              
-              <div>
-                <label className="block mb-1 text-right text-gray-700 dark:text-gray-300">كلمة المرور</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    className={cn(
-                      "w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
-                      errors.password ? "border-red-500 focus:border-red-500" : "border-emerald-300 dark:border-gray-700"
-                    )}
-                    value={password}
-                    onChange={handlePasswordChange}
-                    placeholder="••••••••"
-                    dir="rtl"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 left-0 px-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-                {errors.password && <p className="mt-1 text-red-500 text-sm text-right">{errors.password}</p>}
-                
-                {/* Password strength meter for signup */}
-                {mode === 'signup' && (
-                  <div className="mt-2">
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className={cn(
-                        passwordStrength >= 75 ? "text-green-500" :
-                        passwordStrength >= 50 ? "text-yellow-500" :
-                        passwordStrength >= 25 ? "text-orange-500" : "text-red-500"
-                      )}>
-                        {passwordStrength === 0 ? "ضعيفة جداً" :
-                         passwordStrength <= 25 ? "ضعيفة" :
-                         passwordStrength <= 50 ? "متوسطة" :
-                         passwordStrength <= 75 ? "جيدة" : "قوية"}
-                      </span>
-                    </div>
-                    <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
-                      <div 
-                        className={cn(
-                          "h-full transition-all duration-300",
-                          passwordStrength >= 75 ? "bg-green-500" :
-                          passwordStrength >= 50 ? "bg-yellow-500" :
-                          passwordStrength >= 25 ? "bg-orange-500" : "bg-red-500"
-                        )}
-                        style={{ width: `${passwordStrength}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </>
+        <div className="space-y-2">
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            كلمة المرور
+          </label>
+          <div className="relative">
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-500">
+              <FiLock className="h-5 w-5" />
+            </div>
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={formData.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              placeholder={type === "signup" ? "8 أحرف على الأقل" : "كلمة المرور الخاصة بك"}
+              required
+              className={`w-full pr-10 ${formErrors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+              disabled={isLoading}
+            />
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none"
+              >
+                {showPassword ? <FiEyeOff className="h-5 w-5" /> : <FiEye className="h-5 w-5" />}
+              </button>
+            </div>
+          </div>
+          {formErrors.password && (
+            <p className="mt-1 text-sm text-red-600">{formErrors.password}</p>
           )}
           
-          {mode === 'login' && (
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <input 
-                  type="checkbox" 
-                  id="remember" 
-                  checked={rememberMe}
-                  onChange={() => setRememberMe(!rememberMe)}
-                  className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-                />
-                <label htmlFor="remember" className="text-gray-600 dark:text-gray-400">تذكرني</label>
+          {type === "signup" && formData.password && (
+            <div className="mt-2 space-y-1">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                  قوة كلمة المرور: <span className={`font-semibold ${passwordStrength >= 3 ? 'text-green-600 dark:text-green-400' : 'text-orange-600 dark:text-orange-400'}`}>{getStrengthText()}</span>
+                </span>
               </div>
-              <Link href="/auth/forgot-password" className="text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300">
-                نسيت كلمة المرور؟
-              </Link>
+              <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden dark:bg-gray-700">
+                <div 
+                  className={`h-full ${getStrengthColor()} transition-all duration-300`}
+                  style={{ width: `${(passwordStrength / 5) * 100}%` }}
+                ></div>
+              </div>
+              <ul className="text-xs text-gray-600 dark:text-gray-400 mt-1 space-y-1">
+                <li className={`flex items-center ${formData.password.length >= 8 ? 'text-green-600 dark:text-green-400' : ''}`}>
+                  <span className="mr-1">•</span> على الأقل 8 أحرف
+                </li>
+                <li className={`flex items-center ${/[A-Z]/.test(formData.password) ? 'text-green-600 dark:text-green-400' : ''}`}>
+                  <span className="mr-1">•</span> حرف كبير واحد على الأقل
+                </li>
+                <li className={`flex items-center ${/[0-9]/.test(formData.password) ? 'text-green-600 dark:text-green-400' : ''}`}>
+                  <span className="mr-1">•</span> رقم واحد على الأقل
+                </li>
+              </ul>
             </div>
           )}
-          
-          {success && (
-            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-300 rounded-lg p-3 text-center">
-              {success}
-            </div>
-          )}
-          
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={cn(
-              "w-full py-3 rounded-lg font-semibold text-white transition-all transform hover:scale-[1.02] duration-200",
-              isSubmitting ? "bg-gray-400 cursor-not-allowed" : "bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 shadow-lg hover:shadow-xl"
-            )}
-          >
-            {isSubmitting ? (
-              <div className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                جاري التحميل...
-              </div>
-            ) : (
-              mode === 'login' ? 'تسجيل الدخول' : step === 1 ? 'متابعة' : 'إنشاء الحساب'
-            )}
-          </button>
+        </div>
 
-          {/* Social logins */}
-          {(mode === 'login' || step === 1) && (
-            <>
-              <div className="relative py-3">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
-                </div>
-                <div className="relative flex justify-center">
-                  <span className="bg-white dark:bg-gray-800 px-4 text-sm text-gray-500 dark:text-gray-400">
-                    أو
-                  </span>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-3 gap-3">
+        {type === "signup" && (
+          <>
+            <div className="space-y-2">
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                أنا:
+              </label>
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  onClick={handleGoogleLogin}
-                  className="flex justify-center items-center py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className={`flex items-center justify-center space-x-2 p-3 rounded-lg border ${
+                    formData.role === "USER" 
+                      ? "bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-900/30 dark:border-blue-500 dark:text-blue-300" 
+                      : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                  }`}
+                  onClick={() => setFormData(prev => ({ ...prev, role: "USER" as UserRole }))}
                 >
-                  <FaGoogle className="h-5 w-5 text-red-500" />
+                  <FiBook className="h-5 w-5 ml-2" />
+                  <span>طالب</span>
                 </button>
                 <button
                   type="button"
-                  onClick={handleFacebookLogin}
-                  className="flex justify-center items-center py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className={`flex items-center justify-center space-x-2 p-3 rounded-lg border ${
+                    formData.role === "TEACHER" 
+                      ? "bg-green-50 border-green-500 text-green-700 dark:bg-green-900/30 dark:border-green-500 dark:text-green-300" 
+                      : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                  }`}
+                  onClick={() => setFormData(prev => ({ ...prev, role: "TEACHER" as UserRole }))}
                 >
-                  <FaFacebook className="h-5 w-5 text-blue-600" />
-                </button>
-                <button
-                  type="button"
-                  onClick={handleAppleLogin}
-                  className="flex justify-center items-center py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <FaApple className="h-5 w-5" />
+                  <FiAward className="h-5 w-5 ml-2" />
+                  <span>معلم</span>
                 </button>
               </div>
-            </>
-          )}
-        </form>
-      </div>
-      
-      <p className="text-center mt-6 text-sm text-gray-600 dark:text-gray-400">
-        {mode === 'login' ? (
-          <>
-            ليس لديك حساب؟{' '}
-            <Link href="/auth/signup" className="text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">
-              إنشاء حساب جديد
-            </Link>
-          </>
-        ) : (
-          <>
-            لديك حساب بالفعل؟{' '}
-            <Link href="/auth/login" className="text-emerald-600 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">
-              تسجيل الدخول
-            </Link>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="gender" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                الجنس:
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  className={`flex items-center justify-center space-x-2 p-3 rounded-lg border ${
+                    formData.gender === "MALE" 
+                      ? "bg-blue-50 border-blue-500 text-blue-700 dark:bg-blue-900/30 dark:border-blue-500 dark:text-blue-300" 
+                      : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                  }`}
+                  onClick={() => setFormData(prev => ({ ...prev, gender: "MALE" as UserGender }))}
+                >
+                  <FaMale className="h-5 w-5 ml-2" />
+                  <span>ذكر</span>
+                </button>
+                <button
+                  type="button"
+                  className={`flex items-center justify-center space-x-2 p-3 rounded-lg border ${
+                    formData.gender === "FEMALE" 
+                      ? "bg-pink-50 border-pink-500 text-pink-700 dark:bg-pink-900/30 dark:border-pink-500 dark:text-pink-300" 
+                      : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                  }`}
+                  onClick={() => setFormData(prev => ({ ...prev, gender: "FEMALE" as UserGender }))}
+                >
+                  <FaFemale className="h-5 w-5 ml-2" />
+                  <span>أنثى</span>
+                </button>
+              </div>
+            </div>
           </>
         )}
-      </p>
+
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="w-full py-3 mt-6 font-medium transition-colors flex items-center justify-center gap-2"
+        >
+          {isLoading ? (
+            <span className="flex items-center justify-center">
+              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              جاري التنفيذ...
+            </span>
+          ) : type === "login" ? (
+            <>
+              <FiLogIn className="h-5 w-5" /> 
+              <span>تسجيل الدخول</span>
+            </>
+          ) : (
+            <>
+              <FiUserPlus className="h-5 w-5" />
+              <span>إنشاء حساب</span>
+            </>
+          )}
+        </Button>
+
+        {type === "signup" && (
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                أو سجل مباشرة باستخدام
+              </span>
+            </div>
+          </div>
+        )}
+
+        {type === "signup" && (
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              type="button"
+              onClick={() => signIn('google', { callbackUrl })}
+              className="w-full flex justify-center items-center gap-2 py-2.5 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+            >
+              <FaGoogle className="h-5 w-5 text-red-500" />
+              <span>Google</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => signIn('facebook', { callbackUrl })}
+              className="w-full flex justify-center items-center gap-2 py-2.5 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+            >
+              <FaFacebook className="h-5 w-5 text-blue-600" />
+              <span>Facebook</span>
+            </button>
+          </div>
+        )}
+
+        <div className="text-center mt-5">
+          {type === "login" ? (
+            <p className="text-gray-600 dark:text-gray-400">
+              ليس لديك حساب؟{" "}
+              <a href={`/auth/signup${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ''}`} className="text-blue-600 hover:underline font-medium">
+                التسجيل
+              </a>
+            </p>
+          ) : (
+            <p className="text-gray-600 dark:text-gray-400">
+              لديك حساب بالفعل؟{" "}
+              <a href={`/auth/login${callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : ''}`} className="text-blue-600 hover:underline font-medium">
+                تسجيل الدخول
+              </a>
+            </p>
+          )}
+        </div>
+
+        {type === "signup" && (
+          <div className="text-center text-xs text-gray-500 dark:text-gray-400 mt-5">
+            بالتسجيل، أنت توافق على <a href="/terms" className="text-blue-600 hover:underline">شروط الاستخدام</a> و <a href="/privacy" className="text-blue-600 hover:underline">سياسة الخصوصية</a>
+          </div>
+        )}
+      </form>
     </div>
   );
-}
+};
+
+export default AuthForm;
