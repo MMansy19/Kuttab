@@ -499,7 +499,7 @@ export default function BookingsPage() {
                       {booking.id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-1">
                         <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                           <FaUser className="text-gray-500 dark:text-gray-400" />
                         </div>
@@ -510,7 +510,7 @@ export default function BookingsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-1">
                         <div className="flex-shrink-0 h-8 w-8 rounded-full bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center">
                           <FaChalkboardTeacher className="text-emerald-600 dark:text-emerald-400" />
                         </div>

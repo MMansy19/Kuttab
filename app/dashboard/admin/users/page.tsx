@@ -199,10 +199,10 @@ export default function UsersPage() {
                   className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort('name')}
                 >
-                  <div className="flex items-center justify-end">
+                  <div className="flex items-center justify-center">
                     <span>الاسم</span>
                     {sortField === 'name' && (
-                      sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
+                      sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
                     )}
                   </div>
                 </th>
@@ -211,10 +211,10 @@ export default function UsersPage() {
                   className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort('email')}
                 >
-                  <div className="flex items-center justify-end">
+                  <div className="flex items-center justify-center">
                     <span>البريد الإلكتروني</span>
                     {sortField === 'email' && (
-                      sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
+                      sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
                     )}
                   </div>
                 </th>
@@ -223,10 +223,10 @@ export default function UsersPage() {
                   className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort('role')}
                 >
-                  <div className="flex items-center justify-end">
+                  <div className="flex items-center justify-center">
                     <span>الدور</span>
                     {sortField === 'role' && (
-                      sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
+                      sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
                     )}
                   </div>
                 </th>
@@ -235,10 +235,10 @@ export default function UsersPage() {
                   className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort('status')}
                 >
-                  <div className="flex items-center justify-end">
+                  <div className="flex items-center justify-center">
                     <span>الحالة</span>
                     {sortField === 'status' && (
-                      sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
+                      sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
                     )}
                   </div>
                 </th>
@@ -247,10 +247,10 @@ export default function UsersPage() {
                   className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort('joinDate')}
                 >
-                  <div className="flex items-center justify-end">
+                  <div className="flex items-center justify-center">
                     <span>تاريخ التسجيل</span>
                     {sortField === 'joinDate' && (
-                      sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
+                      sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
                     )}
                   </div>
                 </th>
@@ -259,10 +259,10 @@ export default function UsersPage() {
                   className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
                   onClick={() => handleSort('lastActive')}
                 >
-                  <div className="flex items-center justify-end">
+                  <div className="flex items-center justify-center">
                     <span>آخر نشاط</span>
                     {sortField === 'lastActive' && (
-                      sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
+                      sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
                     )}
                   </div>
                 </th>
@@ -275,7 +275,7 @@ export default function UsersPage() {
               {currentUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-1">
                       <div className="flex-shrink-0 h-10 w-10 rounded-full bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center">
                         <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{user.name.charAt(0)}</span>
                       </div>

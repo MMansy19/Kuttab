@@ -156,7 +156,7 @@ export async function middleware(req: NextRequest) {
 
   // Add the security headers to the response
   return response;
-}
+ }
 
 // See "Matching Paths" below to learn more
 export const config = {

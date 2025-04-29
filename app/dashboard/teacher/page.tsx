@@ -231,7 +231,7 @@ export default function TeacherDashboard() {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4 items-start">
             <div className="flex items-center">
               <div className={`w-3 h-3 rounded-full ml-2 ${teacherProfile.isAvailable ? 'bg-green-500' : 'bg-red-500'}`}></div>
               <span className="text-sm font-medium" dir="rtl">
@@ -283,7 +283,7 @@ export default function TeacherDashboard() {
             )}
           </Card>
         ) : (
-          <div className="space-y-4">
+          <div className="flex flex-col gap-4 items-start">
             {upcomingBookings.map((booking) => (
               <Card key={booking.id} className="p-4">
                 <div className="flex justify-between items-center">

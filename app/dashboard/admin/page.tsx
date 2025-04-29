@@ -208,7 +208,7 @@ export default function AdminDashboard() {
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
             مراجعة وإدارة ملفات المعلمين والموافقات وتقييم الأداء.
           </p>
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <Link href="/dashboard/admin/teachers">
               <Button variant="outline" size="sm" className="w-full">
                 جميع المعلمين
@@ -234,7 +234,7 @@ export default function AdminDashboard() {
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
             متابعة وإدارة حجوزات الطلاب والجلسات.
           </p>
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <Link href="/dashboard/admin/bookings">
               <Button variant="outline" size="sm" className="w-full">
                 جميع الحجوزات

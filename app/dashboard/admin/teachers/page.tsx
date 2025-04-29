@@ -416,7 +416,7 @@ export default function TeacherManagementPage() {
               <thead className="bg-gray-50 dark:bg-gray-800">
                 <tr>
                   <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    <div className="flex items-center justify-end">
+                    <div className="flex items-center justify-center">
                       <span>المعلم</span>
                     </div>
                   </th>
@@ -425,10 +425,10 @@ export default function TeacherManagementPage() {
                     className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
                     onClick={() => handleSort('rating')}
                   >
-                    <div className="flex items-center justify-end">
+                    <div className="flex items-center justify-center">
                       <span>التقييم</span>
                       {sortField === 'rating' && (
-                        sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
+                        sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
                       )}
                     </div>
                   </th>
@@ -437,10 +437,10 @@ export default function TeacherManagementPage() {
                     className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
                     onClick={() => handleSort('experience')}
                   >
-                    <div className="flex items-center justify-end">
+                    <div className="flex items-center justify-center">
                       <span>الخبرة</span>
                       {sortField === 'experience' && (
-                        sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
+                        sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
                       )}
                     </div>
                   </th>
@@ -455,10 +455,10 @@ export default function TeacherManagementPage() {
                     className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
                     onClick={() => handleSort('completedSessions')}
                   >
-                    <div className="flex items-center justify-end">
+                    <div className="flex items-center justify-center">
                       <span>الجلسات</span>
                       {sortField === 'completedSessions' && (
-                        sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
+                        sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
                       )}
                     </div>
                   </th>
@@ -474,7 +474,7 @@ export default function TeacherManagementPage() {
                 {currentTeachers.map((teacher) => (
                   <tr key={teacher.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-2">
                         <div className="flex-shrink-0 h-10 w-10 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700">
                           {teacher.image ? (
                             <img src={teacher.image} alt={teacher.name} className="h-full w-full object-cover" />
@@ -488,7 +488,7 @@ export default function TeacherManagementPage() {
                           <div className="text-sm font-medium text-gray-900 dark:text-white flex items-center">
                             {teacher.name}
                             {teacher.featured && (
-                              <span className="ml-1 text-yellow-500" title="معلم مميز">
+                              <span className="mr-1 text-yellow-500" title="معلم مميز">
                                 <FaStar size={12} />
                               </span>
                             )}
@@ -499,14 +499,14 @@ export default function TeacherManagementPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <RatingComp rating={teacher.rating} />
+                        <RatingComp initialRating={teacher.rating} />
                         <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">({teacher.rating})</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       <div className="flex items-center">
                         <span>{teacher.experience}</span> 
-                        <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">سنة</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 mr-1">سنة</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -763,7 +763,7 @@ function TeacherDetails({ teacher, onBack, onVerify, onFeatureToggle }: TeacherD
                     : 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-300'
                 }`}>
                   {teacher.featured ? (
-                    <><FaStar className="ml-1" /> مميز</>
+                    <><FaStar className="mr-1" /> مميز</>
                   ) : (
                     'غير مميز'
                   )}

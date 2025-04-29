@@ -151,3 +151,103 @@ export async function PATCH(
     );
   }
 }
+
+// PUT to completely update a teacher profile
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    // Get the teacher profile
+    const teacherProfile = await prisma.teacherProfile.findUnique({
+      where: { id: params.id },
+      include: { user: true },
+    });
+    
+    if (!teacherProfile) {
+      return NextResponse.json({ error: "Teacher profile not found" }, { status: 404 });
+    }
+    
+    // Only the teacher or an admin can update the profile
+    const isTeacherOrAdmin = 
+      session.user.id === teacherProfile.userId || 
+      session.user.role === "ADMIN";
+      
+    if (!isTeacherOrAdmin) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    
+    const updatedTeacher = await req.json();
+    
+    // Prepare data for update - split between user and teacher profile data
+    const { 
+      name, bio, gender, email, image, avatarUrl, videoUrl, 
+      subjects, specialization, experience, education, 
+      certifications, teachingApproach, languages, 
+      achievements, isPaid, price, contactInfo, ...teacherData 
+    } = updatedTeacher;
+    
+    // Update user data first if it exists
+    if (name || bio || gender || email || image) {
+      await prisma.user.update({
+        where: { id: teacherProfile.userId },
+        data: {
+          name: name || undefined,
+          bio: bio || undefined,
+          gender: gender || undefined,
+          email: email || undefined,
+          image: image || avatarUrl || undefined,
+        },
+      });
+    }
+    
+    // Now update the teacher profile
+    const updatedProfile = await prisma.teacherProfile.update({
+      where: { id: params.id },
+      data: {
+        videoUrl,
+        specialization,
+        yearsOfExperience: experience,
+        subjects: subjects ? { set: subjects } : undefined,
+        education,
+        certifications: certifications ? { set: certifications } : undefined,
+        teachingApproach,
+        languages: languages ? { set: languages } : undefined,
+        achievements: achievements ? { set: achievements } : undefined,
+        isPaid,
+        price,
+        contactInfo: contactInfo ? JSON.stringify(contactInfo) : undefined,
+        // Mark profile for review when updated
+        approvalStatus: session.user.role === "ADMIN" ? undefined : "PENDING",
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            bio: true,
+            gender: true,
+          },
+        },
+      },
+    });
+    
+    return NextResponse.json({
+      message: "Teacher profile updated successfully",
+      profile: updatedProfile,
+    });
+  } catch (error) {
+    console.error("Error updating teacher profile:", error);
+    return NextResponse.json(
+      { error: "Failed to update teacher profile" },
+      { status: 500 }
+    );
+  }
+}
