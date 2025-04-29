@@ -33,9 +33,9 @@ interface HeroStat {
 }
 
 const heroStats: HeroStat[] = [
-  { icon: <FaUserGraduate className="text-yellow-300 mr-2" />, label: (count) => `${count}+ معلم متميز` },
-  { icon: <FaQuran className="text-yellow-300 mr-2" />, label: () => "تعليم قرآني متميز" },
-  { icon: <FaStar className="text-yellow-300 mr-2" />, label: () => "تقييمات مصدقة" }
+  { icon: <FaUserGraduate className="text-yellow-300 ml-2" />, label: (count) => `${count}+ معلم متميز` },
+  { icon: <FaQuran className="text-yellow-300 ml-2" />, label: () => "تعليم قرآني متميز" },
+  { icon: <FaStar className="text-yellow-300 ml-2" />, label: () => "تقييمات مصدقة" }
 ];
 
 // Testimonials data
@@ -156,7 +156,7 @@ interface TestimonialCardProps {
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ initial, name, color, text }) => (
   <div className="bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-6 rounded-lg">
     <div className="flex items-center gap-4 mb-4">
-      <div className={`w-10 h-10 rounded-full bg-${color}-100 flex items-center justify-center mr-3`}>
+      <div className={`w-10 h-10 rounded-full bg-${color}-100 flex items-center justify-center ml-3`}>
         <span className={`text-${color}-600 font-bold`}>{initial}</span>
       </div>
       <div>

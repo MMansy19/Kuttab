@@ -303,7 +303,7 @@ export default function TeacherManagementPage() {
               checked={featuredOnly}
               onChange={() => setFeaturedOnly(!featuredOnly)}
             />
-            <label htmlFor="featuredOnly" className="mr-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+            <label htmlFor="featuredOnly" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
               المعلمين المميزين فقط
             </label>
           </div>
@@ -351,7 +351,7 @@ export default function TeacherManagementPage() {
                 ))}
                 {selectedRating && (
                   <button
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:underline mr-2"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:underline ml-2"
                     onClick={() => setSelectedRating(null)}
                   >
                     إعادة ضبط
@@ -428,7 +428,7 @@ export default function TeacherManagementPage() {
                     <div className="flex items-center justify-end">
                       <span>التقييم</span>
                       {sortField === 'rating' && (
-                        sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                        sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                       )}
                     </div>
                   </th>
@@ -440,7 +440,7 @@ export default function TeacherManagementPage() {
                     <div className="flex items-center justify-end">
                       <span>الخبرة</span>
                       {sortField === 'experience' && (
-                        sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                        sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                       )}
                     </div>
                   </th>
@@ -458,7 +458,7 @@ export default function TeacherManagementPage() {
                     <div className="flex items-center justify-end">
                       <span>الجلسات</span>
                       {sortField === 'completedSessions' && (
-                        sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                        sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                       )}
                     </div>
                   </th>
@@ -484,11 +484,11 @@ export default function TeacherManagementPage() {
                             </div>
                           )}
                         </div>
-                        <div className="mr-4">
+                        <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900 dark:text-white flex items-center">
                             {teacher.name}
                             {teacher.featured && (
-                              <span className="mr-1 text-yellow-500" title="معلم مميز">
+                              <span className="ml-1 text-yellow-500" title="معلم مميز">
                                 <FaStar size={12} />
                               </span>
                             )}
@@ -500,13 +500,13 @@ export default function TeacherManagementPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <RatingComp rating={teacher.rating} />
-                        <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">({teacher.rating})</span>
+                        <span className="text-sm text-gray-600 dark:text-gray-400 ml-2">({teacher.rating})</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                       <div className="flex items-center">
                         <span>{teacher.experience}</span> 
-                        <span className="text-xs text-gray-500 dark:text-gray-400 mr-1">سنة</span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">سنة</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -702,7 +702,7 @@ function TeacherDetails({ teacher, onBack, onVerify, onFeatureToggle }: TeacherD
       <div className="flex items-center">
         <button
           onClick={onBack}
-          className="mr-2 bg-white dark:bg-gray-800 rounded-full p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+          className="ml-2 bg-white dark:bg-gray-800 rounded-full p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
         >
           <FaChevronRight />
         </button>
@@ -725,7 +725,7 @@ function TeacherDetails({ teacher, onBack, onVerify, onFeatureToggle }: TeacherD
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">{teacher.name}</h3>
             <div className="flex items-center mt-2">
               <RatingComp rating={teacher.rating} size="lg" />
-              <span className="text-gray-600 dark:text-gray-400 mr-2">({teacher.rating})</span>
+              <span className="text-gray-600 dark:text-gray-400 ml-2">({teacher.rating})</span>
             </div>
             
             <div className="mt-4 w-full space-y-2">

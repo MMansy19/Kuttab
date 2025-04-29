@@ -101,7 +101,7 @@ export function TeacherProfileCard({
                     size={variant === 'compact' ? 14 : 16} 
                   />
                 ))}
-                <span className="text-sm text-gray-600 dark:text-gray-400 mr-1">
+                <span className="text-sm text-gray-600 dark:text-gray-400 ml-1">
                   ({teacher.reviewCount || 0})
                 </span>
               </div>
@@ -168,7 +168,7 @@ export function TeacherProfileCard({
           >
             <Link href={`/book/${teacher.id}`}>
               حجز جلسة
-              <FaArrowLeft className="mr-2 rtl:rotate-180" />
+              <FaArrowLeft className="ml-2 rtl:rotate-180" />
             </Link>
           </Button>
         )}
@@ -182,7 +182,7 @@ export function TeacherProfileCard({
           >
             <Link href={`/teachers/${teacher.id}`}>
               الملف الشخصي
-              <FaArrowRight className="mr-2 rtl:rotate-180" />
+              <FaArrowRight className="ml-2 rtl:rotate-180" />
             </Link>
           </Button>
         )}

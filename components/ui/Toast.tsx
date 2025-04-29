@@ -47,7 +47,7 @@ const ToastItem = ({ id, message, type, onClose }: ToastProps) => {
       ${isExiting ? 'animate-fade-out' : 'animate-fade-in'} transform transition-all duration-300`}
       role="alert"
     >
-      <div className="mr-3">{icon}</div>
+      <div className="ml-3">{icon}</div>
       <div className={`flex-1 ${textColor} font-medium`} dir="rtl">{message}</div>
       <button 
         onClick={handleClose}

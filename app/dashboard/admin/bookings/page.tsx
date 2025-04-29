@@ -390,7 +390,7 @@ export default function BookingsPage() {
         {selectedDate && (
           <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 flex justify-between items-center">
             <div className="flex items-center">
-              <FaCalendarAlt className="text-blue-500 mr-2" />
+              <FaCalendarAlt className="text-blue-500 ml-2" />
               <span className="text-blue-700 dark:text-blue-300">
                 تصفية حسب التاريخ: {formatDate(selectedDate)}
               </span>
@@ -420,7 +420,7 @@ export default function BookingsPage() {
                     <div className="flex items-center justify-end">
                       <span>رقم الحجز</span>
                       {sortField === 'id' && (
-                        sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                        sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                       )}
                     </div>
                   </th>
@@ -432,7 +432,7 @@ export default function BookingsPage() {
                     <div className="flex items-center justify-end">
                       <span>المستخدم</span>
                       {sortField === 'userName' && (
-                        sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                        sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                       )}
                     </div>
                   </th>
@@ -444,7 +444,7 @@ export default function BookingsPage() {
                     <div className="flex items-center justify-end">
                       <span>المعلم</span>
                       {sortField === 'teacherName' && (
-                        sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                        sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                       )}
                     </div>
                   </th>
@@ -456,7 +456,7 @@ export default function BookingsPage() {
                     <div className="flex items-center justify-end">
                       <span>التاريخ والوقت</span>
                       {sortField === 'date' && (
-                        sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                        sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                       )}
                     </div>
                   </th>
@@ -468,7 +468,7 @@ export default function BookingsPage() {
                     <div className="flex items-center justify-end">
                       <span>الحالة</span>
                       {sortField === 'status' && (
-                        sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                        sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                       )}
                     </div>
                   </th>
@@ -480,7 +480,7 @@ export default function BookingsPage() {
                     <div className="flex items-center justify-end">
                       <span>المبلغ</span>
                       {sortField === 'amount' && (
-                        sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                        sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                       )}
                     </div>
                   </th>
@@ -503,7 +503,7 @@ export default function BookingsPage() {
                         <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                           <FaUser className="text-gray-500 dark:text-gray-400" />
                         </div>
-                        <div className="mr-3">
+                        <div className="ml-3">
                           {booking.userName}
                           <div className="text-xs text-gray-500 dark:text-gray-400">{booking.userId}</div>
                         </div>
@@ -514,7 +514,7 @@ export default function BookingsPage() {
                         <div className="flex-shrink-0 h-8 w-8 rounded-full bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center">
                           <FaChalkboardTeacher className="text-emerald-600 dark:text-emerald-400" />
                         </div>
-                        <div className="mr-3">
+                        <div className="ml-3">
                           {booking.teacherName}
                           <div className="text-xs text-gray-500 dark:text-gray-400">{booking.teacherId}</div>
                         </div>
@@ -561,14 +561,14 @@ export default function BookingsPage() {
                           <FaEye />
                         </button>
                         <button 
-                          className="mr-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300"
+                          className="ml-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300"
                           title="تعديل"
                         >
                           <FaEdit />
                         </button>
                         {booking.status === 'pending' && (
                           <button 
-                            className="mr-2 text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300"
+                            className="ml-2 text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300"
                             title="تأكيد"
                             onClick={() => updateBookingStatus(booking.id, 'confirmed')}
                           >
@@ -577,7 +577,7 @@ export default function BookingsPage() {
                         )}
                         {booking.status !== 'cancelled' && booking.status !== 'completed' && (
                           <button 
-                            className="mr-2 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
+                            className="ml-2 text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300"
                             title="إلغاء"
                             onClick={() => updateBookingStatus(booking.id, 'cancelled')}
                           >
@@ -586,7 +586,7 @@ export default function BookingsPage() {
                         )}
                         {booking.status === 'confirmed' && (
                           <button 
-                            className="mr-2 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300"
+                            className="ml-2 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300"
                             title="اكتمال"
                             onClick={() => updateBookingStatus(booking.id, 'completed')}
                           >

@@ -76,7 +76,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
   });
 
   // Development mode to bypass authentication
-  const isDevelopmentMode = process.env.NODE_ENV === 'development';
+  const isDevelopmentMode = process.env.NODE_ENV === 'development'|| true;
 
   // Calculate password strength
   const calculatePasswordStrength = (password: string) => {

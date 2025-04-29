@@ -202,7 +202,7 @@ export default function UsersPage() {
                   <div className="flex items-center justify-end">
                     <span>الاسم</span>
                     {sortField === 'name' && (
-                      sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                      sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                     )}
                   </div>
                 </th>
@@ -214,7 +214,7 @@ export default function UsersPage() {
                   <div className="flex items-center justify-end">
                     <span>البريد الإلكتروني</span>
                     {sortField === 'email' && (
-                      sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                      sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                     )}
                   </div>
                 </th>
@@ -226,7 +226,7 @@ export default function UsersPage() {
                   <div className="flex items-center justify-end">
                     <span>الدور</span>
                     {sortField === 'role' && (
-                      sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                      sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                     )}
                   </div>
                 </th>
@@ -238,7 +238,7 @@ export default function UsersPage() {
                   <div className="flex items-center justify-end">
                     <span>الحالة</span>
                     {sortField === 'status' && (
-                      sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                      sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                     )}
                   </div>
                 </th>
@@ -250,7 +250,7 @@ export default function UsersPage() {
                   <div className="flex items-center justify-end">
                     <span>تاريخ التسجيل</span>
                     {sortField === 'joinDate' && (
-                      sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                      sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                     )}
                   </div>
                 </th>
@@ -262,7 +262,7 @@ export default function UsersPage() {
                   <div className="flex items-center justify-end">
                     <span>آخر نشاط</span>
                     {sortField === 'lastActive' && (
-                      sortDirection === 'asc' ? <FaChevronUp className="mr-1" /> : <FaChevronDown className="mr-1" />
+                      sortDirection === 'asc' ? <FaChevronUp className="ml-1" /> : <FaChevronDown className="ml-1" />
                     )}
                   </div>
                 </th>
@@ -279,7 +279,7 @@ export default function UsersPage() {
                       <div className="flex-shrink-0 h-10 w-10 rounded-full bg-emerald-100 dark:bg-emerald-900/20 flex items-center justify-center">
                         <span className="text-emerald-600 dark:text-emerald-400 font-semibold">{user.name.charAt(0)}</span>
                       </div>
-                      <div className="mr-4">
+                      <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900 dark:text-white">
                           {user.name}
                         </div>
@@ -327,7 +327,7 @@ export default function UsersPage() {
                         <FaEye />
                       </button>
                       <button 
-                        className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 mr-2"
+                        className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-300 ml-2"
                         title="تعديل"
                       >
                         <FaUserEdit />
@@ -337,14 +337,14 @@ export default function UsersPage() {
                           user.status === 'active'
                           ? 'text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300'
                           : 'text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300'
-                        } mr-2`}
+                        } ml-2`}
                         title={user.status === 'active' ? 'تعطيل' : 'تفعيل'}
                         onClick={() => toggleUserStatus(user.id, user.status)}
                       >
                         {user.status === 'active' ? <FaUserTimes /> : <FaUserCheck />}
                       </button>
                       <button 
-                        className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 mr-2"
+                        className="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 ml-2"
                         title="حذف"
                       >
                         <FaTrash />

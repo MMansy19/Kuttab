@@ -294,7 +294,7 @@ export default function NotificationsPage() {
         >
           غير مقروءة
           {metadata && metadata.unreadCount > 0 && (
-            <span className="mr-2 bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300 text-xs font-medium px-2 py-0.5 rounded-full">
+            <span className="ml-2 bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300 text-xs font-medium px-2 py-0.5 rounded-full">
               {metadata.unreadCount}
             </span>
           )}
@@ -350,7 +350,7 @@ export default function NotificationsPage() {
                   </p>
                 </div>
                 
-                <div className="flex space-x-2 mr-4">
+                <div className="flex space-x-2 ml-4">
                   {!notification.isRead && (
                     <button
                       onClick={() => markAsRead(notification.id)}

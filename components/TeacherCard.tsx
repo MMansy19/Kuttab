@@ -61,13 +61,13 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
           <div className="flex items-center gap-3">
             <p className="text-emerald-700 dark:text-emerald-300 text-sm mt-[2px]">{teacher.experience} سنوات خبرة</p>
             <div className="flex items-center text-yellow-500 dark:text-yellow-400">
-              <FaStar className="h-4 w-4 mr-1" />
+              <FaStar className="h-4 w-4 ml-1" />
               <span className="font-bold">{teacher.rating?.toFixed(1) ?? '0.0'}</span>
             </div>
           </div>
           {teacher.specialization && (
             <div className="flex items-center mt-1 gap-1 text-blue-600 dark:text-blue-400 text-sm">
-              <FaUserGraduate className="h-3 w-3 mr-1" />
+              <FaUserGraduate className="h-3 w-3 ml-1" />
               <span>{teacher.specialization}</span>
             </div>
           )}
@@ -80,7 +80,7 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
       <div className="flex flex-wrap gap-2 mt-2">
         {teacher.subjects?.map(subject => (
           <span key={subject} className="px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 text-xs font-semibold flex items-center">
-            <FaQuran className="mr-1 h-3 w-3" />
+            <FaQuran className="ml-1 h-3 w-3" />
             {subject}
           </span>
         ))}
@@ -96,7 +96,7 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
         >
           {loadingProfile ? (
         <>
-          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
           جاري التحميل
         </>
           ) : (
@@ -115,7 +115,7 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
         >
           {loadingBooking ? (
         <>
-          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
           جاري الحجز
         </>
           ) : (

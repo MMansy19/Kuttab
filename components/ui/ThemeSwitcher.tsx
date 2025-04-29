@@ -64,7 +64,7 @@ export function ThemeSwitcher({ className, variant = 'toggle' }: ThemeSwitcherPr
   
   return (
     <div className={cn('flex items-center', className)}>
-      <FaSun className="text-yellow-500 mr-2" />
+      <FaSun className="text-yellow-500 ml-2" />
       <label className="relative inline-flex items-center cursor-pointer">
         <input
           type="checkbox"

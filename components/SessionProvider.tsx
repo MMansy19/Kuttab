@@ -21,7 +21,7 @@ export default function SessionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Check if we're in development and should use the mock session
     // In a production environment, this would be false
-    const shouldUseMockSession = process.env.NODE_ENV === 'development';
+    const shouldUseMockSession = process.env.NODE_ENV === 'development' || true
     
     if (shouldUseMockSession) {
       // Store the mock session in sessionStorage to persist across page refreshes

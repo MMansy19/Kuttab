@@ -6,7 +6,7 @@ import { FaUser, FaEnvelope, FaPhone, FaUserGraduate, FaCommentAlt, FaArrowRight
 import { Button } from '../ui/Button';
 import { cn } from '@/utils/cn';
 
-interface DetailsSelectorProps {
+interface DetailsSelectorPlops {
   initialValues: {
     name: string;
     email: string;
@@ -42,7 +42,7 @@ export default function DetailsSelector({
   onBack,
   isGroupSession = false,
   maxParticipants = 1
-}: DetailsSelectorProps) {
+}: DetailsSelectorPlops) {
   const [formData, setFormData] = useState(initialValues);
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [activeSection, setActiveSection] = useState<'personal' | 'learning'>('personal');
@@ -90,7 +90,7 @@ export default function DetailsSelector({
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.pleventDefault();
     
     if (activeSection === 'personal') {
       // When on personal section, validate only personal fields then move to learning section
@@ -200,7 +200,7 @@ export default function DetailsSelector({
                 الاسم الكامل
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 ml-4 pointer-events-none">
                   <FaUser className="text-gray-400" />
                 </div>
                 <input
@@ -209,7 +209,7 @@ export default function DetailsSelector({
                   value={formData.name}
                   onChange={handleChange}
                   className={cn(
-                    "block w-full pr-10 py-2 px-4 rounded-md bg-white dark:bg-gray-900 text-right border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
+                    "block w-full pl-10 py-2 px-4 rounded-md bg-white dark:bg-gray-900 text-right border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
                     errors.name ? "border-red-500 focus:border-red-500" : "border-gray-300 dark:border-gray-700"
                   )}
                   placeholder="أدخل اسمك الكامل"
@@ -225,7 +225,7 @@ export default function DetailsSelector({
                 البريد الإلكتروني
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 ml-4 pointer-events-none">
                   <FaEnvelope className="text-gray-400" />
                 </div>
                 <input
@@ -234,7 +234,7 @@ export default function DetailsSelector({
                   value={formData.email}
                   onChange={handleChange}
                   className={cn(
-                    "block w-full pr-10 py-2 px-4 rounded-md bg-white dark:bg-gray-900 text-right border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
+                    "block w-full pl-10 py-2 px-4 rounded-md bg-white dark:bg-gray-900 text-right border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
                     errors.email ? "border-red-500 focus:border-red-500" : "border-gray-300 dark:border-gray-700"
                   )}
                   placeholder="example@email.com"
@@ -251,7 +251,7 @@ export default function DetailsSelector({
                 رقم الهاتف
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 ml-4 pointer-events-none">
                   <FaPhone className="text-gray-400" />
                 </div>
                 <input
@@ -260,7 +260,7 @@ export default function DetailsSelector({
                   value={formData.phone}
                   onChange={handleChange}
                   className={cn(
-                    "block w-full pr-10 py-2 px-4 rounded-md bg-white dark:bg-gray-900 text-right border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
+                    "block w-full pl-10 py-2 px-4 rounded-md bg-white dark:bg-gray-900 text-right border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
                     errors.phone ? "border-red-500 focus:border-red-500" : "border-gray-300 dark:border-gray-700"
                   )}
                   placeholder="+966-xx-xxx-xxxx"
@@ -278,7 +278,7 @@ export default function DetailsSelector({
                   عدد المشاركين
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 ml-4 pointer-events-none">
                     <FaUsers className="text-gray-400" />
                   </div>
                   <input
@@ -289,7 +289,7 @@ export default function DetailsSelector({
                     min={1}
                     max={maxParticipants}
                     className={cn(
-                      "block w-full pr-10 py-2 px-4 rounded-md bg-white dark:bg-gray-900 text-right border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
+                      "block w-full pl-10 py-2 px-4 rounded-md bg-white dark:bg-gray-900 text-right border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
                       errors.participantCount ? "border-red-500 focus:border-red-500" : "border-gray-300 dark:border-gray-700"
                     )}
                   />
@@ -365,7 +365,7 @@ export default function DetailsSelector({
                 رسالة إضافية (اختياري)
               </label>
               <div className="relative">
-                <div className="absolute top-3 right-3 pointer-events-none">
+                <div className="absolute top-3 left-3 pointer-events-none">
                   <FaCommentAlt className="text-gray-400" />
                 </div>
                 <textarea
@@ -373,7 +373,7 @@ export default function DetailsSelector({
                   value={formData.message}
                   onChange={handleChange}
                   rows={4}
-                  className="block w-full pr-10 py-2 px-4 rounded-md bg-white dark:bg-gray-900 text-right border border-gray-300 dark:border-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="block w-full pl-10 py-2 px-4 rounded-md bg-white dark:bg-gray-900 text-right border border-gray-300 dark:border-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500"
                   placeholder="أي معلومات إضافية ترغب في إضافتها"
                 />
               </div>
@@ -395,7 +395,7 @@ export default function DetailsSelector({
           
           <Button
             type="submit"
-            variant="primary"
+            variant="secondary"
             className="flex items-center gap-1"
           >
             {activeSection === 'personal' ? 'التالي' : 'تأكيد التفاصيل'}

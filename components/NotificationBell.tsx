@@ -214,7 +214,7 @@ export default function NotificationBell() {
                 >
                   <div className="flex items-start">
                     <div
-                      className={`h-2 w-2 mt-2 rounded-full mr-2 ${
+                      className={`h-2 w-2 mt-2 rounded-full ml-2 ${
                         getNotificationColor(notification.type)
                       }`}
                     ></div>

@@ -88,7 +88,7 @@ const RatingComp = ({
         })}
         
         {rating > 0 && (
-          <span className="mr-2 text-gray-700 dark:text-gray-300 text-sm">
+          <span className="ml-2 text-gray-700 dark:text-gray-300 text-sm">
             {rating} من {totalStars}
           </span>
         )}

@@ -117,7 +117,7 @@ export default function TeacherProfilePage() {
               </div>
               <div className="mt-6 flex items-center justify-center md:justify-start gap-2">
                 <div className="bg-yellow-500/20 backdrop-blur-sm px-3 py-1 rounded-full flex items-center">
-                  <FaStar className="text-yellow-400 mr-1" />
+                  <FaStar className="text-yellow-400 ml-1" />
                   <span className="font-bold">{teacher.rating.toFixed(1)}</span>
                 </div>
                 <span className="text-emerald-100">
@@ -153,7 +153,7 @@ export default function TeacherProfilePage() {
           {/* Main content */}
           <div className="lg:col-span-2">
             {/* About section */}
-            <Section spacing="medium">
+            <Section spacing="small">
               <SectionHeader title="نبذة عن المعلم" />
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 text-right">
                 <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-lg">
@@ -164,7 +164,7 @@ export default function TeacherProfilePage() {
 
             {/* Teaching approach */}
             {teacher.teachingApproach && (
-              <Section spacing="medium">
+              <Section spacing="small">
                 <div className="flex items-center gap-2 mb-4">
                   <FaChalkboardTeacher className="text-emerald-600 dark:text-emerald-400" size={24} />
                   <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
@@ -180,7 +180,7 @@ export default function TeacherProfilePage() {
             )}
 
             {/* Qualifications */}
-            <Section spacing="medium">
+            <Section spacing="small">
               <div className="flex items-center gap-2 mb-4">
                 <FaGraduationCap className="text-emerald-600 dark:text-emerald-400" size={24} />
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
@@ -225,7 +225,7 @@ export default function TeacherProfilePage() {
             </Section>
 
             {/* Languages & Achievements */}
-            <Section spacing="medium">
+            <Section spacing="small">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Languages */}
                 <Card variant="bordered">
@@ -275,7 +275,7 @@ export default function TeacherProfilePage() {
             </Section>
 
             {/* Available slots section */}
-            <Section spacing="medium">
+            <Section spacing="small">
               <div className="flex items-center gap-2 mb-4">
                 <FaCalendarAlt className="text-emerald-600 dark:text-emerald-400" size={24} />
                 <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
@@ -311,7 +311,7 @@ export default function TeacherProfilePage() {
                         >
                           <div className="flex justify-between items-center mb-3">
                             <div className="flex items-center text-emerald-800 dark:text-emerald-300">
-                              <FaClock className="mr-2" />
+                              <FaClock className="ml-2" />
                               <span>{formatSlotDate(slot)}</span>
                             </div>
                           </div>

@@ -197,12 +197,12 @@ export default function TeacherDashboard() {
                  teacherProfile.approvalStatus === "REJECTED" ? "مرفوض" : teacherProfile.approvalStatus}
               </Badge>
               {teacherProfile.approvalStatus === "PENDING" && (
-                <p className="mr-3 text-sm text-gray-600 dark:text-gray-400" dir="rtl">
+                <p className="ml-3 text-sm text-gray-600 dark:text-gray-400" dir="rtl">
                   يتم مراجعة ملفك الشخصي من قبل فريقنا.
                 </p>
               )}
               {teacherProfile.approvalStatus === "REJECTED" && (
-                <p className="mr-3 text-sm text-red-600 dark:text-red-400" dir="rtl">
+                <p className="ml-3 text-sm text-red-600 dark:text-red-400" dir="rtl">
                   تم رفض ملفك الشخصي. يرجى تحديث معلوماتك وإعادة التقديم.
                 </p>
               )}

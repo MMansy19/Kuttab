@@ -64,7 +64,7 @@ export default function Home() {
             <div className="text-center lg:text-right lg:max-w-2xl">
               <div className="inline-block animate-float">
                 <div className="bg-white dark:bg-gray-800 px-4 py-1 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-6 mx-auto lg:mx-0 inline-flex items-center">
-                  <span className="animate-pulse inline-block w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
+                  <span className="animate-pulse inline-block w-2 h-2 rounded-full bg-emerald-500 ml-2"></span>
                   منصة تعليمية متميزة
                 </div>
               </div>
@@ -339,7 +339,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-blue-500 blur-2xl opacity-10 -z-10 transform rotate-3"></div>
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 md:p-10 relative z-10">
               <div className="mb-10">
-                <div className="text-gray-800 dark:text-gray-200 text-lg md:text-xl italic">
+                <div className="text-gray-800 dark:text-gray-200 text-lg md:text-xl italic line-clamp-1">
                   "{testimonials[activeTestimonial].text}"
                 </div>
               </div>

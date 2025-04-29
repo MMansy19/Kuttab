@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
           <div className="flex items-center mb-4 md:mb-0">
-            <div className="w-12 h-12 mr-3 relative">
+            <div className="w-12 h-12 ml-3 relative">
               <Image 
                 src="/images/logo.svg" 
                 alt="كُتّاب"

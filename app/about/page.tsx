@@ -4,6 +4,49 @@ import { FaMicrophone, FaUserGraduate, FaGlobe, FaBook } from "react-icons/fa";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card, CardContent } from "@/components/ui/Card";
 
+// Service Card Component
+interface ServiceCardProps {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}
+
+const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, description }) => (
+  <Card variant="raised" className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transition-transform hover:scale-105 hover:shadow-xl">
+    <CardContent className="p-6">
+      <div className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+        {icon}
+      </div>
+      <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{title}</h3>
+      <p className="text-gray-600 dark:text-gray-400">{description}</p>
+    </CardContent>
+  </Card>
+);
+
+// Services Data
+const services = [
+  {
+    icon: <FaBook size={32} />,
+    title: "تعلم القرآن الكريم",
+    description: "تعلم قراءة القرآن الكريم بالتجويد الصحيح من معلمين حاصلين على إجازات في القراءات المختلفة."
+  },
+  {
+    icon: <FaMicrophone size={32} />,
+    title: "تعلم التجويد",
+    description: "دروس متخصصة في علم التجويد وأحكامه، مع التطبيق العملي على آيات القرآن الكريم."
+  },
+  {
+    icon: <FaUserGraduate size={32} />,
+    title: "دورات إسلامية",
+    description: "دورات متنوعة في العلوم الإسلامية الأساسية كالتفسير، والحديث، والسيرة النبوية."
+  },
+  {
+    icon: <FaGlobe size={32} />,
+    title: "تعليم دولي",
+    description: "معلمون من مختلف أنحاء العالم بلغات متعددة، مما يتيح التعلم لغير الناطقين بالعربية."
+  }
+];
+
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-white dark:bg-gray-900">
@@ -22,15 +65,6 @@ export default function AboutPage() {
             <div className="flex items-center justify-center">
               <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full bg-white/20 p-2 backdrop-blur-sm animate-pulse">
                 <div className="absolute inset-0 flex items-center justify-center">
-                  {/* <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 64 64"
-                    className="w-16 h-16 md:w-20 md:h-20 text-white"
-                    fill="currentColor"
-                  >
-                    <path d="M8 8v48l24-8 24 8V8l-24 8-24-8zm4 5.6l20 6.7v36.1l-20-6.7V13.6zm40 0v36.1l-20 6.7V20.3l20-6.7z" />
-                    <path d="M32 26c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4z" />
-                  </svg> */}
                   <FaBookOpenReader className="w-16 h-16 md:w-20 md:h-20 text-white" />
                 </div>
               </div>
@@ -60,53 +94,14 @@ export default function AboutPage() {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-          <Card variant="raised" className="text-center">
-            <CardContent className="p-6">
-                <div className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaBook size={32} />
-                </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">تعلم القرآن الكريم</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                تعلم قراءة القرآن الكريم بالتجويد الصحيح من معلمين حاصلين على إجازات في القراءات المختلفة.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card variant="raised" className="text-center">
-            <CardContent className="p-6">
-              <div className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaMicrophone size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">تعلم التجويد</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                دروس متخصصة في علم التجويد وأحكامه، مع التطبيق العملي على آيات القرآن الكريم.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card variant="raised" className="text-center">
-            <CardContent className="p-6">
-              <div className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaUserGraduate size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">دورات إسلامية</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                دورات متنوعة في العلوم الإسلامية الأساسية كالتفسير، والحديث، والسيرة النبوية.
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Card variant="raised" className="text-center">
-            <CardContent className="p-6">
-              <div className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FaGlobe size={32} />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">تعليم دولي</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                معلمون من مختلف أنحاء العالم بلغات متعددة، مما يتيح التعلم لغير الناطقين بالعربية.
-              </p>
-            </CardContent>
-          </Card>
+          {services.map((service, index) => (
+            <ServiceCard
+              key={index}
+              icon={service.icon}
+              title={service.title}
+              description={service.description}
+            />
+          ))}
         </div>
       </Section>
 
