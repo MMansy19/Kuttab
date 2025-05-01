@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { rateLimit } from "@/utils/rate-limiter";
 import { validateRequest } from "@/utils/validation";
@@ -72,7 +72,13 @@ export async function GET(
       });
 
       // Get booked slots for the date range if provided
-      let bookedSlots = [];
+      let bookedSlots: {
+        id: string;
+        startTime: Date;
+        endTime: Date;
+        status: string;
+      }[] = [];
+      
       if (data.startDate && data.endDate) {
         const startDate = new Date(data.startDate);
         const endDate = new Date(data.endDate);
@@ -202,7 +208,8 @@ export async function POST(
         .map(slot => slot.id));
 
       // Records to delete (exist in DB but not in the new data)
-      const idsToDelete = [...existingIds].filter(id => !newIds.has(id));
+      // Converting Set to Array to avoid iteration issues
+      const idsToDelete = Array.from(existingIds).filter(id => !newIds.has(id));
 
       // Batch operations
       const operations = [];

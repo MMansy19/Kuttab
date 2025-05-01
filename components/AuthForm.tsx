@@ -55,7 +55,7 @@ const mockSession = {
 const AuthForm = ({ type }: AuthFormProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
+  const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard/admin";
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -147,6 +147,14 @@ const AuthForm = ({ type }: AuthFormProps) => {
     validateField(name, value);
   };
 
+  const handleRedirection = (url: string, successMessage: string) => {
+    setSuccess(successMessage);
+    router.refresh();
+    setTimeout(() => {
+      router.push(url);
+    }, 800);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
@@ -201,22 +209,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
           throw new Error(result.error);
         }
 
-        // Show success message before redirect
-        setSuccess("تم تسجيل الدخول بنجاح! جاري التحويل...");
-        
-        // Redirect will be handled by middleware based on role
-        router.refresh();
-
-        // Short timeout to show success message
-        setTimeout(() => {
-          if (result?.url) {
-            // Use the URL returned by NextAuth if available
-            router.push(result.url);
-          } else {
-            // Fallback to dashboard, middleware will handle proper redirection
-            router.push("/dashboard");
-          }
-        }, 800);
+        handleRedirection(result?.url || "/dashboard/admin", "تم تسجيل الدخول بنجاح! جاري التحويل...");
         
       } else {
         // Validate signup data
@@ -228,13 +221,23 @@ const AuthForm = ({ type }: AuthFormProps) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            role: formData.role,
+            gender: formData.gender
+          }),
+          cache: 'no-store'
         });
+
+        // Debug the response
+        console.log("Register response status:", response.status);
 
         // Check if the response is OK before trying to parse JSON
         if (!response.ok) {
-          const errorData = await response.json().catch(() => null);
-          const errorMessage = errorData?.error || `فشل في التسجيل (${response.status})`;
+          const errorData = await response.json().catch(() => ({ error: `Registration failed (${response.status})` }));
+          const errorMessage = errorData?.error || `Registration failed (${response.status})`;
           throw new Error(errorMessage);
         }
 
@@ -253,17 +256,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
           throw new Error(signInResult.error);
         }
 
-        // Redirect will be handled by middleware based on role
-        router.refresh();
-        
-        // Short timeout to show success message
-        setTimeout(() => {
-          if (signInResult?.url) {
-            router.push(signInResult.url);
-          } else {
-            router.push("/dashboard");
-          }
-        }, 800);
+        handleRedirection(signInResult?.url || "/dashboard/admin", "تم إنشاء الحساب بنجاح! جاري تسجيل الدخول...");
       }
     } catch (err: any) {
       setError(err.message || "حدث خطأ ما");

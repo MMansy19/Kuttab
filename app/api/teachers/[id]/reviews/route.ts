@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { rateLimit } from "@/utils/rate-limiter";
 import { validateRequest } from "@/utils/validation";
@@ -14,8 +14,8 @@ const apiLimiter = rateLimit({
 
 // Schema for GET request query params
 const getReviewsQuerySchema = z.object({
-  page: z.coerce.number().int().positive().optional().default(1),
-  limit: z.coerce.number().int().min(1).max(50).optional().default(10),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().min(1).max(50).default(10),
 });
 
 // Schema for review creation
@@ -43,7 +43,8 @@ export async function GET(
   }
 
   return validateRequest(getReviewsQuerySchema, async (req, data) => {
-    const { page, limit } = data;
+    // Add type assertion to fix "possibly undefined" errors
+    const { page, limit } = data as { page: number; limit: number };
     const skip = (page - 1) * limit;
 
     try {

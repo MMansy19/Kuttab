@@ -14,13 +14,11 @@ const apiLimiter = rateLimit({
 
 // Schema for GET request query params
 const getTeachersQuerySchema = z.object({
-  page: z.coerce.number().int().positive().optional().default(1),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(10),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
   search: z.string().optional(),
   approvalStatus: z.enum(["PENDING", "APPROVED", "REJECTED"]).optional(),
-  isAvailable: z.enum(["true", "false"]).optional()
-    .transform((val) => val === "true").default("true")
-    .pipe(z.boolean()),
+  isAvailable: z.boolean().default(true),
   minRating: z.coerce.number().min(0).max(5).optional(),
 });
 
@@ -39,7 +37,15 @@ export async function GET(request: NextRequest) {
   if (rateLimitResult) return rateLimitResult;
 
   return validateRequest(getTeachersQuerySchema, async (req, data) => {
-    const { page, limit, search, approvalStatus, isAvailable, minRating } = data;
+    // Add type assertion to fix "possibly undefined" errors
+    const { page, limit, search, approvalStatus, isAvailable, minRating } = data as {
+      page: number;
+      limit: number;
+      search?: string;
+      approvalStatus?: "PENDING" | "APPROVED" | "REJECTED";
+      isAvailable: boolean;
+      minRating?: number;
+    };
     const skip = (page - 1) * limit;
 
     // Build search filters

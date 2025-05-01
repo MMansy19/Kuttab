@@ -33,29 +33,9 @@ export async function GET(
             role: true,
           },
         },
-        availabilities: {
-          orderBy: {
-            dayOfWeek: "asc",
-          },
-        },
-        reviews: {
-          select: {
-            id: true,
-            rating: true,
-            comment: true,
-            createdAt: true,
-            user: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-              },
-            },
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
+        bookings: {
           take: 5,
+          orderBy: { createdAt: "desc" },
         },
       },
     });
@@ -63,6 +43,45 @@ export async function GET(
     if (!teacher) {
       return NextResponse.json({ error: "Teacher profile not found" }, { status: 404 });
     }
+
+    // Fetch reviews separately to avoid schema mismatch
+    const reviews = await prisma.review.findMany({
+      where: { teacherId: teacher.userId },
+      select: {
+        id: true,
+        rating: true,
+        comment: true,
+        createdAt: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 5,
+    });
+
+    // Fetch availabilities separately to avoid schema mismatch
+    const availabilities = await prisma.teacherAvailability.findMany({
+      where: {
+        teacherId: teacher.userId,
+      },
+      orderBy: {
+        dayOfWeek: "asc",
+      },
+    });
+
+    // Add reviews and availabilities to the teacher object
+    const enrichedTeacher = {
+      ...teacher,
+      reviews,
+      availabilities,
+    };
 
     // Only return APPROVED profiles to public, unless the user is an admin or the teacher themselves
     const session = await getServerSession(authOptions);
@@ -75,7 +94,7 @@ export async function GET(
       return NextResponse.json({ error: "Teacher profile not available" }, { status: 403 });
     }
 
-    return NextResponse.json(teacher);
+    return NextResponse.json(enrichedTeacher);
   } catch (error) {
     console.error("Error fetching teacher profile:", error);
     return NextResponse.json(
@@ -188,9 +207,8 @@ export async function PUT(
     // Prepare data for update - split between user and teacher profile data
     const { 
       name, bio, gender, email, image, avatarUrl, videoUrl, 
-      subjects, specialization, experience, education, 
-      certifications, teachingApproach, languages, 
-      achievements, isPaid, price, contactInfo, ...teacherData 
+      specialization, experience, education, 
+      contactInfo, ...teacherData 
     } = updatedTeacher;
     
     // Update user data first if it exists
@@ -214,17 +232,9 @@ export async function PUT(
         videoUrl,
         specialization,
         yearsOfExperience: experience,
-        subjects: subjects ? { set: subjects } : undefined,
-        education,
-        certifications: certifications ? { set: certifications } : undefined,
-        teachingApproach,
-        languages: languages ? { set: languages } : undefined,
-        achievements: achievements ? { set: achievements } : undefined,
-        isPaid,
-        price,
-        contactInfo: contactInfo ? JSON.stringify(contactInfo) : undefined,
-        // Mark profile for review when updated
-        approvalStatus: session.user.role === "ADMIN" ? undefined : "PENDING",
+        // Only include fields that exist in the TeacherProfile model
+        isAvailable: updatedTeacher.isAvailable,
+        approvalStatus: session.user.role === "ADMIN" ? updatedTeacher.approvalStatus : "PENDING",
       },
       include: {
         user: {

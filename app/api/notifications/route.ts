@@ -14,8 +14,8 @@ const apiLimiter = rateLimit({
 
 // Schema for GET request query params
 const getNotificationsQuerySchema = z.object({
-  page: z.coerce.number().int().positive().optional().default(1),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
   isRead: z.enum(["true", "false", "all"]).optional().default("all"),
 });
 
@@ -40,7 +40,12 @@ export async function GET(request: NextRequest) {
 
   return validateRequest(getNotificationsQuerySchema, async (req, data) => {
     try {
-      const { page, limit, isRead } = data;
+      // Explicitly type the data to inform TypeScript these values will always be defined
+      const { page, limit, isRead } = data as { 
+        page: number; 
+        limit: number; 
+        isRead: "true" | "false" | "all" 
+      };
       const skip = (page - 1) * limit;
 
       // Build query filters
