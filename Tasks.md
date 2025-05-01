@@ -1,6 +1,10 @@
-# KOTTAB - Project Tasks and Features (Prioritized)
+# KOTTAB - Pending Tasks and Features (By Priority)
 
-## High Priority Tasks
+## Immediate TODOs
+- Fix light mode toggle (not working well in all app)
+- Run Prisma and download PostgreSQL
+
+## High Priority - Pending Tasks
 
 ### Authentication
 - Implement secure signin/signup flow for different user roles:
@@ -39,7 +43,7 @@
   - Admins → Admin dashboard
 - Add ratings and reviews system for teachers
 
-## Medium Priority Tasks
+## Medium Priority - Pending Tasks
 
 ### Frontend Development: User Experience
 - Implement search and filter functionality across the platform
@@ -65,7 +69,7 @@
 - Add integration tests for API endpoints
 - Create end-to-end tests for user flows
 
-## Lower Priority Tasks
+## Low Priority - Pending Tasks
 
 ### UI/UX Design: Assets
 - Search for high-quality images and icons:

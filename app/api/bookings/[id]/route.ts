@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 // Validation schema for booking updates
 const bookingUpdateSchema = z.object({
@@ -14,7 +14,7 @@ const bookingUpdateSchema = z.object({
 // GET a single booking by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -25,7 +25,7 @@ export async function GET(
     
     // Get the booking with related data
     const booking = await prisma.booking.findUnique({
-      where: { id: params.id },
+      where: { id: context.params.id },
       include: {
         user: {
           select: {
@@ -78,7 +78,7 @@ export async function GET(
 // PATCH to update booking status
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -89,7 +89,7 @@ export async function PATCH(
     
     // Get the booking
     const booking = await prisma.booking.findUnique({
-      where: { id: params.id },
+      where: { id: context.params.id },
       include: {
         teacherProfile: true,
       },
@@ -147,7 +147,7 @@ export async function PATCH(
     
     // Update the booking
     const updatedBooking = await prisma.booking.update({
-      where: { id: params.id },
+      where: { id: context.params.id },
       data: result.data,
       include: {
         user: {
@@ -226,7 +226,7 @@ export async function PATCH(
 // DELETE to cancel a booking (soft delete)
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -237,7 +237,7 @@ export async function DELETE(
     
     // Get the booking
     const booking = await prisma.booking.findUnique({
-      where: { id: params.id },
+      where: { id: context.params.id },
       include: {
         teacherProfile: true,
       },
@@ -263,7 +263,7 @@ export async function DELETE(
     
     // Update booking to cancelled status
     const cancelledBooking = await prisma.booking.update({
-      where: { id: params.id },
+      where: { id: context.params.id },
       data: {
         status: "CANCELLED",
         cancellationReason: reason,

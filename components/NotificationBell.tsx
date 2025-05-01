@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { FaBell } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
-import Badge from "./ui/Badge";
+import {Badge} from "./ui/Badge";
 
 interface Notification {
   id: string;
@@ -207,7 +207,7 @@ export default function NotificationBell() {
                       ? `/dashboard/${notification.type === "BOOKING" ? "user/bookings/" + notification.relatedId : "notifications"}`
                       : "/dashboard/notifications"
                   }
-                  onClick={() => markAsRead(notification.id, event as React.MouseEvent)}
+                  onClick={(e) => markAsRead(notification.id, e)}
                   className={`block px-4 py-3 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition ${
                     !notification.isRead ? "bg-blue-50 dark:bg-blue-900/20" : ""
                   }`}
@@ -232,7 +232,7 @@ export default function NotificationBell() {
                       </p>
                     </div>
                     {notification.isRead === false && (
-                      <Badge variant="primary" className="ml-2 text-xs">
+                      <Badge variant="info" className="ml-2 text-xs">
                         جديد
                       </Badge>
                     )}

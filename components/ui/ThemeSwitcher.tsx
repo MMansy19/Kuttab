@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FaSun, FaMoon } from 'react-icons/fa';
 import { cn } from '../../utils/cn';
+import { useTheme } from '../../context/ThemeContext';
 
 interface ThemeSwitcherProps {
   className?: string;
@@ -10,24 +11,7 @@ interface ThemeSwitcherProps {
 }
 
 export function ThemeSwitcher({ className, variant = 'toggle' }: ThemeSwitcherProps) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  
-  useEffect(() => {
-    // On mount, read the theme from localStorage or use system preference
-    const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialTheme = storedTheme || (prefersDark ? 'dark' : 'light');
-    
-    setTheme(initialTheme);
-    document.documentElement.classList.toggle('dark', initialTheme === 'dark');
-  }, []);
-  
-  const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.classList.toggle('dark', newTheme === 'dark');
-  };
+  const { theme, toggleTheme } = useTheme();
   
   if (variant === 'icon') {
     return (
@@ -78,3 +62,5 @@ export function ThemeSwitcher({ className, variant = 'toggle' }: ThemeSwitcherPr
     </div>
   );
 }
+
+export default ThemeSwitcher;

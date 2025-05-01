@@ -96,3 +96,5 @@ export function SectionHeader({
     </div>
   );
 }
+
+export default Section;

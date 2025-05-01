@@ -1,7 +1,7 @@
 import React from "react";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 // Common dashboard layout for all user types
 export default async function DashboardLayout({

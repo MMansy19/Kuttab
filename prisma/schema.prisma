@@ -10,8 +10,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model Account {
@@ -20,12 +20,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -48,7 +48,7 @@ model User {
   emailVerified         DateTime?
   password              String?
   image                 String?
-  bio                   String?                @db.Text
+  bio                   String?
   gender                String?
   role                  Role                   @default(USER)
   isActive              Boolean                @default(true)
@@ -130,7 +130,7 @@ model Review {
   teacherId   String   // Teacher being reviewed
   teacher     User     @relation("TeacherReviews", fields: [teacherId], references: [id], onDelete: Cascade)
   rating      Int
-  comment     String?  @db.Text
+  comment     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   

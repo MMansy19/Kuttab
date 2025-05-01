@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { rateLimit } from "@/utils/rate-limiter";
 import { validateRequest } from "@/utils/validation";
@@ -12,18 +12,8 @@ const apiLimiter = rateLimit({
   interval: 60 * 10, // 10 minutes
 });
 
-// Schema for GET request query params
-const getBookingsQuerySchema = z.object({
-  page: z.coerce.number().int().positive().optional().default(1),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(10),
-  status: z.string().optional().transform(val => 
-    val ? val.split(',') as BookingStatus[] : undefined
-  ),
-  userId: z.string().optional(),
-  teacherProfileId: z.string().optional(),
-  fromDate: z.string().optional().transform(val => val ? new Date(val) : undefined),
-  toDate: z.string().optional().transform(val => val ? new Date(val) : undefined),
-});
+// Type definition for booking status
+type BookingStatus = "PENDING" | "CONFIRMED" | "CANCELED" | "COMPLETED" | "NO_SHOW";
 
 // Schema for booking creation
 const createBookingSchema = z.object({
@@ -42,8 +32,23 @@ const updateBookingSchema = z.object({
   cancelReason: z.string().optional().nullable(),
 });
 
-// Type definition for booking status
-type BookingStatus = "PENDING" | "CONFIRMED" | "CANCELED" | "COMPLETED" | "NO_SHOW";
+// Schema for GET request query params
+const getBookingsQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
+  status: z.string().optional().transform(val => 
+    val ? val.split(',') as BookingStatus[] : undefined
+  ),
+  userId: z.string().optional(),
+  teacherProfileId: z.string().optional(),
+  fromDate: z.string().optional().transform(val => val ? new Date(val) : undefined),
+  toDate: z.string().optional().transform(val => val ? new Date(val) : undefined),
+});
+
+// Define types for the validated data
+type BookingsQueryData = z.infer<typeof getBookingsQuerySchema>;
+type CreateBookingData = z.infer<typeof createBookingSchema>;
+type UpdateBookingData = z.infer<typeof updateBookingSchema>;
 
 export async function GET(request: NextRequest) {
   // Check rate limiting
@@ -59,8 +64,8 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  return validateRequest(getBookingsQuerySchema, async (req, data) => {
-    const { page, limit, status, userId, teacherProfileId, fromDate, toDate } = data;
+  return validateRequest(getBookingsQuerySchema as any, async (req, data) => {
+    const { page, limit, status, userId, teacherProfileId, fromDate, toDate } = data as BookingsQueryData;
     const skip = (page - 1) * limit;
 
     // Build query filters
@@ -157,9 +162,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  return validateRequest(createBookingSchema, async (req, data) => {
+  return validateRequest(createBookingSchema as any, async (req, data) => {
     try {
-      const { teacherProfileId, startTime, endTime, notes } = data;
+      const { teacherProfileId, startTime, endTime, notes } = data as CreateBookingData;
 
       // Validate teacher profile exists and is approved
       const teacherProfile = await prisma.teacherProfile.findFirst({
@@ -288,7 +293,7 @@ export async function PATCH(request: NextRequest) {
     );
   }
 
-  return validateRequest(updateBookingSchema, async (req, data) => {
+  return validateRequest(updateBookingSchema, async (req, data: UpdateBookingData) => {
     try {
       const { id, status, notes, meetingLink, cancelReason } = data;
       const userId = session.user.id;

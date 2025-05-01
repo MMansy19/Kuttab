@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { rateLimit } from "@/utils/rate-limiter";
 import { validateRequest } from "@/utils/validation";
@@ -10,15 +10,6 @@ import { validateRequest } from "@/utils/validation";
 const apiLimiter = rateLimit({
   limit: 50,
   interval: 60 * 10, // 10 minutes
-});
-
-// Schema for GET request query params
-const getUsersQuerySchema = z.object({
-  page: z.coerce.number().int().positive().optional().default(1),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(10),
-  search: z.string().optional(),
-  role: z.enum(["USER", "TEACHER", "ADMIN"]).optional(),
-  isActive: z.enum(["true", "false"]).optional().default("true").transform((val) => val === "true"),
 });
 
 // Schema for user updates
@@ -31,6 +22,21 @@ const updateUserSchema = z.object({
   image: z.string().optional(),
   gender: z.string().optional(),
 });
+
+// Schema for GET request query params
+const getUsersQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
+  search: z.string().optional(),
+  role: z.enum(["USER", "TEACHER", "ADMIN"]).optional(),
+  isActive: z.enum(["true", "false", "all"]).default("true").transform((val) => 
+    val === "all" ? undefined : val === "true"
+  ),
+});
+
+// Define types for the validated data
+type UsersQueryData = z.infer<typeof getUsersQuerySchema>;
+type UpdateUserData = z.infer<typeof updateUserSchema>;
 
 export async function GET(request: NextRequest) {
   // Check rate limiting
@@ -46,8 +52,8 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  return validateRequest(getUsersQuerySchema, async (req, data) => {
-    const { page, limit, search, role, isActive } = data;
+  return validateRequest(getUsersQuerySchema as any, async (req, data) => {
+    const { page, limit, search, role, isActive } = data as UsersQueryData;
     const skip = (page - 1) * limit;
 
     // Build search filters

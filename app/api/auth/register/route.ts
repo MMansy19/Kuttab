@@ -70,9 +70,20 @@ export async function POST(req: NextRequest) {
     
   } catch (error: any) {
     console.error("Registration error:", error);
-    return NextResponse.json(
-      { error: "حدث خطأ أثناء تسجيل المستخدم" },
-      { status: 500 }
-    );
+    
+    // Provide more detailed error information for debugging
+    const errorMessage = error.message || "حدث خطأ أثناء تسجيل المستخدم";
+    const responsePayload: { error: string; details?: object } = { error: errorMessage };
+
+    if (process.env.NODE_ENV !== 'production') {
+      responsePayload.details = {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        cause: error.cause,
+      };
+    }
+
+    return NextResponse.json(responsePayload, { status: 500 });
   }
 }
