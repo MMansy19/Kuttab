@@ -14,9 +14,6 @@ const nextConfig = {
     domains: ['images.unsplash.com', 'img.icons8.com'],
   },
   
-  // Disable telemetry completely
-  telemetry: false,
-  
   webpack: (config) => {
     // Exclude problematic directories from being processed
     config.watchOptions = {
@@ -26,7 +23,17 @@ const nextConfig = {
         '**/node_modules/**', 
         '**/Cookies/**', 
         '**/.next/**',
+        '**/AppData/**',
+        '**/Application Data/**',
+        '**/Local Settings/**',
+        '**/NetHood/**',
+        '**/PrintHood/**',
+        '**/Recent/**',
+        '**/Start Menu/**',
+        '**/Templates/**',
+        '**/SendTo/**',
         'C:\\Users\\mahmo\\Cookies/**',
+        'C:\\Users\\mahmo\\Application Data/**',
       ]
     };
     
@@ -35,7 +42,6 @@ const nextConfig = {
   
   // Set production-only options
   productionBrowserSourceMaps: false,
-  swcMinify: true,
 };
 
 module.exports = nextConfig;
