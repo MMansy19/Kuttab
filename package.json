@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "clean": "node clean.js",
+    "build": "node clean.js && prisma generate && next build",
     "start": "next start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "prisma generate",
@@ -28,6 +29,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "glob": "^11.0.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.14.0",
     "next": "^15.3.1",
@@ -44,6 +46,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.16",
     "postcss": "^8.5.3",
+    "rimraf": "^6.0.1",
     "tailwindcss": "^3.4.17",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"

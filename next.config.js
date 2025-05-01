@@ -11,18 +11,31 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   images: {
-    domains: ['images.unsplash.com', 'img.icons8.com'], // Added icons8 domain
+    domains: ['images.unsplash.com', 'img.icons8.com'],
   },
-  // Add webpack configuration to exclude problematic directories
-  webpack: (config, { isServer }) => {
-    // Exclude the Cookies directory from being processed
+  
+  // Disable telemetry completely
+  telemetry: false,
+  
+  webpack: (config) => {
+    // Exclude problematic directories from being processed
     config.watchOptions = {
       ...config.watchOptions,
-      ignored: ['**/.git/**', '**/node_modules/**', '**/Cookies/**', 'C:\\Users\\mahmo\\Cookies/**']
+      ignored: [
+        '**/.git/**', 
+        '**/node_modules/**', 
+        '**/Cookies/**', 
+        '**/.next/**',
+        'C:\\Users\\mahmo\\Cookies/**',
+      ]
     };
     
     return config;
   },
+  
+  // Set production-only options
+  productionBrowserSourceMaps: false,
+  swcMinify: true,
 };
 
 module.exports = nextConfig;
