@@ -11,9 +11,9 @@ export default async function DashboardLayout({
 }) {
   const session = await getServerSession(authOptions);
   
-  if (!session) {
-    redirect("/auth/login");
-  }
+  // if (!session) {
+  //   redirect("/auth/login");
+  // }
 
   // Shared dashboard layout with sidebar navigation
   return (

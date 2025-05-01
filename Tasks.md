@@ -101,3 +101,55 @@
 
 ### Frontend Development: Advanced Features
 - Implement lazy loading for resource-intensive operations
+
+
+
+
+
+## Setup and Run Instructions
+
+### Prerequisites
+- Node.js (v18+ recommended)
+- PostgreSQL database
+- npm or yarn
+
+### Steps to Run the Application
+1. **Clone the repository**
+  ```bash
+  git clone <repository-url>
+  cd kottab
+  ```
+
+2. **Install dependencies**
+  ```bash
+  npm install
+  # or
+  yarn install
+  ```
+
+3. **Set up environment variables**
+  - Copy `.env.example` to `.env`
+  - Configure database connection and other required variables
+
+4. **Initialize the database**
+  ```bash
+  npx prisma migrate dev
+  # or
+  yarn prisma migrate dev
+  ```
+
+5. **Start the development server**
+  ```bash
+  npm run dev
+  # or
+  yarn dev
+  ```
+
+6. **Access the application**
+  - Open your browser and navigate to `http://localhost:3000`
+
+### Troubleshooting
+- If you encounter database connection issues, ensure PostgreSQL is running
+- For prisma errors, try `npx prisma generate` to update client
+
+TELL ME AGAIN STEPS TO RUN THIS APP

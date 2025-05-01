@@ -1,11 +1,11 @@
 import { NextAuthOptions } from "next-auth";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 
+// Remove PrismaAdapter to fix compatibility issues
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  // Adapter removed due to Prisma version incompatibilities
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -13,19 +13,17 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Missing credentials");
+          return null // Return null instead of throwing error
         }
 
         const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email,
-          },
+          where: { email: credentials.email },
         });
 
         if (!user || !user.password) {
-          throw new Error("Invalid credentials");
+          return null
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -34,15 +32,13 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!isPasswordValid) {
-          throw new Error("Invalid credentials");
+          return null
         }
 
-        // Transform the Prisma User to match NextAuth User interface
-        // This ensures we have non-null values for required fields
         return {
           id: user.id,
-          name: user.name || "",
-          email: user.email || "",
+          name: user.name || (user.email ? user.email.split('@')[0] : 'user'), // Fallback name
+          email: user.email || '', // Ensure email is never null
           image: user.image,
           role: user.role,
         };
@@ -50,50 +46,51 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user, account, trigger }) {
-      // Initial sign in
+    async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        token.role = user.role;
-        token.name = user.name;
-        token.image = user.image;
-        // Add issued at time for token rotation validation
-        token.iat = Math.floor(Date.now() / 1000);
+        // Type the token correctly to accept custom properties
+        return {
+          ...token,
+          id: user.id,
+          role: user.role || "USER" // Default to USER role if none provided
+        };
       }
-      
-      // Return token with minimal modification to reduce session updates
       return token;
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as "USER" | "TEACHER" | "ADMIN";
-        session.user.email = token.email as string;
-        session.user.name = token.name as string;
-        session.user.image = token.image as string | null;
+      if (token && session.user) {
+        // Ensure user object exists and properly typed
+        session.user = {
+          ...session.user,
+          id: token.id as string,
+          role: token.role as string
+        };
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // Handle relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Handle absolute URLs
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
+    }
   },
   pages: {
     signIn: "/auth/login",
-    signOut: "/",
-    error: "/auth/error",
+    error: "/auth/error", // Custom error page
+    newUser: "/dashboard" // Where to redirect after first sign in
   },
   session: {
     strategy: "jwt",
-    // Extend session lifetime to reduce frequent renewals
-    maxAge: 24 * 60 * 60, // 24 hours
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+    updateAge: 24 * 60 * 60 // 24 hours
   },
   jwt: {
-    // Extend token max age to match session
-    maxAge: 24 * 60 * 60, // 24 hours
+    maxAge: 30 * 24 * 60 * 60, // Match session maxAge
   },
   secret: process.env.NEXTAUTH_SECRET,
-  // Prevent excessive debug logging
   debug: process.env.NODE_ENV === "development",
-  // Only send cookie on same-origin requests
   cookies: {
     sessionToken: {
       name: `__Secure-next-auth.session-token`,
@@ -101,8 +98,8 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        secure: true,
+        secure: process.env.NODE_ENV === "production",
       },
     },
   },
-};
+}

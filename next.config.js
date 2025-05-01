@@ -1,13 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  swcMinify: true,
+  // Using updated property names for Next.js 15.3.1
+  serverExternalPackages: ['@prisma/client'],
+  
+  // This property is now implicit in Next.js 15
+  // swcMinify: true,
+  
   poweredByHeader: false,
   reactStrictMode: true,
-  
-  // Keep essential experimental features but remove problematic ones
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client']
-  },
   
   // Simplified webpack configuration
   webpack: (config) => {

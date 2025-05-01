@@ -6,9 +6,9 @@ import { authOptions } from "@/lib/auth";
 
 // Validation schema for booking updates
 const bookingUpdateSchema = z.object({
-  status: z.enum(["SCHEDULED", "CONFIRMED", "COMPLETED", "CANCELLED", "NO_SHOW"]).optional(),
+  status: z.enum(["PENDING", "SCHEDULED", "CONFIRMED", "COMPLETED", "CANCELLED", "NO_SHOW"]).optional(),
   teacherNotes: z.string().max(1000).optional(),
-  cancellationReason: z.string().max(500).optional(),
+  cancelReason: z.string().max(500).optional(), // Changed from cancellationReason to cancelReason
 });
 
 // GET a single booking by ID
@@ -47,7 +47,7 @@ export async function GET(
             },
           },
         },
-        review: true,
+        reviews: true, // Changed from review to reviews
       },
     });
     
@@ -111,7 +111,7 @@ export async function PATCH(
       );
     }
     
-    const { status, teacherNotes, cancellationReason } = result.data;
+    const { status, teacherNotes, cancelReason } = result.data;
     
     // Determine who can perform this action based on the update type
     
@@ -138,17 +138,23 @@ export async function PATCH(
     }
     
     // If cancelling, require a reason
-    if (status === "CANCELLED" && !cancellationReason) {
+    if (status === "CANCELLED" && !cancelReason) {
       return NextResponse.json(
         { error: "Cancellation reason is required" },
         { status: 400 }
       );
     }
     
-    // Update the booking
+    // Update the booking with the correct field names
+    const updatedData = {
+      ...result.data,
+      // If there are notes in the update, add them to the booking
+      ...(teacherNotes && { notes: teacherNotes }),
+    };
+    
     const updatedBooking = await prisma.booking.update({
       where: { id: context.params.id },
-      data: result.data,
+      data: updatedData,
       include: {
         user: {
           select: {
@@ -179,33 +185,38 @@ export async function PATCH(
       let notificationTitle = "Booking Update";
       let notificationMessage = "";
       
+      // Format date and time in a readable format
+      const startTime = new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const dateStr = new Date(booking.startTime).toLocaleDateString();
+      
       switch (status) {
         case "CONFIRMED":
           notificationTitle = "Booking Confirmed";
-          notificationMessage = `Your booking on ${booking.date} at ${booking.startTime} has been confirmed by the teacher.`;
+          notificationMessage = `Your booking on ${dateStr} at ${startTime} has been confirmed by the teacher.`;
           break;
         case "COMPLETED":
           notificationTitle = "Booking Completed";
-          notificationMessage = `Your booking on ${booking.date} at ${booking.startTime} has been marked as completed.`;
+          notificationMessage = `Your booking on ${dateStr} at ${startTime} has been marked as completed.`;
           break;
         case "CANCELLED":
           notificationTitle = "Booking Cancelled";
-          notificationMessage = `Your booking on ${booking.date} at ${booking.startTime} has been cancelled. Reason: ${cancellationReason}`;
+          notificationMessage = `Your booking on ${dateStr} at ${startTime} has been cancelled. Reason: ${cancelReason}`;
           break;
         case "NO_SHOW":
           notificationTitle = "No Show Recorded";
-          notificationMessage = `You were marked as a no-show for your booking on ${booking.date} at ${booking.startTime}.`;
+          notificationMessage = `You were marked as a no-show for your booking on ${dateStr} at ${startTime}.`;
           break;
       }
       
       await prisma.notification.create({
         data: {
-          userId: notificationUserId,
+          receiverId: notificationUserId,
           title: notificationTitle,
           message: notificationMessage,
           type: "BOOKING",
           isRead: false,
-          relatedId: booking.id,
+          entityId: booking.id,
+          entityType: "BOOKING"
         },
       });
     }
@@ -261,12 +272,13 @@ export async function DELETE(
     const { searchParams } = new URL(req.url);
     const reason = searchParams.get("reason") || "Cancelled by user";
     
-    // Update booking to cancelled status
+    // Update booking to cancelled status with the correct field name
     const cancelledBooking = await prisma.booking.update({
       where: { id: context.params.id },
       data: {
         status: "CANCELLED",
-        cancellationReason: reason,
+        cancelReason: reason, // Using the correct field name as per Prisma schema
+        canceledBy: session.user.id,
       },
     });
     
@@ -276,14 +288,19 @@ export async function DELETE(
       ? booking.teacherProfile.userId 
       : booking.userId;
     
+    // Format date and time in a readable format
+    const startTime = new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const dateStr = new Date(booking.startTime).toLocaleDateString();
+    
     await prisma.notification.create({
       data: {
-        userId: notificationUserId,
+        receiverId: notificationUserId, // Using receiverId instead of userId
         title: "Booking Cancelled",
-        message: `Your booking on ${booking.date} at ${booking.startTime} has been cancelled. Reason: ${reason}`,
+        message: `Your booking on ${dateStr} at ${startTime} has been cancelled. Reason: ${reason}`,
         type: "BOOKING",
         isRead: false,
-        relatedId: booking.id,
+        entityId: booking.id,
+        entityType: "BOOKING"
       },
     });
     

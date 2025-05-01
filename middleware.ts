@@ -42,6 +42,8 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
+  console.log("Middleware token check:", token ? "Token exists" : "No token", "Path:", req.nextUrl.pathname);
+
   const { pathname, searchParams } = req.nextUrl;
   const callbackUrl = searchParams.get("callbackUrl");
   
@@ -73,6 +75,7 @@ export async function middleware(req: NextRequest) {
 
   // If trying to access a protected route without being logged in
   if (isProtectedPath && !token) {
+    console.log("Access to protected path without token, redirecting to login");
     if (isApiRequest) {
       return NextResponse.json(
         { error: "يجب تسجيل الدخول أولاً" },
@@ -82,13 +85,15 @@ export async function middleware(req: NextRequest) {
     
     const url = new URL("/auth/login", req.url);
     // Save the requested URL as callbackUrl to redirect after successful login
-    url.searchParams.set("callbackUrl", encodeURIComponent(pathname + req.nextUrl.search));
+    url.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(url);
   }
 
   // If logged in and trying to access a protected route without proper role
   if (isProtectedPath && token) {
     const userRole = token.role as string;
+    console.log("User role:", userRole, "for protected path:", pathname);
+    
     const allowedRoles = Object.entries(protectedPaths).find(([path]) =>
       pathname.startsWith(path)
     )?.[1];
@@ -112,11 +117,27 @@ export async function middleware(req: NextRequest) {
   // If trying to access auth pages while logged in
   if (token && (pathname === "/auth/login" || pathname === "/auth/signup")) {
     const userRole = token.role as string;
+    console.log("User already logged in, redirecting to dashboard for role:", userRole);
     
     // If there's a valid callback URL, try to honor it if the user has permission
     if (callbackUrl) {
-      const decodedCallbackUrl = decodeURIComponent(callbackUrl);
-      const callbackPath = new URL(decodedCallbackUrl, req.url).pathname;
+      // Fix double-encoding issue by ensuring proper decoding
+      let decodedCallbackUrl;
+      try {
+        // Handle potential double-encoded URLs
+        decodedCallbackUrl = decodeURIComponent(callbackUrl);
+        if (decodedCallbackUrl.includes('%2F')) {
+          decodedCallbackUrl = decodeURIComponent(decodedCallbackUrl);
+        }
+      } catch (e) {
+        // If decoding fails, use as is
+        decodedCallbackUrl = callbackUrl;
+      }
+      
+      // Ensure the URL is properly formatted for redirection
+      const callbackPath = decodedCallbackUrl.startsWith('/') 
+        ? decodedCallbackUrl 
+        : `/${decodedCallbackUrl}`;
       
       // Check if the callback URL is to a protected path
       const isCallbackProtected = Object.entries(protectedPaths).some(([path, roles]) => 
@@ -125,30 +146,28 @@ export async function middleware(req: NextRequest) {
       
       // If the callback path is protected and user has access, or it's a public path
       if (isCallbackProtected || publicPaths.some(path => callbackPath.startsWith(path))) {
-        const redirectUrl = new URL(decodedCallbackUrl, req.url);
-        // Add success login notification parameter
-        redirectUrl.searchParams.set("loginSuccess", "true");
-        return NextResponse.redirect(redirectUrl);
+        // Use a direct URL construction to avoid issues with URL parsing
+        console.log("Redirecting to callback URL:", callbackPath);
+        return NextResponse.redirect(new URL(callbackPath, req.url));
       }
     }
     
     // Default to role-based redirections
-    const redirectUrl = new URL(roleRedirections[userRole as keyof typeof roleRedirections] || "/", req.url);
-    // Add success login notification parameter
-    redirectUrl.searchParams.set("loginSuccess", "true");
-    return NextResponse.redirect(redirectUrl);
+    console.log("Redirecting to role-specific dashboard:", roleRedirections[userRole as keyof typeof roleRedirections]);
+    return NextResponse.redirect(new URL(roleRedirections[userRole as keyof typeof roleRedirections] || "/", req.url));
   }
 
   // If accessing the root path while logged in
   if (token && pathname === "/") {
     const userRole = token.role as string;
-    const redirectUrl = new URL(roleRedirections[userRole as keyof typeof roleRedirections] || "/", req.url);
-    return NextResponse.redirect(redirectUrl);
+    console.log("User at root path, redirecting to dashboard for role:", userRole);
+    return NextResponse.redirect(new URL(roleRedirections[userRole as keyof typeof roleRedirections] || "/", req.url));
   }
 
   // If accessing the dashboard root, redirect to role-specific dashboard
   if (token && pathname === "/dashboard") {
     const userRole = token.role as string;
+    console.log("User at dashboard root, redirecting to specific dashboard for role:", userRole);
     return NextResponse.redirect(
       new URL(roleRedirections[userRole as keyof typeof roleRedirections] || "/", req.url)
     );
@@ -156,9 +175,9 @@ export async function middleware(req: NextRequest) {
 
   // Add the security headers to the response
   return response;
- }
+}
 
-// See "Matching Paths" below to learn more
+// Configure which routes should use this middleware
 export const config = {
   matcher: [
     /*
@@ -168,6 +187,7 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public (public files)
      */
+    "/dashboard/:path*",
     "/((?!_next/static|_next/image|favicon.ico|public).*)",
     "/",
   ],
