@@ -1,5 +1,5 @@
 // Use CommonJS require syntax to avoid module issues
-const { PrismaClient } = require('@prisma/client')
+const { PrismaClient } = require('../generated/prisma')
 const bcrypt = require('bcryptjs')
 
 // Initialize Prisma Client
@@ -12,7 +12,7 @@ async function main() {
     // Clear existing data (with error handling)
     console.log('🧹 Clearing existing data...')
     await prisma.user.deleteMany().catch((e: Error) => 
-      console.log('No users to delete or tables don\'t exist yet')
+      console.log('No users to delete or tables dont exist yet')
     )
 
     // Create admin user
@@ -30,14 +30,14 @@ async function main() {
     console.log('✅ Admin created:', admin.email)
 
     console.log('🎉 Database seeding completed!')
-  } catch (e) {
+  } catch (e: unknown) {
     console.error('❌ Seeding error:', e)
     throw e
   }
 }
 
 main()
-  .catch((e) => {
+  .catch((e: unknown) => {
     console.error('Fatal seeding error:', e)
     process.exit(1)
   })
