@@ -60,69 +60,6 @@ export type Review = $Result.DefaultSelection<Prisma.$ReviewPayload>
 export type Notification = $Result.DefaultSelection<Prisma.$NotificationPayload>
 
 /**
- * Enums
- */
-export namespace $Enums {
-  export const Role: {
-  USER: 'USER',
-  TEACHER: 'TEACHER',
-  ADMIN: 'ADMIN'
-};
-
-export type Role = (typeof Role)[keyof typeof Role]
-
-
-export const BookingStatus: {
-  PENDING: 'PENDING',
-  CONFIRMED: 'CONFIRMED',
-  CANCELED: 'CANCELED',
-  COMPLETED: 'COMPLETED',
-  NO_SHOW: 'NO_SHOW'
-};
-
-export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus]
-
-
-export const ApprovalStatus: {
-  PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED'
-};
-
-export type ApprovalStatus = (typeof ApprovalStatus)[keyof typeof ApprovalStatus]
-
-
-export const NotificationType: {
-  BOOKING_REQUEST: 'BOOKING_REQUEST',
-  BOOKING_CONFIRMED: 'BOOKING_CONFIRMED',
-  BOOKING_CANCELED: 'BOOKING_CANCELED',
-  BOOKING_REMINDER: 'BOOKING_REMINDER',
-  REVIEW_RECEIVED: 'REVIEW_RECEIVED',
-  ACCOUNT_UPDATE: 'ACCOUNT_UPDATE',
-  ADMIN_MESSAGE: 'ADMIN_MESSAGE'
-};
-
-export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
-
-}
-
-export type Role = $Enums.Role
-
-export const Role: typeof $Enums.Role
-
-export type BookingStatus = $Enums.BookingStatus
-
-export const BookingStatus: typeof $Enums.BookingStatus
-
-export type ApprovalStatus = $Enums.ApprovalStatus
-
-export const ApprovalStatus: typeof $Enums.ApprovalStatus
-
-export type NotificationType = $Enums.NotificationType
-
-export const NotificationType: typeof $Enums.NotificationType
-
-/**
  * ##  Prisma Client ʲˢ
  *
  * Type-safe database client for TypeScript & Node.js
@@ -1661,23 +1598,23 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     accounts: number
-    sessions: number
     bookingsAsUser: number
+    notificationsSent: number
+    notificationsReceived: number
     receivedReviews: number
     givenReviews: number
-    notificationsReceived: number
-    notificationsSent: number
+    sessions: number
     availability: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
-    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     bookingsAsUser?: boolean | UserCountOutputTypeCountBookingsAsUserArgs
+    notificationsSent?: boolean | UserCountOutputTypeCountNotificationsSentArgs
+    notificationsReceived?: boolean | UserCountOutputTypeCountNotificationsReceivedArgs
     receivedReviews?: boolean | UserCountOutputTypeCountReceivedReviewsArgs
     givenReviews?: boolean | UserCountOutputTypeCountGivenReviewsArgs
-    notificationsReceived?: boolean | UserCountOutputTypeCountNotificationsReceivedArgs
-    notificationsSent?: boolean | UserCountOutputTypeCountNotificationsSentArgs
+    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     availability?: boolean | UserCountOutputTypeCountAvailabilityArgs
   }
 
@@ -1702,15 +1639,22 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SessionWhereInput
+  export type UserCountOutputTypeCountBookingsAsUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BookingWhereInput
   }
 
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountBookingsAsUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: BookingWhereInput
+  export type UserCountOutputTypeCountNotificationsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountNotificationsReceivedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NotificationWhereInput
   }
 
   /**
@@ -1730,15 +1674,8 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountNotificationsReceivedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: NotificationWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountNotificationsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: NotificationWhereInput
+  export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SessionWhereInput
   }
 
   /**
@@ -4058,7 +3995,7 @@ export namespace Prisma {
     image: string | null
     bio: string | null
     gender: string | null
-    role: $Enums.Role | null
+    role: string | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4073,7 +4010,7 @@ export namespace Prisma {
     image: string | null
     bio: string | null
     gender: string | null
-    role: $Enums.Role | null
+    role: string | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4223,7 +4160,7 @@ export namespace Prisma {
     image: string | null
     bio: string | null
     gender: string | null
-    role: $Enums.Role
+    role: string
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -4260,14 +4197,14 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
     bookingsAsUser?: boolean | User$bookingsAsUserArgs<ExtArgs>
-    teacherProfile?: boolean | User$teacherProfileArgs<ExtArgs>
+    notificationsSent?: boolean | User$notificationsSentArgs<ExtArgs>
+    notificationsReceived?: boolean | User$notificationsReceivedArgs<ExtArgs>
     receivedReviews?: boolean | User$receivedReviewsArgs<ExtArgs>
     givenReviews?: boolean | User$givenReviewsArgs<ExtArgs>
-    notificationsReceived?: boolean | User$notificationsReceivedArgs<ExtArgs>
-    notificationsSent?: boolean | User$notificationsSentArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
     availability?: boolean | User$availabilityArgs<ExtArgs>
+    teacherProfile?: boolean | User$teacherProfileArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4319,14 +4256,14 @@ export namespace Prisma {
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "password" | "image" | "bio" | "gender" | "role" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
-    sessions?: boolean | User$sessionsArgs<ExtArgs>
     bookingsAsUser?: boolean | User$bookingsAsUserArgs<ExtArgs>
-    teacherProfile?: boolean | User$teacherProfileArgs<ExtArgs>
+    notificationsSent?: boolean | User$notificationsSentArgs<ExtArgs>
+    notificationsReceived?: boolean | User$notificationsReceivedArgs<ExtArgs>
     receivedReviews?: boolean | User$receivedReviewsArgs<ExtArgs>
     givenReviews?: boolean | User$givenReviewsArgs<ExtArgs>
-    notificationsReceived?: boolean | User$notificationsReceivedArgs<ExtArgs>
-    notificationsSent?: boolean | User$notificationsSentArgs<ExtArgs>
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
     availability?: boolean | User$availabilityArgs<ExtArgs>
+    teacherProfile?: boolean | User$teacherProfileArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4336,14 +4273,14 @@ export namespace Prisma {
     name: "User"
     objects: {
       accounts: Prisma.$AccountPayload<ExtArgs>[]
-      sessions: Prisma.$SessionPayload<ExtArgs>[]
       bookingsAsUser: Prisma.$BookingPayload<ExtArgs>[]
-      teacherProfile: Prisma.$TeacherProfilePayload<ExtArgs> | null
+      notificationsSent: Prisma.$NotificationPayload<ExtArgs>[]
+      notificationsReceived: Prisma.$NotificationPayload<ExtArgs>[]
       receivedReviews: Prisma.$ReviewPayload<ExtArgs>[]
       givenReviews: Prisma.$ReviewPayload<ExtArgs>[]
-      notificationsReceived: Prisma.$NotificationPayload<ExtArgs>[]
-      notificationsSent: Prisma.$NotificationPayload<ExtArgs>[]
+      sessions: Prisma.$SessionPayload<ExtArgs>[]
       availability: Prisma.$TeacherAvailabilityPayload<ExtArgs>[]
+      teacherProfile: Prisma.$TeacherProfilePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4354,7 +4291,7 @@ export namespace Prisma {
       image: string | null
       bio: string | null
       gender: string | null
-      role: $Enums.Role
+      role: string
       isActive: boolean
       createdAt: Date
       updatedAt: Date
@@ -4753,14 +4690,14 @@ export namespace Prisma {
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     bookingsAsUser<T extends User$bookingsAsUserArgs<ExtArgs> = {}>(args?: Subset<T, User$bookingsAsUserArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    teacherProfile<T extends User$teacherProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$teacherProfileArgs<ExtArgs>>): Prisma__TeacherProfileClient<$Result.GetResult<Prisma.$TeacherProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    notificationsSent<T extends User$notificationsSentArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsSentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    notificationsReceived<T extends User$notificationsReceivedArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     receivedReviews<T extends User$receivedReviewsArgs<ExtArgs> = {}>(args?: Subset<T, User$receivedReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     givenReviews<T extends User$givenReviewsArgs<ExtArgs> = {}>(args?: Subset<T, User$givenReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    notificationsReceived<T extends User$notificationsReceivedArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    notificationsSent<T extends User$notificationsSentArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsSentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     availability<T extends User$availabilityArgs<ExtArgs> = {}>(args?: Subset<T, User$availabilityArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeacherAvailabilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    teacherProfile<T extends User$teacherProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$teacherProfileArgs<ExtArgs>>): Prisma__TeacherProfileClient<$Result.GetResult<Prisma.$TeacherProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4798,7 +4735,7 @@ export namespace Prisma {
     readonly image: FieldRef<"User", 'String'>
     readonly bio: FieldRef<"User", 'String'>
     readonly gender: FieldRef<"User", 'String'>
-    readonly role: FieldRef<"User", 'Role'>
+    readonly role: FieldRef<"User", 'String'>
     readonly isActive: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
@@ -5212,30 +5149,6 @@ export namespace Prisma {
   }
 
   /**
-   * User.sessions
-   */
-  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Session
-     */
-    select?: SessionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Session
-     */
-    omit?: SessionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SessionInclude<ExtArgs> | null
-    where?: SessionWhereInput
-    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
-    cursor?: SessionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
-  }
-
-  /**
    * User.bookingsAsUser
    */
   export type User$bookingsAsUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5260,22 +5173,51 @@ export namespace Prisma {
   }
 
   /**
-   * User.teacherProfile
+   * User.notificationsSent
    */
-  export type User$teacherProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$notificationsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the TeacherProfile
+     * Select specific fields to fetch from the Notification
      */
-    select?: TeacherProfileSelect<ExtArgs> | null
+    select?: NotificationSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the TeacherProfile
+     * Omit specific fields from the Notification
      */
-    omit?: TeacherProfileOmit<ExtArgs> | null
+    omit?: NotificationOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: TeacherProfileInclude<ExtArgs> | null
-    where?: TeacherProfileWhereInput
+    include?: NotificationInclude<ExtArgs> | null
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    cursor?: NotificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * User.notificationsReceived
+   */
+  export type User$notificationsReceivedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Notification
+     */
+    select?: NotificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Notification
+     */
+    omit?: NotificationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NotificationInclude<ExtArgs> | null
+    where?: NotificationWhereInput
+    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
+    cursor?: NotificationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
   }
 
   /**
@@ -5327,51 +5269,27 @@ export namespace Prisma {
   }
 
   /**
-   * User.notificationsReceived
+   * User.sessions
    */
-  export type User$notificationsReceivedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Notification
+     * Select specific fields to fetch from the Session
      */
-    select?: NotificationSelect<ExtArgs> | null
+    select?: SessionSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Notification
+     * Omit specific fields from the Session
      */
-    omit?: NotificationOmit<ExtArgs> | null
+    omit?: SessionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: NotificationInclude<ExtArgs> | null
-    where?: NotificationWhereInput
-    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
-    cursor?: NotificationWhereUniqueInput
+    include?: SessionInclude<ExtArgs> | null
+    where?: SessionWhereInput
+    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
+    cursor?: SessionWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
-  }
-
-  /**
-   * User.notificationsSent
-   */
-  export type User$notificationsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Notification
-     */
-    select?: NotificationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Notification
-     */
-    omit?: NotificationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: NotificationInclude<ExtArgs> | null
-    where?: NotificationWhereInput
-    orderBy?: NotificationOrderByWithRelationInput | NotificationOrderByWithRelationInput[]
-    cursor?: NotificationWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
   }
 
   /**
@@ -5396,6 +5314,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TeacherAvailabilityScalarFieldEnum | TeacherAvailabilityScalarFieldEnum[]
+  }
+
+  /**
+   * User.teacherProfile
+   */
+  export type User$teacherProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeacherProfile
+     */
+    select?: TeacherProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeacherProfile
+     */
+    omit?: TeacherProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeacherProfileInclude<ExtArgs> | null
+    where?: TeacherProfileWhereInput
   }
 
   /**
@@ -6414,7 +6351,7 @@ export namespace Prisma {
     specialization: string | null
     videoUrl: string | null
     yearsOfExperience: number | null
-    approvalStatus: $Enums.ApprovalStatus | null
+    approvalStatus: string | null
     isAvailable: boolean | null
     averageRating: number | null
     reviewCount: number | null
@@ -6428,7 +6365,7 @@ export namespace Prisma {
     specialization: string | null
     videoUrl: string | null
     yearsOfExperience: number | null
-    approvalStatus: $Enums.ApprovalStatus | null
+    approvalStatus: string | null
     isAvailable: boolean | null
     averageRating: number | null
     reviewCount: number | null
@@ -6599,7 +6536,7 @@ export namespace Prisma {
     specialization: string | null
     videoUrl: string | null
     yearsOfExperience: number | null
-    approvalStatus: $Enums.ApprovalStatus
+    approvalStatus: string
     isAvailable: boolean
     averageRating: number
     reviewCount: number
@@ -6638,8 +6575,8 @@ export namespace Prisma {
     reviewCount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     bookings?: boolean | TeacherProfile$bookingsArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | TeacherProfileCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["teacherProfile"]>
 
@@ -6689,8 +6626,8 @@ export namespace Prisma {
 
   export type TeacherProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "specialization" | "videoUrl" | "yearsOfExperience" | "approvalStatus" | "isAvailable" | "averageRating" | "reviewCount" | "createdAt" | "updatedAt", ExtArgs["result"]["teacherProfile"]>
   export type TeacherProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     bookings?: boolean | TeacherProfile$bookingsArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | TeacherProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TeacherProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6703,8 +6640,8 @@ export namespace Prisma {
   export type $TeacherProfilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "TeacherProfile"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
       bookings: Prisma.$BookingPayload<ExtArgs>[]
+      user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6712,7 +6649,7 @@ export namespace Prisma {
       specialization: string | null
       videoUrl: string | null
       yearsOfExperience: number | null
-      approvalStatus: $Enums.ApprovalStatus
+      approvalStatus: string
       isAvailable: boolean
       averageRating: number
       reviewCount: number
@@ -7112,8 +7049,8 @@ export namespace Prisma {
    */
   export interface Prisma__TeacherProfileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     bookings<T extends TeacherProfile$bookingsArgs<ExtArgs> = {}>(args?: Subset<T, TeacherProfile$bookingsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7148,7 +7085,7 @@ export namespace Prisma {
     readonly specialization: FieldRef<"TeacherProfile", 'String'>
     readonly videoUrl: FieldRef<"TeacherProfile", 'String'>
     readonly yearsOfExperience: FieldRef<"TeacherProfile", 'Int'>
-    readonly approvalStatus: FieldRef<"TeacherProfile", 'ApprovalStatus'>
+    readonly approvalStatus: FieldRef<"TeacherProfile", 'String'>
     readonly isAvailable: FieldRef<"TeacherProfile", 'Boolean'>
     readonly averageRating: FieldRef<"TeacherProfile", 'Float'>
     readonly reviewCount: FieldRef<"TeacherProfile", 'Int'>
@@ -8735,7 +8672,7 @@ export namespace Prisma {
     teacherProfileId: string | null
     startTime: Date | null
     endTime: Date | null
-    status: $Enums.BookingStatus | null
+    status: string | null
     notes: string | null
     meetingLink: string | null
     createdAt: Date | null
@@ -8750,7 +8687,7 @@ export namespace Prisma {
     teacherProfileId: string | null
     startTime: Date | null
     endTime: Date | null
-    status: $Enums.BookingStatus | null
+    status: string | null
     notes: string | null
     meetingLink: string | null
     createdAt: Date | null
@@ -8900,7 +8837,7 @@ export namespace Prisma {
     teacherProfileId: string
     startTime: Date
     endTime: Date
-    status: $Enums.BookingStatus
+    status: string
     notes: string | null
     meetingLink: string | null
     createdAt: Date
@@ -8939,8 +8876,8 @@ export namespace Prisma {
     updatedAt?: boolean
     canceledBy?: boolean
     cancelReason?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     teacherProfile?: boolean | TeacherProfileDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
     reviews?: boolean | Booking$reviewsArgs<ExtArgs>
     _count?: boolean | BookingCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
@@ -8958,8 +8895,8 @@ export namespace Prisma {
     updatedAt?: boolean
     canceledBy?: boolean
     cancelReason?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     teacherProfile?: boolean | TeacherProfileDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
   export type BookingSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8975,8 +8912,8 @@ export namespace Prisma {
     updatedAt?: boolean
     canceledBy?: boolean
     cancelReason?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
     teacherProfile?: boolean | TeacherProfileDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["booking"]>
 
   export type BookingSelectScalar = {
@@ -8996,25 +8933,25 @@ export namespace Prisma {
 
   export type BookingOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "teacherProfileId" | "startTime" | "endTime" | "status" | "notes" | "meetingLink" | "createdAt" | "updatedAt" | "canceledBy" | "cancelReason", ExtArgs["result"]["booking"]>
   export type BookingInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     teacherProfile?: boolean | TeacherProfileDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
     reviews?: boolean | Booking$reviewsArgs<ExtArgs>
     _count?: boolean | BookingCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type BookingIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     teacherProfile?: boolean | TeacherProfileDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type BookingIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
     teacherProfile?: boolean | TeacherProfileDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $BookingPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Booking"
     objects: {
-      user: Prisma.$UserPayload<ExtArgs>
       teacherProfile: Prisma.$TeacherProfilePayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
       reviews: Prisma.$ReviewPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -9023,7 +8960,7 @@ export namespace Prisma {
       teacherProfileId: string
       startTime: Date
       endTime: Date
-      status: $Enums.BookingStatus
+      status: string
       notes: string | null
       meetingLink: string | null
       createdAt: Date
@@ -9424,8 +9361,8 @@ export namespace Prisma {
    */
   export interface Prisma__BookingClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     teacherProfile<T extends TeacherProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TeacherProfileDefaultArgs<ExtArgs>>): Prisma__TeacherProfileClient<$Result.GetResult<Prisma.$TeacherProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     reviews<T extends Booking$reviewsArgs<ExtArgs> = {}>(args?: Subset<T, Booking$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -9461,7 +9398,7 @@ export namespace Prisma {
     readonly teacherProfileId: FieldRef<"Booking", 'String'>
     readonly startTime: FieldRef<"Booking", 'DateTime'>
     readonly endTime: FieldRef<"Booking", 'DateTime'>
-    readonly status: FieldRef<"Booking", 'BookingStatus'>
+    readonly status: FieldRef<"Booking", 'String'>
     readonly notes: FieldRef<"Booking", 'String'>
     readonly meetingLink: FieldRef<"Booking", 'String'>
     readonly createdAt: FieldRef<"Booking", 'DateTime'>
@@ -10126,9 +10063,9 @@ export namespace Prisma {
     comment?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    booking?: boolean | BookingDefaultArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
     teacher?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    booking?: boolean | BookingDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["review"]>
 
   export type ReviewSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10140,9 +10077,9 @@ export namespace Prisma {
     comment?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    booking?: boolean | BookingDefaultArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
     teacher?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    booking?: boolean | BookingDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["review"]>
 
   export type ReviewSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -10154,9 +10091,9 @@ export namespace Prisma {
     comment?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    booking?: boolean | BookingDefaultArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
     teacher?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    booking?: boolean | BookingDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["review"]>
 
   export type ReviewSelectScalar = {
@@ -10172,27 +10109,27 @@ export namespace Prisma {
 
   export type ReviewOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "bookingId" | "userId" | "teacherId" | "rating" | "comment" | "createdAt" | "updatedAt", ExtArgs["result"]["review"]>
   export type ReviewInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    booking?: boolean | BookingDefaultArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
     teacher?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    booking?: boolean | BookingDefaultArgs<ExtArgs>
   }
   export type ReviewIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    booking?: boolean | BookingDefaultArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
     teacher?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    booking?: boolean | BookingDefaultArgs<ExtArgs>
   }
   export type ReviewIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    booking?: boolean | BookingDefaultArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
     teacher?: boolean | UserDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    booking?: boolean | BookingDefaultArgs<ExtArgs>
   }
 
   export type $ReviewPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Review"
     objects: {
-      booking: Prisma.$BookingPayload<ExtArgs>
-      user: Prisma.$UserPayload<ExtArgs>
       teacher: Prisma.$UserPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+      booking: Prisma.$BookingPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10597,9 +10534,9 @@ export namespace Prisma {
    */
   export interface Prisma__ReviewClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    booking<T extends BookingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BookingDefaultArgs<ExtArgs>>): Prisma__BookingClient<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     teacher<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    booking<T extends BookingDefaultArgs<ExtArgs> = {}>(args?: Subset<T, BookingDefaultArgs<ExtArgs>>): Prisma__BookingClient<$Result.GetResult<Prisma.$BookingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11061,7 +10998,7 @@ export namespace Prisma {
 
   export type NotificationMinAggregateOutputType = {
     id: string | null
-    type: $Enums.NotificationType | null
+    type: string | null
     title: string | null
     message: string | null
     isRead: boolean | null
@@ -11074,7 +11011,7 @@ export namespace Prisma {
 
   export type NotificationMaxAggregateOutputType = {
     id: string | null
-    type: $Enums.NotificationType | null
+    type: string | null
     title: string | null
     message: string | null
     isRead: boolean | null
@@ -11214,7 +11151,7 @@ export namespace Prisma {
 
   export type NotificationGroupByOutputType = {
     id: string
-    type: $Enums.NotificationType
+    type: string
     title: string
     message: string
     isRead: boolean
@@ -11253,8 +11190,8 @@ export namespace Prisma {
     senderId?: boolean
     entityId?: boolean
     entityType?: boolean
-    receiver?: boolean | UserDefaultArgs<ExtArgs>
     sender?: boolean | Notification$senderArgs<ExtArgs>
+    receiver?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["notification"]>
 
   export type NotificationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -11268,8 +11205,8 @@ export namespace Prisma {
     senderId?: boolean
     entityId?: boolean
     entityType?: boolean
-    receiver?: boolean | UserDefaultArgs<ExtArgs>
     sender?: boolean | Notification$senderArgs<ExtArgs>
+    receiver?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["notification"]>
 
   export type NotificationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -11283,8 +11220,8 @@ export namespace Prisma {
     senderId?: boolean
     entityId?: boolean
     entityType?: boolean
-    receiver?: boolean | UserDefaultArgs<ExtArgs>
     sender?: boolean | Notification$senderArgs<ExtArgs>
+    receiver?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["notification"]>
 
   export type NotificationSelectScalar = {
@@ -11302,27 +11239,27 @@ export namespace Prisma {
 
   export type NotificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "title" | "message" | "isRead" | "createdAt" | "receiverId" | "senderId" | "entityId" | "entityType", ExtArgs["result"]["notification"]>
   export type NotificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    receiver?: boolean | UserDefaultArgs<ExtArgs>
     sender?: boolean | Notification$senderArgs<ExtArgs>
+    receiver?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type NotificationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    receiver?: boolean | UserDefaultArgs<ExtArgs>
     sender?: boolean | Notification$senderArgs<ExtArgs>
+    receiver?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type NotificationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    receiver?: boolean | UserDefaultArgs<ExtArgs>
     sender?: boolean | Notification$senderArgs<ExtArgs>
+    receiver?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $NotificationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Notification"
     objects: {
-      receiver: Prisma.$UserPayload<ExtArgs>
       sender: Prisma.$UserPayload<ExtArgs> | null
+      receiver: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      type: $Enums.NotificationType
+      type: string
       title: string
       message: string
       isRead: boolean
@@ -11725,8 +11662,8 @@ export namespace Prisma {
    */
   export interface Prisma__NotificationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    receiver<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     sender<T extends Notification$senderArgs<ExtArgs> = {}>(args?: Subset<T, Notification$senderArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    receiver<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11757,7 +11694,7 @@ export namespace Prisma {
    */
   interface NotificationFieldRefs {
     readonly id: FieldRef<"Notification", 'String'>
-    readonly type: FieldRef<"Notification", 'NotificationType'>
+    readonly type: FieldRef<"Notification", 'String'>
     readonly title: FieldRef<"Notification", 'String'>
     readonly message: FieldRef<"Notification", 'String'>
     readonly isRead: FieldRef<"Notification", 'Boolean'>
@@ -12385,13 +12322,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Role'
-   */
-  export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
-    
-
-
-  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -12399,30 +12329,9 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'ApprovalStatus'
-   */
-  export type EnumApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ApprovalStatus'>
-    
-
-
-  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'BookingStatus'
-   */
-  export type EnumBookingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BookingStatus'>
-    
-
-
-  /**
-   * Reference to a field of type 'NotificationType'
-   */
-  export type EnumNotificationTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationType'>
     
   /**
    * Deep Input Types
@@ -12584,19 +12493,19 @@ export namespace Prisma {
     image?: StringNullableFilter<"User"> | string | null
     bio?: StringNullableFilter<"User"> | string | null
     gender?: StringNullableFilter<"User"> | string | null
-    role?: EnumRoleFilter<"User"> | $Enums.Role
+    role?: StringFilter<"User"> | string
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
-    sessions?: SessionListRelationFilter
     bookingsAsUser?: BookingListRelationFilter
-    teacherProfile?: XOR<TeacherProfileNullableScalarRelationFilter, TeacherProfileWhereInput> | null
+    notificationsSent?: NotificationListRelationFilter
+    notificationsReceived?: NotificationListRelationFilter
     receivedReviews?: ReviewListRelationFilter
     givenReviews?: ReviewListRelationFilter
-    notificationsReceived?: NotificationListRelationFilter
-    notificationsSent?: NotificationListRelationFilter
+    sessions?: SessionListRelationFilter
     availability?: TeacherAvailabilityListRelationFilter
+    teacherProfile?: XOR<TeacherProfileNullableScalarRelationFilter, TeacherProfileWhereInput> | null
   }
 
   export type UserOrderByWithRelationInput = {
@@ -12613,14 +12522,14 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
-    sessions?: SessionOrderByRelationAggregateInput
     bookingsAsUser?: BookingOrderByRelationAggregateInput
-    teacherProfile?: TeacherProfileOrderByWithRelationInput
+    notificationsSent?: NotificationOrderByRelationAggregateInput
+    notificationsReceived?: NotificationOrderByRelationAggregateInput
     receivedReviews?: ReviewOrderByRelationAggregateInput
     givenReviews?: ReviewOrderByRelationAggregateInput
-    notificationsReceived?: NotificationOrderByRelationAggregateInput
-    notificationsSent?: NotificationOrderByRelationAggregateInput
+    sessions?: SessionOrderByRelationAggregateInput
     availability?: TeacherAvailabilityOrderByRelationAggregateInput
+    teacherProfile?: TeacherProfileOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -12635,19 +12544,19 @@ export namespace Prisma {
     image?: StringNullableFilter<"User"> | string | null
     bio?: StringNullableFilter<"User"> | string | null
     gender?: StringNullableFilter<"User"> | string | null
-    role?: EnumRoleFilter<"User"> | $Enums.Role
+    role?: StringFilter<"User"> | string
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
-    sessions?: SessionListRelationFilter
     bookingsAsUser?: BookingListRelationFilter
-    teacherProfile?: XOR<TeacherProfileNullableScalarRelationFilter, TeacherProfileWhereInput> | null
+    notificationsSent?: NotificationListRelationFilter
+    notificationsReceived?: NotificationListRelationFilter
     receivedReviews?: ReviewListRelationFilter
     givenReviews?: ReviewListRelationFilter
-    notificationsReceived?: NotificationListRelationFilter
-    notificationsSent?: NotificationListRelationFilter
+    sessions?: SessionListRelationFilter
     availability?: TeacherAvailabilityListRelationFilter
+    teacherProfile?: XOR<TeacherProfileNullableScalarRelationFilter, TeacherProfileWhereInput> | null
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -12680,7 +12589,7 @@ export namespace Prisma {
     image?: StringNullableWithAggregatesFilter<"User"> | string | null
     bio?: StringNullableWithAggregatesFilter<"User"> | string | null
     gender?: StringNullableWithAggregatesFilter<"User"> | string | null
-    role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
+    role?: StringWithAggregatesFilter<"User"> | string
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -12738,14 +12647,14 @@ export namespace Prisma {
     specialization?: StringNullableFilter<"TeacherProfile"> | string | null
     videoUrl?: StringNullableFilter<"TeacherProfile"> | string | null
     yearsOfExperience?: IntNullableFilter<"TeacherProfile"> | number | null
-    approvalStatus?: EnumApprovalStatusFilter<"TeacherProfile"> | $Enums.ApprovalStatus
+    approvalStatus?: StringFilter<"TeacherProfile"> | string
     isAvailable?: BoolFilter<"TeacherProfile"> | boolean
     averageRating?: FloatFilter<"TeacherProfile"> | number
     reviewCount?: IntFilter<"TeacherProfile"> | number
     createdAt?: DateTimeFilter<"TeacherProfile"> | Date | string
     updatedAt?: DateTimeFilter<"TeacherProfile"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     bookings?: BookingListRelationFilter
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type TeacherProfileOrderByWithRelationInput = {
@@ -12760,8 +12669,8 @@ export namespace Prisma {
     reviewCount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    user?: UserOrderByWithRelationInput
     bookings?: BookingOrderByRelationAggregateInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type TeacherProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -12773,14 +12682,14 @@ export namespace Prisma {
     specialization?: StringNullableFilter<"TeacherProfile"> | string | null
     videoUrl?: StringNullableFilter<"TeacherProfile"> | string | null
     yearsOfExperience?: IntNullableFilter<"TeacherProfile"> | number | null
-    approvalStatus?: EnumApprovalStatusFilter<"TeacherProfile"> | $Enums.ApprovalStatus
+    approvalStatus?: StringFilter<"TeacherProfile"> | string
     isAvailable?: BoolFilter<"TeacherProfile"> | boolean
     averageRating?: FloatFilter<"TeacherProfile"> | number
     reviewCount?: IntFilter<"TeacherProfile"> | number
     createdAt?: DateTimeFilter<"TeacherProfile"> | Date | string
     updatedAt?: DateTimeFilter<"TeacherProfile"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     bookings?: BookingListRelationFilter
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id" | "userId">
 
   export type TeacherProfileOrderByWithAggregationInput = {
@@ -12811,7 +12720,7 @@ export namespace Prisma {
     specialization?: StringNullableWithAggregatesFilter<"TeacherProfile"> | string | null
     videoUrl?: StringNullableWithAggregatesFilter<"TeacherProfile"> | string | null
     yearsOfExperience?: IntNullableWithAggregatesFilter<"TeacherProfile"> | number | null
-    approvalStatus?: EnumApprovalStatusWithAggregatesFilter<"TeacherProfile"> | $Enums.ApprovalStatus
+    approvalStatus?: StringWithAggregatesFilter<"TeacherProfile"> | string
     isAvailable?: BoolWithAggregatesFilter<"TeacherProfile"> | boolean
     averageRating?: FloatWithAggregatesFilter<"TeacherProfile"> | number
     reviewCount?: IntWithAggregatesFilter<"TeacherProfile"> | number
@@ -12901,15 +12810,15 @@ export namespace Prisma {
     teacherProfileId?: StringFilter<"Booking"> | string
     startTime?: DateTimeFilter<"Booking"> | Date | string
     endTime?: DateTimeFilter<"Booking"> | Date | string
-    status?: EnumBookingStatusFilter<"Booking"> | $Enums.BookingStatus
+    status?: StringFilter<"Booking"> | string
     notes?: StringNullableFilter<"Booking"> | string | null
     meetingLink?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
     updatedAt?: DateTimeFilter<"Booking"> | Date | string
     canceledBy?: StringNullableFilter<"Booking"> | string | null
     cancelReason?: StringNullableFilter<"Booking"> | string | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     teacherProfile?: XOR<TeacherProfileScalarRelationFilter, TeacherProfileWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     reviews?: ReviewListRelationFilter
   }
 
@@ -12926,8 +12835,8 @@ export namespace Prisma {
     updatedAt?: SortOrder
     canceledBy?: SortOrderInput | SortOrder
     cancelReason?: SortOrderInput | SortOrder
-    user?: UserOrderByWithRelationInput
     teacherProfile?: TeacherProfileOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
     reviews?: ReviewOrderByRelationAggregateInput
   }
 
@@ -12940,15 +12849,15 @@ export namespace Prisma {
     teacherProfileId?: StringFilter<"Booking"> | string
     startTime?: DateTimeFilter<"Booking"> | Date | string
     endTime?: DateTimeFilter<"Booking"> | Date | string
-    status?: EnumBookingStatusFilter<"Booking"> | $Enums.BookingStatus
+    status?: StringFilter<"Booking"> | string
     notes?: StringNullableFilter<"Booking"> | string | null
     meetingLink?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
     updatedAt?: DateTimeFilter<"Booking"> | Date | string
     canceledBy?: StringNullableFilter<"Booking"> | string | null
     cancelReason?: StringNullableFilter<"Booking"> | string | null
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     teacherProfile?: XOR<TeacherProfileScalarRelationFilter, TeacherProfileWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     reviews?: ReviewListRelationFilter
   }, "id">
 
@@ -12979,7 +12888,7 @@ export namespace Prisma {
     teacherProfileId?: StringWithAggregatesFilter<"Booking"> | string
     startTime?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
     endTime?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
-    status?: EnumBookingStatusWithAggregatesFilter<"Booking"> | $Enums.BookingStatus
+    status?: StringWithAggregatesFilter<"Booking"> | string
     notes?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     meetingLink?: StringNullableWithAggregatesFilter<"Booking"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Booking"> | Date | string
@@ -13000,9 +12909,9 @@ export namespace Prisma {
     comment?: StringNullableFilter<"Review"> | string | null
     createdAt?: DateTimeFilter<"Review"> | Date | string
     updatedAt?: DateTimeFilter<"Review"> | Date | string
-    booking?: XOR<BookingScalarRelationFilter, BookingWhereInput>
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     teacher?: XOR<UserScalarRelationFilter, UserWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    booking?: XOR<BookingScalarRelationFilter, BookingWhereInput>
   }
 
   export type ReviewOrderByWithRelationInput = {
@@ -13014,9 +12923,9 @@ export namespace Prisma {
     comment?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    booking?: BookingOrderByWithRelationInput
-    user?: UserOrderByWithRelationInput
     teacher?: UserOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+    booking?: BookingOrderByWithRelationInput
   }
 
   export type ReviewWhereUniqueInput = Prisma.AtLeast<{
@@ -13032,9 +12941,9 @@ export namespace Prisma {
     comment?: StringNullableFilter<"Review"> | string | null
     createdAt?: DateTimeFilter<"Review"> | Date | string
     updatedAt?: DateTimeFilter<"Review"> | Date | string
-    booking?: XOR<BookingScalarRelationFilter, BookingWhereInput>
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
     teacher?: XOR<UserScalarRelationFilter, UserWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    booking?: XOR<BookingScalarRelationFilter, BookingWhereInput>
   }, "id" | "bookingId_userId">
 
   export type ReviewOrderByWithAggregationInput = {
@@ -13072,7 +12981,7 @@ export namespace Prisma {
     OR?: NotificationWhereInput[]
     NOT?: NotificationWhereInput | NotificationWhereInput[]
     id?: StringFilter<"Notification"> | string
-    type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
+    type?: StringFilter<"Notification"> | string
     title?: StringFilter<"Notification"> | string
     message?: StringFilter<"Notification"> | string
     isRead?: BoolFilter<"Notification"> | boolean
@@ -13081,8 +12990,8 @@ export namespace Prisma {
     senderId?: StringNullableFilter<"Notification"> | string | null
     entityId?: StringNullableFilter<"Notification"> | string | null
     entityType?: StringNullableFilter<"Notification"> | string | null
-    receiver?: XOR<UserScalarRelationFilter, UserWhereInput>
     sender?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    receiver?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type NotificationOrderByWithRelationInput = {
@@ -13096,8 +13005,8 @@ export namespace Prisma {
     senderId?: SortOrderInput | SortOrder
     entityId?: SortOrderInput | SortOrder
     entityType?: SortOrderInput | SortOrder
-    receiver?: UserOrderByWithRelationInput
     sender?: UserOrderByWithRelationInput
+    receiver?: UserOrderByWithRelationInput
   }
 
   export type NotificationWhereUniqueInput = Prisma.AtLeast<{
@@ -13105,7 +13014,7 @@ export namespace Prisma {
     AND?: NotificationWhereInput | NotificationWhereInput[]
     OR?: NotificationWhereInput[]
     NOT?: NotificationWhereInput | NotificationWhereInput[]
-    type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
+    type?: StringFilter<"Notification"> | string
     title?: StringFilter<"Notification"> | string
     message?: StringFilter<"Notification"> | string
     isRead?: BoolFilter<"Notification"> | boolean
@@ -13114,8 +13023,8 @@ export namespace Prisma {
     senderId?: StringNullableFilter<"Notification"> | string | null
     entityId?: StringNullableFilter<"Notification"> | string | null
     entityType?: StringNullableFilter<"Notification"> | string | null
-    receiver?: XOR<UserScalarRelationFilter, UserWhereInput>
     sender?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    receiver?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type NotificationOrderByWithAggregationInput = {
@@ -13139,7 +13048,7 @@ export namespace Prisma {
     OR?: NotificationScalarWhereWithAggregatesInput[]
     NOT?: NotificationScalarWhereWithAggregatesInput | NotificationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Notification"> | string
-    type?: EnumNotificationTypeWithAggregatesFilter<"Notification"> | $Enums.NotificationType
+    type?: StringWithAggregatesFilter<"Notification"> | string
     title?: StringWithAggregatesFilter<"Notification"> | string
     message?: StringWithAggregatesFilter<"Notification"> | string
     isRead?: BoolWithAggregatesFilter<"Notification"> | boolean
@@ -13311,19 +13220,19 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
     bookingsAsUser?: BookingCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
+    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
     receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
     givenReviews?: ReviewCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -13335,19 +13244,19 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     bookingsAsUser?: BookingUncheckedCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
     receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
     givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -13359,19 +13268,19 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
+    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     availability?: TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -13383,19 +13292,19 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUncheckedUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUncheckedUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     availability?: TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -13407,7 +13316,7 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13422,7 +13331,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13437,7 +13346,7 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13490,14 +13399,14 @@ export namespace Prisma {
     specialization?: string | null
     videoUrl?: string | null
     yearsOfExperience?: number | null
-    approvalStatus?: $Enums.ApprovalStatus
+    approvalStatus?: string
     isAvailable?: boolean
     averageRating?: number
     reviewCount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutTeacherProfileInput
     bookings?: BookingCreateNestedManyWithoutTeacherProfileInput
+    user: UserCreateNestedOneWithoutTeacherProfileInput
   }
 
   export type TeacherProfileUncheckedCreateInput = {
@@ -13506,7 +13415,7 @@ export namespace Prisma {
     specialization?: string | null
     videoUrl?: string | null
     yearsOfExperience?: number | null
-    approvalStatus?: $Enums.ApprovalStatus
+    approvalStatus?: string
     isAvailable?: boolean
     averageRating?: number
     reviewCount?: number
@@ -13520,14 +13429,14 @@ export namespace Prisma {
     specialization?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
-    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    approvalStatus?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     averageRating?: FloatFieldUpdateOperationsInput | number
     reviewCount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutTeacherProfileNestedInput
     bookings?: BookingUpdateManyWithoutTeacherProfileNestedInput
+    user?: UserUpdateOneRequiredWithoutTeacherProfileNestedInput
   }
 
   export type TeacherProfileUncheckedUpdateInput = {
@@ -13536,7 +13445,7 @@ export namespace Prisma {
     specialization?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
-    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    approvalStatus?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     averageRating?: FloatFieldUpdateOperationsInput | number
     reviewCount?: IntFieldUpdateOperationsInput | number
@@ -13551,7 +13460,7 @@ export namespace Prisma {
     specialization?: string | null
     videoUrl?: string | null
     yearsOfExperience?: number | null
-    approvalStatus?: $Enums.ApprovalStatus
+    approvalStatus?: string
     isAvailable?: boolean
     averageRating?: number
     reviewCount?: number
@@ -13564,7 +13473,7 @@ export namespace Prisma {
     specialization?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
-    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    approvalStatus?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     averageRating?: FloatFieldUpdateOperationsInput | number
     reviewCount?: IntFieldUpdateOperationsInput | number
@@ -13578,7 +13487,7 @@ export namespace Prisma {
     specialization?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
-    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
+    approvalStatus?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     averageRating?: FloatFieldUpdateOperationsInput | number
     reviewCount?: IntFieldUpdateOperationsInput | number
@@ -13666,15 +13575,15 @@ export namespace Prisma {
     id?: string
     startTime: Date | string
     endTime: Date | string
-    status?: $Enums.BookingStatus
+    status?: string
     notes?: string | null
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     canceledBy?: string | null
     cancelReason?: string | null
-    user: UserCreateNestedOneWithoutBookingsAsUserInput
     teacherProfile: TeacherProfileCreateNestedOneWithoutBookingsInput
+    user: UserCreateNestedOneWithoutBookingsAsUserInput
     reviews?: ReviewCreateNestedManyWithoutBookingInput
   }
 
@@ -13684,7 +13593,7 @@ export namespace Prisma {
     teacherProfileId: string
     startTime: Date | string
     endTime: Date | string
-    status?: $Enums.BookingStatus
+    status?: string
     notes?: string | null
     meetingLink?: string | null
     createdAt?: Date | string
@@ -13698,15 +13607,15 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     canceledBy?: NullableStringFieldUpdateOperationsInput | string | null
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
-    user?: UserUpdateOneRequiredWithoutBookingsAsUserNestedInput
     teacherProfile?: TeacherProfileUpdateOneRequiredWithoutBookingsNestedInput
+    user?: UserUpdateOneRequiredWithoutBookingsAsUserNestedInput
     reviews?: ReviewUpdateManyWithoutBookingNestedInput
   }
 
@@ -13716,7 +13625,7 @@ export namespace Prisma {
     teacherProfileId?: StringFieldUpdateOperationsInput | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13732,7 +13641,7 @@ export namespace Prisma {
     teacherProfileId: string
     startTime: Date | string
     endTime: Date | string
-    status?: $Enums.BookingStatus
+    status?: string
     notes?: string | null
     meetingLink?: string | null
     createdAt?: Date | string
@@ -13745,7 +13654,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13760,7 +13669,7 @@ export namespace Prisma {
     teacherProfileId?: StringFieldUpdateOperationsInput | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13775,9 +13684,9 @@ export namespace Prisma {
     comment?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    booking: BookingCreateNestedOneWithoutReviewsInput
-    user: UserCreateNestedOneWithoutGivenReviewsInput
     teacher: UserCreateNestedOneWithoutReceivedReviewsInput
+    user: UserCreateNestedOneWithoutGivenReviewsInput
+    booking: BookingCreateNestedOneWithoutReviewsInput
   }
 
   export type ReviewUncheckedCreateInput = {
@@ -13797,9 +13706,9 @@ export namespace Prisma {
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    booking?: BookingUpdateOneRequiredWithoutReviewsNestedInput
-    user?: UserUpdateOneRequiredWithoutGivenReviewsNestedInput
     teacher?: UserUpdateOneRequiredWithoutReceivedReviewsNestedInput
+    user?: UserUpdateOneRequiredWithoutGivenReviewsNestedInput
+    booking?: BookingUpdateOneRequiredWithoutReviewsNestedInput
   }
 
   export type ReviewUncheckedUpdateInput = {
@@ -13845,20 +13754,20 @@ export namespace Prisma {
 
   export type NotificationCreateInput = {
     id?: string
-    type: $Enums.NotificationType
+    type: string
     title: string
     message: string
     isRead?: boolean
     createdAt?: Date | string
     entityId?: string | null
     entityType?: string | null
-    receiver: UserCreateNestedOneWithoutNotificationsReceivedInput
     sender?: UserCreateNestedOneWithoutNotificationsSentInput
+    receiver: UserCreateNestedOneWithoutNotificationsReceivedInput
   }
 
   export type NotificationUncheckedCreateInput = {
     id?: string
-    type: $Enums.NotificationType
+    type: string
     title: string
     message: string
     isRead?: boolean
@@ -13871,20 +13780,20 @@ export namespace Prisma {
 
   export type NotificationUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    type?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     entityId?: NullableStringFieldUpdateOperationsInput | string | null
     entityType?: NullableStringFieldUpdateOperationsInput | string | null
-    receiver?: UserUpdateOneRequiredWithoutNotificationsReceivedNestedInput
     sender?: UserUpdateOneWithoutNotificationsSentNestedInput
+    receiver?: UserUpdateOneRequiredWithoutNotificationsReceivedNestedInput
   }
 
   export type NotificationUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    type?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
@@ -13897,7 +13806,7 @@ export namespace Prisma {
 
   export type NotificationCreateManyInput = {
     id?: string
-    type: $Enums.NotificationType
+    type: string
     title: string
     message: string
     isRead?: boolean
@@ -13910,7 +13819,7 @@ export namespace Prisma {
 
   export type NotificationUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    type?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
@@ -13921,7 +13830,7 @@ export namespace Prisma {
 
   export type NotificationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
+    type?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
@@ -14146,13 +14055,6 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type EnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[]
-    notIn?: $Enums.Role[]
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -14164,27 +14066,10 @@ export namespace Prisma {
     none?: AccountWhereInput
   }
 
-  export type SessionListRelationFilter = {
-    every?: SessionWhereInput
-    some?: SessionWhereInput
-    none?: SessionWhereInput
-  }
-
   export type BookingListRelationFilter = {
     every?: BookingWhereInput
     some?: BookingWhereInput
     none?: BookingWhereInput
-  }
-
-  export type TeacherProfileNullableScalarRelationFilter = {
-    is?: TeacherProfileWhereInput | null
-    isNot?: TeacherProfileWhereInput | null
-  }
-
-  export type ReviewListRelationFilter = {
-    every?: ReviewWhereInput
-    some?: ReviewWhereInput
-    none?: ReviewWhereInput
   }
 
   export type NotificationListRelationFilter = {
@@ -14193,17 +14078,30 @@ export namespace Prisma {
     none?: NotificationWhereInput
   }
 
+  export type ReviewListRelationFilter = {
+    every?: ReviewWhereInput
+    some?: ReviewWhereInput
+    none?: ReviewWhereInput
+  }
+
+  export type SessionListRelationFilter = {
+    every?: SessionWhereInput
+    some?: SessionWhereInput
+    none?: SessionWhereInput
+  }
+
   export type TeacherAvailabilityListRelationFilter = {
     every?: TeacherAvailabilityWhereInput
     some?: TeacherAvailabilityWhereInput
     none?: TeacherAvailabilityWhereInput
   }
 
-  export type AccountOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type TeacherProfileNullableScalarRelationFilter = {
+    is?: TeacherProfileWhereInput | null
+    isNot?: TeacherProfileWhereInput | null
   }
 
-  export type SessionOrderByRelationAggregateInput = {
+  export type AccountOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -14211,11 +14109,15 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type NotificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type ReviewOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type NotificationOrderByRelationAggregateInput = {
+  export type SessionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -14282,16 +14184,6 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[]
-    notIn?: $Enums.Role[]
-    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRoleFilter<$PrismaModel>
-    _max?: NestedEnumRoleFilter<$PrismaModel>
-  }
-
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
@@ -14321,13 +14213,6 @@ export namespace Prisma {
     identifier?: SortOrder
     token?: SortOrder
     expires?: SortOrder
-  }
-
-  export type EnumApprovalStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.ApprovalStatus | EnumApprovalStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ApprovalStatus[]
-    notIn?: $Enums.ApprovalStatus[]
-    not?: NestedEnumApprovalStatusFilter<$PrismaModel> | $Enums.ApprovalStatus
   }
 
   export type FloatFilter<$PrismaModel = never> = {
@@ -14404,16 +14289,6 @@ export namespace Prisma {
     yearsOfExperience?: SortOrder
     averageRating?: SortOrder
     reviewCount?: SortOrder
-  }
-
-  export type EnumApprovalStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ApprovalStatus | EnumApprovalStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ApprovalStatus[]
-    notIn?: $Enums.ApprovalStatus[]
-    not?: NestedEnumApprovalStatusWithAggregatesFilter<$PrismaModel> | $Enums.ApprovalStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumApprovalStatusFilter<$PrismaModel>
-    _max?: NestedEnumApprovalStatusFilter<$PrismaModel>
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -14496,13 +14371,6 @@ export namespace Prisma {
     dayOfWeek?: SortOrder
   }
 
-  export type EnumBookingStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.BookingStatus | EnumBookingStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.BookingStatus[]
-    notIn?: $Enums.BookingStatus[]
-    not?: NestedEnumBookingStatusFilter<$PrismaModel> | $Enums.BookingStatus
-  }
-
   export type TeacherProfileScalarRelationFilter = {
     is?: TeacherProfileWhereInput
     isNot?: TeacherProfileWhereInput
@@ -14551,16 +14419,6 @@ export namespace Prisma {
     updatedAt?: SortOrder
     canceledBy?: SortOrder
     cancelReason?: SortOrder
-  }
-
-  export type EnumBookingStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.BookingStatus | EnumBookingStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.BookingStatus[]
-    notIn?: $Enums.BookingStatus[]
-    not?: NestedEnumBookingStatusWithAggregatesFilter<$PrismaModel> | $Enums.BookingStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumBookingStatusFilter<$PrismaModel>
-    _max?: NestedEnumBookingStatusFilter<$PrismaModel>
   }
 
   export type BookingScalarRelationFilter = {
@@ -14614,13 +14472,6 @@ export namespace Prisma {
     rating?: SortOrder
   }
 
-  export type EnumNotificationTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.NotificationType[]
-    notIn?: $Enums.NotificationType[]
-    not?: NestedEnumNotificationTypeFilter<$PrismaModel> | $Enums.NotificationType
-  }
-
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
@@ -14663,16 +14514,6 @@ export namespace Prisma {
     senderId?: SortOrder
     entityId?: SortOrder
     entityType?: SortOrder
-  }
-
-  export type EnumNotificationTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.NotificationType[]
-    notIn?: $Enums.NotificationType[]
-    not?: NestedEnumNotificationTypeWithAggregatesFilter<$PrismaModel> | $Enums.NotificationType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumNotificationTypeFilter<$PrismaModel>
-    _max?: NestedEnumNotificationTypeFilter<$PrismaModel>
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -14730,13 +14571,6 @@ export namespace Prisma {
     connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
   }
 
-  export type SessionCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-  }
-
   export type BookingCreateNestedManyWithoutUserInput = {
     create?: XOR<BookingCreateWithoutUserInput, BookingUncheckedCreateWithoutUserInput> | BookingCreateWithoutUserInput[] | BookingUncheckedCreateWithoutUserInput[]
     connectOrCreate?: BookingCreateOrConnectWithoutUserInput | BookingCreateOrConnectWithoutUserInput[]
@@ -14744,10 +14578,18 @@ export namespace Prisma {
     connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
   }
 
-  export type TeacherProfileCreateNestedOneWithoutUserInput = {
-    create?: XOR<TeacherProfileCreateWithoutUserInput, TeacherProfileUncheckedCreateWithoutUserInput>
-    connectOrCreate?: TeacherProfileCreateOrConnectWithoutUserInput
-    connect?: TeacherProfileWhereUniqueInput
+  export type NotificationCreateNestedManyWithoutSenderInput = {
+    create?: XOR<NotificationCreateWithoutSenderInput, NotificationUncheckedCreateWithoutSenderInput> | NotificationCreateWithoutSenderInput[] | NotificationUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutSenderInput | NotificationCreateOrConnectWithoutSenderInput[]
+    createMany?: NotificationCreateManySenderInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type NotificationCreateNestedManyWithoutReceiverInput = {
+    create?: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput> | NotificationCreateWithoutReceiverInput[] | NotificationUncheckedCreateWithoutReceiverInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutReceiverInput | NotificationCreateOrConnectWithoutReceiverInput[]
+    createMany?: NotificationCreateManyReceiverInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
   }
 
   export type ReviewCreateNestedManyWithoutTeacherInput = {
@@ -14764,18 +14606,11 @@ export namespace Prisma {
     connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
   }
 
-  export type NotificationCreateNestedManyWithoutReceiverInput = {
-    create?: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput> | NotificationCreateWithoutReceiverInput[] | NotificationUncheckedCreateWithoutReceiverInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutReceiverInput | NotificationCreateOrConnectWithoutReceiverInput[]
-    createMany?: NotificationCreateManyReceiverInputEnvelope
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-  }
-
-  export type NotificationCreateNestedManyWithoutSenderInput = {
-    create?: XOR<NotificationCreateWithoutSenderInput, NotificationUncheckedCreateWithoutSenderInput> | NotificationCreateWithoutSenderInput[] | NotificationUncheckedCreateWithoutSenderInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutSenderInput | NotificationCreateOrConnectWithoutSenderInput[]
-    createMany?: NotificationCreateManySenderInputEnvelope
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  export type SessionCreateNestedManyWithoutUserInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
   }
 
   export type TeacherAvailabilityCreateNestedManyWithoutTeacherInput = {
@@ -14785,18 +14620,17 @@ export namespace Prisma {
     connect?: TeacherAvailabilityWhereUniqueInput | TeacherAvailabilityWhereUniqueInput[]
   }
 
+  export type TeacherProfileCreateNestedOneWithoutUserInput = {
+    create?: XOR<TeacherProfileCreateWithoutUserInput, TeacherProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: TeacherProfileCreateOrConnectWithoutUserInput
+    connect?: TeacherProfileWhereUniqueInput
+  }
+
   export type AccountUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
     createMany?: AccountCreateManyUserInputEnvelope
     connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
-  }
-
-  export type SessionUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
   }
 
   export type BookingUncheckedCreateNestedManyWithoutUserInput = {
@@ -14806,10 +14640,18 @@ export namespace Prisma {
     connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
   }
 
-  export type TeacherProfileUncheckedCreateNestedOneWithoutUserInput = {
-    create?: XOR<TeacherProfileCreateWithoutUserInput, TeacherProfileUncheckedCreateWithoutUserInput>
-    connectOrCreate?: TeacherProfileCreateOrConnectWithoutUserInput
-    connect?: TeacherProfileWhereUniqueInput
+  export type NotificationUncheckedCreateNestedManyWithoutSenderInput = {
+    create?: XOR<NotificationCreateWithoutSenderInput, NotificationUncheckedCreateWithoutSenderInput> | NotificationCreateWithoutSenderInput[] | NotificationUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutSenderInput | NotificationCreateOrConnectWithoutSenderInput[]
+    createMany?: NotificationCreateManySenderInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type NotificationUncheckedCreateNestedManyWithoutReceiverInput = {
+    create?: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput> | NotificationCreateWithoutReceiverInput[] | NotificationUncheckedCreateWithoutReceiverInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutReceiverInput | NotificationCreateOrConnectWithoutReceiverInput[]
+    createMany?: NotificationCreateManyReceiverInputEnvelope
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
   }
 
   export type ReviewUncheckedCreateNestedManyWithoutTeacherInput = {
@@ -14826,18 +14668,11 @@ export namespace Prisma {
     connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
   }
 
-  export type NotificationUncheckedCreateNestedManyWithoutReceiverInput = {
-    create?: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput> | NotificationCreateWithoutReceiverInput[] | NotificationUncheckedCreateWithoutReceiverInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutReceiverInput | NotificationCreateOrConnectWithoutReceiverInput[]
-    createMany?: NotificationCreateManyReceiverInputEnvelope
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-  }
-
-  export type NotificationUncheckedCreateNestedManyWithoutSenderInput = {
-    create?: XOR<NotificationCreateWithoutSenderInput, NotificationUncheckedCreateWithoutSenderInput> | NotificationCreateWithoutSenderInput[] | NotificationUncheckedCreateWithoutSenderInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutSenderInput | NotificationCreateOrConnectWithoutSenderInput[]
-    createMany?: NotificationCreateManySenderInputEnvelope
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  export type SessionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
   }
 
   export type TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput = {
@@ -14847,12 +14682,14 @@ export namespace Prisma {
     connect?: TeacherAvailabilityWhereUniqueInput | TeacherAvailabilityWhereUniqueInput[]
   }
 
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
+  export type TeacherProfileUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<TeacherProfileCreateWithoutUserInput, TeacherProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: TeacherProfileCreateOrConnectWithoutUserInput
+    connect?: TeacherProfileWhereUniqueInput
   }
 
-  export type EnumRoleFieldUpdateOperationsInput = {
-    set?: $Enums.Role
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -14873,20 +14710,6 @@ export namespace Prisma {
     deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
   }
 
-  export type SessionUpdateManyWithoutUserNestedInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
-  }
-
   export type BookingUpdateManyWithoutUserNestedInput = {
     create?: XOR<BookingCreateWithoutUserInput, BookingUncheckedCreateWithoutUserInput> | BookingCreateWithoutUserInput[] | BookingUncheckedCreateWithoutUserInput[]
     connectOrCreate?: BookingCreateOrConnectWithoutUserInput | BookingCreateOrConnectWithoutUserInput[]
@@ -14901,14 +14724,32 @@ export namespace Prisma {
     deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
   }
 
-  export type TeacherProfileUpdateOneWithoutUserNestedInput = {
-    create?: XOR<TeacherProfileCreateWithoutUserInput, TeacherProfileUncheckedCreateWithoutUserInput>
-    connectOrCreate?: TeacherProfileCreateOrConnectWithoutUserInput
-    upsert?: TeacherProfileUpsertWithoutUserInput
-    disconnect?: TeacherProfileWhereInput | boolean
-    delete?: TeacherProfileWhereInput | boolean
-    connect?: TeacherProfileWhereUniqueInput
-    update?: XOR<XOR<TeacherProfileUpdateToOneWithWhereWithoutUserInput, TeacherProfileUpdateWithoutUserInput>, TeacherProfileUncheckedUpdateWithoutUserInput>
+  export type NotificationUpdateManyWithoutSenderNestedInput = {
+    create?: XOR<NotificationCreateWithoutSenderInput, NotificationUncheckedCreateWithoutSenderInput> | NotificationCreateWithoutSenderInput[] | NotificationUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutSenderInput | NotificationCreateOrConnectWithoutSenderInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutSenderInput | NotificationUpsertWithWhereUniqueWithoutSenderInput[]
+    createMany?: NotificationCreateManySenderInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutSenderInput | NotificationUpdateWithWhereUniqueWithoutSenderInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutSenderInput | NotificationUpdateManyWithWhereWithoutSenderInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type NotificationUpdateManyWithoutReceiverNestedInput = {
+    create?: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput> | NotificationCreateWithoutReceiverInput[] | NotificationUncheckedCreateWithoutReceiverInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutReceiverInput | NotificationCreateOrConnectWithoutReceiverInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutReceiverInput | NotificationUpsertWithWhereUniqueWithoutReceiverInput[]
+    createMany?: NotificationCreateManyReceiverInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutReceiverInput | NotificationUpdateWithWhereUniqueWithoutReceiverInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutReceiverInput | NotificationUpdateManyWithWhereWithoutReceiverInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
   }
 
   export type ReviewUpdateManyWithoutTeacherNestedInput = {
@@ -14939,32 +14780,18 @@ export namespace Prisma {
     deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
   }
 
-  export type NotificationUpdateManyWithoutReceiverNestedInput = {
-    create?: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput> | NotificationCreateWithoutReceiverInput[] | NotificationUncheckedCreateWithoutReceiverInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutReceiverInput | NotificationCreateOrConnectWithoutReceiverInput[]
-    upsert?: NotificationUpsertWithWhereUniqueWithoutReceiverInput | NotificationUpsertWithWhereUniqueWithoutReceiverInput[]
-    createMany?: NotificationCreateManyReceiverInputEnvelope
-    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    update?: NotificationUpdateWithWhereUniqueWithoutReceiverInput | NotificationUpdateWithWhereUniqueWithoutReceiverInput[]
-    updateMany?: NotificationUpdateManyWithWhereWithoutReceiverInput | NotificationUpdateManyWithWhereWithoutReceiverInput[]
-    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
-  }
-
-  export type NotificationUpdateManyWithoutSenderNestedInput = {
-    create?: XOR<NotificationCreateWithoutSenderInput, NotificationUncheckedCreateWithoutSenderInput> | NotificationCreateWithoutSenderInput[] | NotificationUncheckedCreateWithoutSenderInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutSenderInput | NotificationCreateOrConnectWithoutSenderInput[]
-    upsert?: NotificationUpsertWithWhereUniqueWithoutSenderInput | NotificationUpsertWithWhereUniqueWithoutSenderInput[]
-    createMany?: NotificationCreateManySenderInputEnvelope
-    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    update?: NotificationUpdateWithWhereUniqueWithoutSenderInput | NotificationUpdateWithWhereUniqueWithoutSenderInput[]
-    updateMany?: NotificationUpdateManyWithWhereWithoutSenderInput | NotificationUpdateManyWithWhereWithoutSenderInput[]
-    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  export type SessionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
   }
 
   export type TeacherAvailabilityUpdateManyWithoutTeacherNestedInput = {
@@ -14981,6 +14808,16 @@ export namespace Prisma {
     deleteMany?: TeacherAvailabilityScalarWhereInput | TeacherAvailabilityScalarWhereInput[]
   }
 
+  export type TeacherProfileUpdateOneWithoutUserNestedInput = {
+    create?: XOR<TeacherProfileCreateWithoutUserInput, TeacherProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: TeacherProfileCreateOrConnectWithoutUserInput
+    upsert?: TeacherProfileUpsertWithoutUserInput
+    disconnect?: TeacherProfileWhereInput | boolean
+    delete?: TeacherProfileWhereInput | boolean
+    connect?: TeacherProfileWhereUniqueInput
+    update?: XOR<XOR<TeacherProfileUpdateToOneWithWhereWithoutUserInput, TeacherProfileUpdateWithoutUserInput>, TeacherProfileUncheckedUpdateWithoutUserInput>
+  }
+
   export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -14993,20 +14830,6 @@ export namespace Prisma {
     update?: AccountUpdateWithWhereUniqueWithoutUserInput | AccountUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: AccountUpdateManyWithWhereWithoutUserInput | AccountUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
-  }
-
-  export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
-    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: SessionCreateManyUserInputEnvelope
-    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
-    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
   }
 
   export type BookingUncheckedUpdateManyWithoutUserNestedInput = {
@@ -15023,14 +14846,32 @@ export namespace Prisma {
     deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
   }
 
-  export type TeacherProfileUncheckedUpdateOneWithoutUserNestedInput = {
-    create?: XOR<TeacherProfileCreateWithoutUserInput, TeacherProfileUncheckedCreateWithoutUserInput>
-    connectOrCreate?: TeacherProfileCreateOrConnectWithoutUserInput
-    upsert?: TeacherProfileUpsertWithoutUserInput
-    disconnect?: TeacherProfileWhereInput | boolean
-    delete?: TeacherProfileWhereInput | boolean
-    connect?: TeacherProfileWhereUniqueInput
-    update?: XOR<XOR<TeacherProfileUpdateToOneWithWhereWithoutUserInput, TeacherProfileUpdateWithoutUserInput>, TeacherProfileUncheckedUpdateWithoutUserInput>
+  export type NotificationUncheckedUpdateManyWithoutSenderNestedInput = {
+    create?: XOR<NotificationCreateWithoutSenderInput, NotificationUncheckedCreateWithoutSenderInput> | NotificationCreateWithoutSenderInput[] | NotificationUncheckedCreateWithoutSenderInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutSenderInput | NotificationCreateOrConnectWithoutSenderInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutSenderInput | NotificationUpsertWithWhereUniqueWithoutSenderInput[]
+    createMany?: NotificationCreateManySenderInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutSenderInput | NotificationUpdateWithWhereUniqueWithoutSenderInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutSenderInput | NotificationUpdateManyWithWhereWithoutSenderInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutReceiverNestedInput = {
+    create?: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput> | NotificationCreateWithoutReceiverInput[] | NotificationUncheckedCreateWithoutReceiverInput[]
+    connectOrCreate?: NotificationCreateOrConnectWithoutReceiverInput | NotificationCreateOrConnectWithoutReceiverInput[]
+    upsert?: NotificationUpsertWithWhereUniqueWithoutReceiverInput | NotificationUpsertWithWhereUniqueWithoutReceiverInput[]
+    createMany?: NotificationCreateManyReceiverInputEnvelope
+    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+    update?: NotificationUpdateWithWhereUniqueWithoutReceiverInput | NotificationUpdateWithWhereUniqueWithoutReceiverInput[]
+    updateMany?: NotificationUpdateManyWithWhereWithoutReceiverInput | NotificationUpdateManyWithWhereWithoutReceiverInput[]
+    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
   }
 
   export type ReviewUncheckedUpdateManyWithoutTeacherNestedInput = {
@@ -15061,32 +14902,18 @@ export namespace Prisma {
     deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
   }
 
-  export type NotificationUncheckedUpdateManyWithoutReceiverNestedInput = {
-    create?: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput> | NotificationCreateWithoutReceiverInput[] | NotificationUncheckedCreateWithoutReceiverInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutReceiverInput | NotificationCreateOrConnectWithoutReceiverInput[]
-    upsert?: NotificationUpsertWithWhereUniqueWithoutReceiverInput | NotificationUpsertWithWhereUniqueWithoutReceiverInput[]
-    createMany?: NotificationCreateManyReceiverInputEnvelope
-    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    update?: NotificationUpdateWithWhereUniqueWithoutReceiverInput | NotificationUpdateWithWhereUniqueWithoutReceiverInput[]
-    updateMany?: NotificationUpdateManyWithWhereWithoutReceiverInput | NotificationUpdateManyWithWhereWithoutReceiverInput[]
-    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
-  }
-
-  export type NotificationUncheckedUpdateManyWithoutSenderNestedInput = {
-    create?: XOR<NotificationCreateWithoutSenderInput, NotificationUncheckedCreateWithoutSenderInput> | NotificationCreateWithoutSenderInput[] | NotificationUncheckedCreateWithoutSenderInput[]
-    connectOrCreate?: NotificationCreateOrConnectWithoutSenderInput | NotificationCreateOrConnectWithoutSenderInput[]
-    upsert?: NotificationUpsertWithWhereUniqueWithoutSenderInput | NotificationUpsertWithWhereUniqueWithoutSenderInput[]
-    createMany?: NotificationCreateManySenderInputEnvelope
-    set?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    disconnect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    delete?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
-    update?: NotificationUpdateWithWhereUniqueWithoutSenderInput | NotificationUpdateWithWhereUniqueWithoutSenderInput[]
-    updateMany?: NotificationUpdateManyWithWhereWithoutSenderInput | NotificationUpdateManyWithWhereWithoutSenderInput[]
-    deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
   }
 
   export type TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput = {
@@ -15103,10 +14930,14 @@ export namespace Prisma {
     deleteMany?: TeacherAvailabilityScalarWhereInput | TeacherAvailabilityScalarWhereInput[]
   }
 
-  export type UserCreateNestedOneWithoutTeacherProfileInput = {
-    create?: XOR<UserCreateWithoutTeacherProfileInput, UserUncheckedCreateWithoutTeacherProfileInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTeacherProfileInput
-    connect?: UserWhereUniqueInput
+  export type TeacherProfileUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<TeacherProfileCreateWithoutUserInput, TeacherProfileUncheckedCreateWithoutUserInput>
+    connectOrCreate?: TeacherProfileCreateOrConnectWithoutUserInput
+    upsert?: TeacherProfileUpsertWithoutUserInput
+    disconnect?: TeacherProfileWhereInput | boolean
+    delete?: TeacherProfileWhereInput | boolean
+    connect?: TeacherProfileWhereUniqueInput
+    update?: XOR<XOR<TeacherProfileUpdateToOneWithWhereWithoutUserInput, TeacherProfileUpdateWithoutUserInput>, TeacherProfileUncheckedUpdateWithoutUserInput>
   }
 
   export type BookingCreateNestedManyWithoutTeacherProfileInput = {
@@ -15116,15 +14947,17 @@ export namespace Prisma {
     connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
   }
 
+  export type UserCreateNestedOneWithoutTeacherProfileInput = {
+    create?: XOR<UserCreateWithoutTeacherProfileInput, UserUncheckedCreateWithoutTeacherProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTeacherProfileInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type BookingUncheckedCreateNestedManyWithoutTeacherProfileInput = {
     create?: XOR<BookingCreateWithoutTeacherProfileInput, BookingUncheckedCreateWithoutTeacherProfileInput> | BookingCreateWithoutTeacherProfileInput[] | BookingUncheckedCreateWithoutTeacherProfileInput[]
     connectOrCreate?: BookingCreateOrConnectWithoutTeacherProfileInput | BookingCreateOrConnectWithoutTeacherProfileInput[]
     createMany?: BookingCreateManyTeacherProfileInputEnvelope
     connect?: BookingWhereUniqueInput | BookingWhereUniqueInput[]
-  }
-
-  export type EnumApprovalStatusFieldUpdateOperationsInput = {
-    set?: $Enums.ApprovalStatus
   }
 
   export type FloatFieldUpdateOperationsInput = {
@@ -15143,14 +14976,6 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type UserUpdateOneRequiredWithoutTeacherProfileNestedInput = {
-    create?: XOR<UserCreateWithoutTeacherProfileInput, UserUncheckedCreateWithoutTeacherProfileInput>
-    connectOrCreate?: UserCreateOrConnectWithoutTeacherProfileInput
-    upsert?: UserUpsertWithoutTeacherProfileInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTeacherProfileInput, UserUpdateWithoutTeacherProfileInput>, UserUncheckedUpdateWithoutTeacherProfileInput>
-  }
-
   export type BookingUpdateManyWithoutTeacherProfileNestedInput = {
     create?: XOR<BookingCreateWithoutTeacherProfileInput, BookingUncheckedCreateWithoutTeacherProfileInput> | BookingCreateWithoutTeacherProfileInput[] | BookingUncheckedCreateWithoutTeacherProfileInput[]
     connectOrCreate?: BookingCreateOrConnectWithoutTeacherProfileInput | BookingCreateOrConnectWithoutTeacherProfileInput[]
@@ -15163,6 +14988,14 @@ export namespace Prisma {
     update?: BookingUpdateWithWhereUniqueWithoutTeacherProfileInput | BookingUpdateWithWhereUniqueWithoutTeacherProfileInput[]
     updateMany?: BookingUpdateManyWithWhereWithoutTeacherProfileInput | BookingUpdateManyWithWhereWithoutTeacherProfileInput[]
     deleteMany?: BookingScalarWhereInput | BookingScalarWhereInput[]
+  }
+
+  export type UserUpdateOneRequiredWithoutTeacherProfileNestedInput = {
+    create?: XOR<UserCreateWithoutTeacherProfileInput, UserUncheckedCreateWithoutTeacherProfileInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTeacherProfileInput
+    upsert?: UserUpsertWithoutTeacherProfileInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTeacherProfileInput, UserUpdateWithoutTeacherProfileInput>, UserUncheckedUpdateWithoutTeacherProfileInput>
   }
 
   export type BookingUncheckedUpdateManyWithoutTeacherProfileNestedInput = {
@@ -15193,16 +15026,16 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAvailabilityInput, UserUpdateWithoutAvailabilityInput>, UserUncheckedUpdateWithoutAvailabilityInput>
   }
 
-  export type UserCreateNestedOneWithoutBookingsAsUserInput = {
-    create?: XOR<UserCreateWithoutBookingsAsUserInput, UserUncheckedCreateWithoutBookingsAsUserInput>
-    connectOrCreate?: UserCreateOrConnectWithoutBookingsAsUserInput
-    connect?: UserWhereUniqueInput
-  }
-
   export type TeacherProfileCreateNestedOneWithoutBookingsInput = {
     create?: XOR<TeacherProfileCreateWithoutBookingsInput, TeacherProfileUncheckedCreateWithoutBookingsInput>
     connectOrCreate?: TeacherProfileCreateOrConnectWithoutBookingsInput
     connect?: TeacherProfileWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutBookingsAsUserInput = {
+    create?: XOR<UserCreateWithoutBookingsAsUserInput, UserUncheckedCreateWithoutBookingsAsUserInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBookingsAsUserInput
+    connect?: UserWhereUniqueInput
   }
 
   export type ReviewCreateNestedManyWithoutBookingInput = {
@@ -15219,8 +15052,12 @@ export namespace Prisma {
     connect?: ReviewWhereUniqueInput | ReviewWhereUniqueInput[]
   }
 
-  export type EnumBookingStatusFieldUpdateOperationsInput = {
-    set?: $Enums.BookingStatus
+  export type TeacherProfileUpdateOneRequiredWithoutBookingsNestedInput = {
+    create?: XOR<TeacherProfileCreateWithoutBookingsInput, TeacherProfileUncheckedCreateWithoutBookingsInput>
+    connectOrCreate?: TeacherProfileCreateOrConnectWithoutBookingsInput
+    upsert?: TeacherProfileUpsertWithoutBookingsInput
+    connect?: TeacherProfileWhereUniqueInput
+    update?: XOR<XOR<TeacherProfileUpdateToOneWithWhereWithoutBookingsInput, TeacherProfileUpdateWithoutBookingsInput>, TeacherProfileUncheckedUpdateWithoutBookingsInput>
   }
 
   export type UserUpdateOneRequiredWithoutBookingsAsUserNestedInput = {
@@ -15229,14 +15066,6 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutBookingsAsUserInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBookingsAsUserInput, UserUpdateWithoutBookingsAsUserInput>, UserUncheckedUpdateWithoutBookingsAsUserInput>
-  }
-
-  export type TeacherProfileUpdateOneRequiredWithoutBookingsNestedInput = {
-    create?: XOR<TeacherProfileCreateWithoutBookingsInput, TeacherProfileUncheckedCreateWithoutBookingsInput>
-    connectOrCreate?: TeacherProfileCreateOrConnectWithoutBookingsInput
-    upsert?: TeacherProfileUpsertWithoutBookingsInput
-    connect?: TeacherProfileWhereUniqueInput
-    update?: XOR<XOR<TeacherProfileUpdateToOneWithWhereWithoutBookingsInput, TeacherProfileUpdateWithoutBookingsInput>, TeacherProfileUncheckedUpdateWithoutBookingsInput>
   }
 
   export type ReviewUpdateManyWithoutBookingNestedInput = {
@@ -15267,10 +15096,10 @@ export namespace Prisma {
     deleteMany?: ReviewScalarWhereInput | ReviewScalarWhereInput[]
   }
 
-  export type BookingCreateNestedOneWithoutReviewsInput = {
-    create?: XOR<BookingCreateWithoutReviewsInput, BookingUncheckedCreateWithoutReviewsInput>
-    connectOrCreate?: BookingCreateOrConnectWithoutReviewsInput
-    connect?: BookingWhereUniqueInput
+  export type UserCreateNestedOneWithoutReceivedReviewsInput = {
+    create?: XOR<UserCreateWithoutReceivedReviewsInput, UserUncheckedCreateWithoutReceivedReviewsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReceivedReviewsInput
+    connect?: UserWhereUniqueInput
   }
 
   export type UserCreateNestedOneWithoutGivenReviewsInput = {
@@ -15279,26 +15108,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type UserCreateNestedOneWithoutReceivedReviewsInput = {
-    create?: XOR<UserCreateWithoutReceivedReviewsInput, UserUncheckedCreateWithoutReceivedReviewsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutReceivedReviewsInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type BookingUpdateOneRequiredWithoutReviewsNestedInput = {
+  export type BookingCreateNestedOneWithoutReviewsInput = {
     create?: XOR<BookingCreateWithoutReviewsInput, BookingUncheckedCreateWithoutReviewsInput>
     connectOrCreate?: BookingCreateOrConnectWithoutReviewsInput
-    upsert?: BookingUpsertWithoutReviewsInput
     connect?: BookingWhereUniqueInput
-    update?: XOR<XOR<BookingUpdateToOneWithWhereWithoutReviewsInput, BookingUpdateWithoutReviewsInput>, BookingUncheckedUpdateWithoutReviewsInput>
-  }
-
-  export type UserUpdateOneRequiredWithoutGivenReviewsNestedInput = {
-    create?: XOR<UserCreateWithoutGivenReviewsInput, UserUncheckedCreateWithoutGivenReviewsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutGivenReviewsInput
-    upsert?: UserUpsertWithoutGivenReviewsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutGivenReviewsInput, UserUpdateWithoutGivenReviewsInput>, UserUncheckedUpdateWithoutGivenReviewsInput>
   }
 
   export type UserUpdateOneRequiredWithoutReceivedReviewsNestedInput = {
@@ -15309,10 +15122,20 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReceivedReviewsInput, UserUpdateWithoutReceivedReviewsInput>, UserUncheckedUpdateWithoutReceivedReviewsInput>
   }
 
-  export type UserCreateNestedOneWithoutNotificationsReceivedInput = {
-    create?: XOR<UserCreateWithoutNotificationsReceivedInput, UserUncheckedCreateWithoutNotificationsReceivedInput>
-    connectOrCreate?: UserCreateOrConnectWithoutNotificationsReceivedInput
+  export type UserUpdateOneRequiredWithoutGivenReviewsNestedInput = {
+    create?: XOR<UserCreateWithoutGivenReviewsInput, UserUncheckedCreateWithoutGivenReviewsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutGivenReviewsInput
+    upsert?: UserUpsertWithoutGivenReviewsInput
     connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutGivenReviewsInput, UserUpdateWithoutGivenReviewsInput>, UserUncheckedUpdateWithoutGivenReviewsInput>
+  }
+
+  export type BookingUpdateOneRequiredWithoutReviewsNestedInput = {
+    create?: XOR<BookingCreateWithoutReviewsInput, BookingUncheckedCreateWithoutReviewsInput>
+    connectOrCreate?: BookingCreateOrConnectWithoutReviewsInput
+    upsert?: BookingUpsertWithoutReviewsInput
+    connect?: BookingWhereUniqueInput
+    update?: XOR<XOR<BookingUpdateToOneWithWhereWithoutReviewsInput, BookingUpdateWithoutReviewsInput>, BookingUncheckedUpdateWithoutReviewsInput>
   }
 
   export type UserCreateNestedOneWithoutNotificationsSentInput = {
@@ -15321,16 +15144,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type EnumNotificationTypeFieldUpdateOperationsInput = {
-    set?: $Enums.NotificationType
-  }
-
-  export type UserUpdateOneRequiredWithoutNotificationsReceivedNestedInput = {
+  export type UserCreateNestedOneWithoutNotificationsReceivedInput = {
     create?: XOR<UserCreateWithoutNotificationsReceivedInput, UserUncheckedCreateWithoutNotificationsReceivedInput>
     connectOrCreate?: UserCreateOrConnectWithoutNotificationsReceivedInput
-    upsert?: UserUpsertWithoutNotificationsReceivedInput
     connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsReceivedInput, UserUpdateWithoutNotificationsReceivedInput>, UserUncheckedUpdateWithoutNotificationsReceivedInput>
   }
 
   export type UserUpdateOneWithoutNotificationsSentNestedInput = {
@@ -15341,6 +15158,14 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsSentInput, UserUpdateWithoutNotificationsSentInput>, UserUncheckedUpdateWithoutNotificationsSentInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutNotificationsReceivedNestedInput = {
+    create?: XOR<UserCreateWithoutNotificationsReceivedInput, UserUncheckedCreateWithoutNotificationsReceivedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutNotificationsReceivedInput
+    upsert?: UserUpsertWithoutNotificationsReceivedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsReceivedInput, UserUpdateWithoutNotificationsReceivedInput>, UserUncheckedUpdateWithoutNotificationsReceivedInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -15490,13 +15315,6 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
-  export type NestedEnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[]
-    notIn?: $Enums.Role[]
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -15516,29 +15334,12 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[]
-    notIn?: $Enums.Role[]
-    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRoleFilter<$PrismaModel>
-    _max?: NestedEnumRoleFilter<$PrismaModel>
-  }
-
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedBoolFilter<$PrismaModel>
     _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type NestedEnumApprovalStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.ApprovalStatus | EnumApprovalStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ApprovalStatus[]
-    notIn?: $Enums.ApprovalStatus[]
-    not?: NestedEnumApprovalStatusFilter<$PrismaModel> | $Enums.ApprovalStatus
   }
 
   export type NestedFloatFilter<$PrismaModel = never> = {
@@ -15550,16 +15351,6 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
-  }
-
-  export type NestedEnumApprovalStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.ApprovalStatus | EnumApprovalStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ApprovalStatus[]
-    notIn?: $Enums.ApprovalStatus[]
-    not?: NestedEnumApprovalStatusWithAggregatesFilter<$PrismaModel> | $Enums.ApprovalStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumApprovalStatusFilter<$PrismaModel>
-    _max?: NestedEnumApprovalStatusFilter<$PrismaModel>
   }
 
   export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -15594,40 +15385,6 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type NestedEnumBookingStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.BookingStatus | EnumBookingStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.BookingStatus[]
-    notIn?: $Enums.BookingStatus[]
-    not?: NestedEnumBookingStatusFilter<$PrismaModel> | $Enums.BookingStatus
-  }
-
-  export type NestedEnumBookingStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.BookingStatus | EnumBookingStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.BookingStatus[]
-    notIn?: $Enums.BookingStatus[]
-    not?: NestedEnumBookingStatusWithAggregatesFilter<$PrismaModel> | $Enums.BookingStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumBookingStatusFilter<$PrismaModel>
-    _max?: NestedEnumBookingStatusFilter<$PrismaModel>
-  }
-
-  export type NestedEnumNotificationTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.NotificationType[]
-    notIn?: $Enums.NotificationType[]
-    not?: NestedEnumNotificationTypeFilter<$PrismaModel> | $Enums.NotificationType
-  }
-
-  export type NestedEnumNotificationTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.NotificationType | EnumNotificationTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.NotificationType[]
-    notIn?: $Enums.NotificationType[]
-    not?: NestedEnumNotificationTypeWithAggregatesFilter<$PrismaModel> | $Enums.NotificationType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumNotificationTypeFilter<$PrismaModel>
-    _max?: NestedEnumNotificationTypeFilter<$PrismaModel>
-  }
-
   export type UserCreateWithoutAccountsInput = {
     id?: string
     name?: string | null
@@ -15637,18 +15394,18 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    sessions?: SessionCreateNestedManyWithoutUserInput
     bookingsAsUser?: BookingCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
+    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
     receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
     givenReviews?: ReviewCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -15660,18 +15417,18 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     bookingsAsUser?: BookingUncheckedCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
     receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
     givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -15699,18 +15456,18 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
+    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     availability?: TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -15722,18 +15479,18 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUncheckedUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUncheckedUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     availability?: TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -15745,18 +15502,18 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
     bookingsAsUser?: BookingCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
+    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
     receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
     givenReviews?: ReviewCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
     availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -15768,18 +15525,18 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     bookingsAsUser?: BookingUncheckedCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
     receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
     givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
     availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -15807,18 +15564,18 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
+    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
     availability?: TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -15830,18 +15587,18 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUncheckedUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUncheckedUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
     availability?: TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -15881,32 +15638,11 @@ export namespace Prisma {
     data: AccountCreateManyUserInput | AccountCreateManyUserInput[]
   }
 
-  export type SessionCreateWithoutUserInput = {
-    id?: string
-    sessionToken: string
-    expires: Date | string
-  }
-
-  export type SessionUncheckedCreateWithoutUserInput = {
-    id?: string
-    sessionToken: string
-    expires: Date | string
-  }
-
-  export type SessionCreateOrConnectWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
-  }
-
-  export type SessionCreateManyUserInputEnvelope = {
-    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
-  }
-
   export type BookingCreateWithoutUserInput = {
     id?: string
     startTime: Date | string
     endTime: Date | string
-    status?: $Enums.BookingStatus
+    status?: string
     notes?: string | null
     meetingLink?: string | null
     createdAt?: Date | string
@@ -15922,7 +15658,7 @@ export namespace Prisma {
     teacherProfileId: string
     startTime: Date | string
     endTime: Date | string
-    status?: $Enums.BookingStatus
+    status?: string
     notes?: string | null
     meetingLink?: string | null
     createdAt?: Date | string
@@ -15941,37 +15677,70 @@ export namespace Prisma {
     data: BookingCreateManyUserInput | BookingCreateManyUserInput[]
   }
 
-  export type TeacherProfileCreateWithoutUserInput = {
+  export type NotificationCreateWithoutSenderInput = {
     id?: string
-    specialization?: string | null
-    videoUrl?: string | null
-    yearsOfExperience?: number | null
-    approvalStatus?: $Enums.ApprovalStatus
-    isAvailable?: boolean
-    averageRating?: number
-    reviewCount?: number
+    type: string
+    title: string
+    message: string
+    isRead?: boolean
     createdAt?: Date | string
-    updatedAt?: Date | string
-    bookings?: BookingCreateNestedManyWithoutTeacherProfileInput
+    entityId?: string | null
+    entityType?: string | null
+    receiver: UserCreateNestedOneWithoutNotificationsReceivedInput
   }
 
-  export type TeacherProfileUncheckedCreateWithoutUserInput = {
+  export type NotificationUncheckedCreateWithoutSenderInput = {
     id?: string
-    specialization?: string | null
-    videoUrl?: string | null
-    yearsOfExperience?: number | null
-    approvalStatus?: $Enums.ApprovalStatus
-    isAvailable?: boolean
-    averageRating?: number
-    reviewCount?: number
+    type: string
+    title: string
+    message: string
+    isRead?: boolean
     createdAt?: Date | string
-    updatedAt?: Date | string
-    bookings?: BookingUncheckedCreateNestedManyWithoutTeacherProfileInput
+    receiverId: string
+    entityId?: string | null
+    entityType?: string | null
   }
 
-  export type TeacherProfileCreateOrConnectWithoutUserInput = {
-    where: TeacherProfileWhereUniqueInput
-    create: XOR<TeacherProfileCreateWithoutUserInput, TeacherProfileUncheckedCreateWithoutUserInput>
+  export type NotificationCreateOrConnectWithoutSenderInput = {
+    where: NotificationWhereUniqueInput
+    create: XOR<NotificationCreateWithoutSenderInput, NotificationUncheckedCreateWithoutSenderInput>
+  }
+
+  export type NotificationCreateManySenderInputEnvelope = {
+    data: NotificationCreateManySenderInput | NotificationCreateManySenderInput[]
+  }
+
+  export type NotificationCreateWithoutReceiverInput = {
+    id?: string
+    type: string
+    title: string
+    message: string
+    isRead?: boolean
+    createdAt?: Date | string
+    entityId?: string | null
+    entityType?: string | null
+    sender?: UserCreateNestedOneWithoutNotificationsSentInput
+  }
+
+  export type NotificationUncheckedCreateWithoutReceiverInput = {
+    id?: string
+    type: string
+    title: string
+    message: string
+    isRead?: boolean
+    createdAt?: Date | string
+    senderId?: string | null
+    entityId?: string | null
+    entityType?: string | null
+  }
+
+  export type NotificationCreateOrConnectWithoutReceiverInput = {
+    where: NotificationWhereUniqueInput
+    create: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput>
+  }
+
+  export type NotificationCreateManyReceiverInputEnvelope = {
+    data: NotificationCreateManyReceiverInput | NotificationCreateManyReceiverInput[]
   }
 
   export type ReviewCreateWithoutTeacherInput = {
@@ -15980,8 +15749,8 @@ export namespace Prisma {
     comment?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    booking: BookingCreateNestedOneWithoutReviewsInput
     user: UserCreateNestedOneWithoutGivenReviewsInput
+    booking: BookingCreateNestedOneWithoutReviewsInput
   }
 
   export type ReviewUncheckedCreateWithoutTeacherInput = {
@@ -16009,8 +15778,8 @@ export namespace Prisma {
     comment?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    booking: BookingCreateNestedOneWithoutReviewsInput
     teacher: UserCreateNestedOneWithoutReceivedReviewsInput
+    booking: BookingCreateNestedOneWithoutReviewsInput
   }
 
   export type ReviewUncheckedCreateWithoutUserInput = {
@@ -16032,70 +15801,25 @@ export namespace Prisma {
     data: ReviewCreateManyUserInput | ReviewCreateManyUserInput[]
   }
 
-  export type NotificationCreateWithoutReceiverInput = {
+  export type SessionCreateWithoutUserInput = {
     id?: string
-    type: $Enums.NotificationType
-    title: string
-    message: string
-    isRead?: boolean
-    createdAt?: Date | string
-    entityId?: string | null
-    entityType?: string | null
-    sender?: UserCreateNestedOneWithoutNotificationsSentInput
+    sessionToken: string
+    expires: Date | string
   }
 
-  export type NotificationUncheckedCreateWithoutReceiverInput = {
+  export type SessionUncheckedCreateWithoutUserInput = {
     id?: string
-    type: $Enums.NotificationType
-    title: string
-    message: string
-    isRead?: boolean
-    createdAt?: Date | string
-    senderId?: string | null
-    entityId?: string | null
-    entityType?: string | null
+    sessionToken: string
+    expires: Date | string
   }
 
-  export type NotificationCreateOrConnectWithoutReceiverInput = {
-    where: NotificationWhereUniqueInput
-    create: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput>
+  export type SessionCreateOrConnectWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
   }
 
-  export type NotificationCreateManyReceiverInputEnvelope = {
-    data: NotificationCreateManyReceiverInput | NotificationCreateManyReceiverInput[]
-  }
-
-  export type NotificationCreateWithoutSenderInput = {
-    id?: string
-    type: $Enums.NotificationType
-    title: string
-    message: string
-    isRead?: boolean
-    createdAt?: Date | string
-    entityId?: string | null
-    entityType?: string | null
-    receiver: UserCreateNestedOneWithoutNotificationsReceivedInput
-  }
-
-  export type NotificationUncheckedCreateWithoutSenderInput = {
-    id?: string
-    type: $Enums.NotificationType
-    title: string
-    message: string
-    isRead?: boolean
-    createdAt?: Date | string
-    receiverId: string
-    entityId?: string | null
-    entityType?: string | null
-  }
-
-  export type NotificationCreateOrConnectWithoutSenderInput = {
-    where: NotificationWhereUniqueInput
-    create: XOR<NotificationCreateWithoutSenderInput, NotificationUncheckedCreateWithoutSenderInput>
-  }
-
-  export type NotificationCreateManySenderInputEnvelope = {
-    data: NotificationCreateManySenderInput | NotificationCreateManySenderInput[]
+  export type SessionCreateManyUserInputEnvelope = {
+    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
   }
 
   export type TeacherAvailabilityCreateWithoutTeacherInput = {
@@ -16125,6 +15849,39 @@ export namespace Prisma {
 
   export type TeacherAvailabilityCreateManyTeacherInputEnvelope = {
     data: TeacherAvailabilityCreateManyTeacherInput | TeacherAvailabilityCreateManyTeacherInput[]
+  }
+
+  export type TeacherProfileCreateWithoutUserInput = {
+    id?: string
+    specialization?: string | null
+    videoUrl?: string | null
+    yearsOfExperience?: number | null
+    approvalStatus?: string
+    isAvailable?: boolean
+    averageRating?: number
+    reviewCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bookings?: BookingCreateNestedManyWithoutTeacherProfileInput
+  }
+
+  export type TeacherProfileUncheckedCreateWithoutUserInput = {
+    id?: string
+    specialization?: string | null
+    videoUrl?: string | null
+    yearsOfExperience?: number | null
+    approvalStatus?: string
+    isAvailable?: boolean
+    averageRating?: number
+    reviewCount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bookings?: BookingUncheckedCreateNestedManyWithoutTeacherProfileInput
+  }
+
+  export type TeacherProfileCreateOrConnectWithoutUserInput = {
+    where: TeacherProfileWhereUniqueInput
+    create: XOR<TeacherProfileCreateWithoutUserInput, TeacherProfileUncheckedCreateWithoutUserInput>
   }
 
   export type AccountUpsertWithWhereUniqueWithoutUserInput = {
@@ -16161,32 +15918,6 @@ export namespace Prisma {
     session_state?: StringNullableFilter<"Account"> | string | null
   }
 
-  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
-    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
-  }
-
-  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
-    where: SessionWhereUniqueInput
-    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
-  }
-
-  export type SessionUpdateManyWithWhereWithoutUserInput = {
-    where: SessionScalarWhereInput
-    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type SessionScalarWhereInput = {
-    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
-    OR?: SessionScalarWhereInput[]
-    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
-    id?: StringFilter<"Session"> | string
-    sessionToken?: StringFilter<"Session"> | string
-    userId?: StringFilter<"Session"> | string
-    expires?: DateTimeFilter<"Session"> | Date | string
-  }
-
   export type BookingUpsertWithWhereUniqueWithoutUserInput = {
     where: BookingWhereUniqueInput
     update: XOR<BookingUpdateWithoutUserInput, BookingUncheckedUpdateWithoutUserInput>
@@ -16212,7 +15943,7 @@ export namespace Prisma {
     teacherProfileId?: StringFilter<"Booking"> | string
     startTime?: DateTimeFilter<"Booking"> | Date | string
     endTime?: DateTimeFilter<"Booking"> | Date | string
-    status?: EnumBookingStatusFilter<"Booking"> | $Enums.BookingStatus
+    status?: StringFilter<"Booking"> | string
     notes?: StringNullableFilter<"Booking"> | string | null
     meetingLink?: StringNullableFilter<"Booking"> | string | null
     createdAt?: DateTimeFilter<"Booking"> | Date | string
@@ -16221,43 +15952,52 @@ export namespace Prisma {
     cancelReason?: StringNullableFilter<"Booking"> | string | null
   }
 
-  export type TeacherProfileUpsertWithoutUserInput = {
-    update: XOR<TeacherProfileUpdateWithoutUserInput, TeacherProfileUncheckedUpdateWithoutUserInput>
-    create: XOR<TeacherProfileCreateWithoutUserInput, TeacherProfileUncheckedCreateWithoutUserInput>
-    where?: TeacherProfileWhereInput
+  export type NotificationUpsertWithWhereUniqueWithoutSenderInput = {
+    where: NotificationWhereUniqueInput
+    update: XOR<NotificationUpdateWithoutSenderInput, NotificationUncheckedUpdateWithoutSenderInput>
+    create: XOR<NotificationCreateWithoutSenderInput, NotificationUncheckedCreateWithoutSenderInput>
   }
 
-  export type TeacherProfileUpdateToOneWithWhereWithoutUserInput = {
-    where?: TeacherProfileWhereInput
-    data: XOR<TeacherProfileUpdateWithoutUserInput, TeacherProfileUncheckedUpdateWithoutUserInput>
+  export type NotificationUpdateWithWhereUniqueWithoutSenderInput = {
+    where: NotificationWhereUniqueInput
+    data: XOR<NotificationUpdateWithoutSenderInput, NotificationUncheckedUpdateWithoutSenderInput>
   }
 
-  export type TeacherProfileUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    specialization?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
-    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean
-    averageRating?: FloatFieldUpdateOperationsInput | number
-    reviewCount?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    bookings?: BookingUpdateManyWithoutTeacherProfileNestedInput
+  export type NotificationUpdateManyWithWhereWithoutSenderInput = {
+    where: NotificationScalarWhereInput
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutSenderInput>
   }
 
-  export type TeacherProfileUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    specialization?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
-    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean
-    averageRating?: FloatFieldUpdateOperationsInput | number
-    reviewCount?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    bookings?: BookingUncheckedUpdateManyWithoutTeacherProfileNestedInput
+  export type NotificationScalarWhereInput = {
+    AND?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+    OR?: NotificationScalarWhereInput[]
+    NOT?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+    id?: StringFilter<"Notification"> | string
+    type?: StringFilter<"Notification"> | string
+    title?: StringFilter<"Notification"> | string
+    message?: StringFilter<"Notification"> | string
+    isRead?: BoolFilter<"Notification"> | boolean
+    createdAt?: DateTimeFilter<"Notification"> | Date | string
+    receiverId?: StringFilter<"Notification"> | string
+    senderId?: StringNullableFilter<"Notification"> | string | null
+    entityId?: StringNullableFilter<"Notification"> | string | null
+    entityType?: StringNullableFilter<"Notification"> | string | null
+  }
+
+  export type NotificationUpsertWithWhereUniqueWithoutReceiverInput = {
+    where: NotificationWhereUniqueInput
+    update: XOR<NotificationUpdateWithoutReceiverInput, NotificationUncheckedUpdateWithoutReceiverInput>
+    create: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput>
+  }
+
+  export type NotificationUpdateWithWhereUniqueWithoutReceiverInput = {
+    where: NotificationWhereUniqueInput
+    data: XOR<NotificationUpdateWithoutReceiverInput, NotificationUncheckedUpdateWithoutReceiverInput>
+  }
+
+  export type NotificationUpdateManyWithWhereWithoutReceiverInput = {
+    where: NotificationScalarWhereInput
+    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutReceiverInput>
   }
 
   export type ReviewUpsertWithWhereUniqueWithoutTeacherInput = {
@@ -16306,52 +16046,30 @@ export namespace Prisma {
     data: XOR<ReviewUpdateManyMutationInput, ReviewUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type NotificationUpsertWithWhereUniqueWithoutReceiverInput = {
-    where: NotificationWhereUniqueInput
-    update: XOR<NotificationUpdateWithoutReceiverInput, NotificationUncheckedUpdateWithoutReceiverInput>
-    create: XOR<NotificationCreateWithoutReceiverInput, NotificationUncheckedCreateWithoutReceiverInput>
+  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
   }
 
-  export type NotificationUpdateWithWhereUniqueWithoutReceiverInput = {
-    where: NotificationWhereUniqueInput
-    data: XOR<NotificationUpdateWithoutReceiverInput, NotificationUncheckedUpdateWithoutReceiverInput>
+  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
   }
 
-  export type NotificationUpdateManyWithWhereWithoutReceiverInput = {
-    where: NotificationScalarWhereInput
-    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutReceiverInput>
+  export type SessionUpdateManyWithWhereWithoutUserInput = {
+    where: SessionScalarWhereInput
+    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
   }
 
-  export type NotificationScalarWhereInput = {
-    AND?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
-    OR?: NotificationScalarWhereInput[]
-    NOT?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
-    id?: StringFilter<"Notification"> | string
-    type?: EnumNotificationTypeFilter<"Notification"> | $Enums.NotificationType
-    title?: StringFilter<"Notification"> | string
-    message?: StringFilter<"Notification"> | string
-    isRead?: BoolFilter<"Notification"> | boolean
-    createdAt?: DateTimeFilter<"Notification"> | Date | string
-    receiverId?: StringFilter<"Notification"> | string
-    senderId?: StringNullableFilter<"Notification"> | string | null
-    entityId?: StringNullableFilter<"Notification"> | string | null
-    entityType?: StringNullableFilter<"Notification"> | string | null
-  }
-
-  export type NotificationUpsertWithWhereUniqueWithoutSenderInput = {
-    where: NotificationWhereUniqueInput
-    update: XOR<NotificationUpdateWithoutSenderInput, NotificationUncheckedUpdateWithoutSenderInput>
-    create: XOR<NotificationCreateWithoutSenderInput, NotificationUncheckedCreateWithoutSenderInput>
-  }
-
-  export type NotificationUpdateWithWhereUniqueWithoutSenderInput = {
-    where: NotificationWhereUniqueInput
-    data: XOR<NotificationUpdateWithoutSenderInput, NotificationUncheckedUpdateWithoutSenderInput>
-  }
-
-  export type NotificationUpdateManyWithWhereWithoutSenderInput = {
-    where: NotificationScalarWhereInput
-    data: XOR<NotificationUpdateManyMutationInput, NotificationUncheckedUpdateManyWithoutSenderInput>
+  export type SessionScalarWhereInput = {
+    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    OR?: SessionScalarWhereInput[]
+    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    id?: StringFilter<"Session"> | string
+    sessionToken?: StringFilter<"Session"> | string
+    userId?: StringFilter<"Session"> | string
+    expires?: DateTimeFilter<"Session"> | Date | string
   }
 
   export type TeacherAvailabilityUpsertWithWhereUniqueWithoutTeacherInput = {
@@ -16384,62 +16102,50 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"TeacherAvailability"> | Date | string
   }
 
-  export type UserCreateWithoutTeacherProfileInput = {
-    id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: Date | string | null
-    password?: string | null
-    image?: string | null
-    bio?: string | null
-    gender?: string | null
-    role?: $Enums.Role
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    bookingsAsUser?: BookingCreateNestedManyWithoutUserInput
-    receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
-    givenReviews?: ReviewCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
-    availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+  export type TeacherProfileUpsertWithoutUserInput = {
+    update: XOR<TeacherProfileUpdateWithoutUserInput, TeacherProfileUncheckedUpdateWithoutUserInput>
+    create: XOR<TeacherProfileCreateWithoutUserInput, TeacherProfileUncheckedCreateWithoutUserInput>
+    where?: TeacherProfileWhereInput
   }
 
-  export type UserUncheckedCreateWithoutTeacherProfileInput = {
-    id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: Date | string | null
-    password?: string | null
-    image?: string | null
-    bio?: string | null
-    gender?: string | null
-    role?: $Enums.Role
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    bookingsAsUser?: BookingUncheckedCreateNestedManyWithoutUserInput
-    receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
-    givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
-    availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+  export type TeacherProfileUpdateToOneWithWhereWithoutUserInput = {
+    where?: TeacherProfileWhereInput
+    data: XOR<TeacherProfileUpdateWithoutUserInput, TeacherProfileUncheckedUpdateWithoutUserInput>
   }
 
-  export type UserCreateOrConnectWithoutTeacherProfileInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutTeacherProfileInput, UserUncheckedCreateWithoutTeacherProfileInput>
+  export type TeacherProfileUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    specialization?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    approvalStatus?: StringFieldUpdateOperationsInput | string
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    averageRating?: FloatFieldUpdateOperationsInput | number
+    reviewCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookings?: BookingUpdateManyWithoutTeacherProfileNestedInput
+  }
+
+  export type TeacherProfileUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    specialization?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    approvalStatus?: StringFieldUpdateOperationsInput | string
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    averageRating?: FloatFieldUpdateOperationsInput | number
+    reviewCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookings?: BookingUncheckedUpdateManyWithoutTeacherProfileNestedInput
   }
 
   export type BookingCreateWithoutTeacherProfileInput = {
     id?: string
     startTime: Date | string
     endTime: Date | string
-    status?: $Enums.BookingStatus
+    status?: string
     notes?: string | null
     meetingLink?: string | null
     createdAt?: Date | string
@@ -16455,7 +16161,7 @@ export namespace Prisma {
     userId: string
     startTime: Date | string
     endTime: Date | string
-    status?: $Enums.BookingStatus
+    status?: string
     notes?: string | null
     meetingLink?: string | null
     createdAt?: Date | string
@@ -16472,6 +16178,73 @@ export namespace Prisma {
 
   export type BookingCreateManyTeacherProfileInputEnvelope = {
     data: BookingCreateManyTeacherProfileInput | BookingCreateManyTeacherProfileInput[]
+  }
+
+  export type UserCreateWithoutTeacherProfileInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    password?: string | null
+    image?: string | null
+    bio?: string | null
+    gender?: string | null
+    role?: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    bookingsAsUser?: BookingCreateNestedManyWithoutUserInput
+    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
+    receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
+    givenReviews?: ReviewCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+  }
+
+  export type UserUncheckedCreateWithoutTeacherProfileInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    password?: string | null
+    image?: string | null
+    bio?: string | null
+    gender?: string | null
+    role?: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    bookingsAsUser?: BookingUncheckedCreateNestedManyWithoutUserInput
+    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
+    receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
+    givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+  }
+
+  export type UserCreateOrConnectWithoutTeacherProfileInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTeacherProfileInput, UserUncheckedCreateWithoutTeacherProfileInput>
+  }
+
+  export type BookingUpsertWithWhereUniqueWithoutTeacherProfileInput = {
+    where: BookingWhereUniqueInput
+    update: XOR<BookingUpdateWithoutTeacherProfileInput, BookingUncheckedUpdateWithoutTeacherProfileInput>
+    create: XOR<BookingCreateWithoutTeacherProfileInput, BookingUncheckedCreateWithoutTeacherProfileInput>
+  }
+
+  export type BookingUpdateWithWhereUniqueWithoutTeacherProfileInput = {
+    where: BookingWhereUniqueInput
+    data: XOR<BookingUpdateWithoutTeacherProfileInput, BookingUncheckedUpdateWithoutTeacherProfileInput>
+  }
+
+  export type BookingUpdateManyWithWhereWithoutTeacherProfileInput = {
+    where: BookingScalarWhereInput
+    data: XOR<BookingUpdateManyMutationInput, BookingUncheckedUpdateManyWithoutTeacherProfileInput>
   }
 
   export type UserUpsertWithoutTeacherProfileInput = {
@@ -16494,17 +16267,17 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUpdateManyWithoutUserNestedInput
+    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     availability?: TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
   }
 
@@ -16517,34 +16290,18 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUncheckedUpdateManyWithoutUserNestedInput
+    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUncheckedUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     availability?: TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
-  }
-
-  export type BookingUpsertWithWhereUniqueWithoutTeacherProfileInput = {
-    where: BookingWhereUniqueInput
-    update: XOR<BookingUpdateWithoutTeacherProfileInput, BookingUncheckedUpdateWithoutTeacherProfileInput>
-    create: XOR<BookingCreateWithoutTeacherProfileInput, BookingUncheckedCreateWithoutTeacherProfileInput>
-  }
-
-  export type BookingUpdateWithWhereUniqueWithoutTeacherProfileInput = {
-    where: BookingWhereUniqueInput
-    data: XOR<BookingUpdateWithoutTeacherProfileInput, BookingUncheckedUpdateWithoutTeacherProfileInput>
-  }
-
-  export type BookingUpdateManyWithWhereWithoutTeacherProfileInput = {
-    where: BookingScalarWhereInput
-    data: XOR<BookingUpdateManyMutationInput, BookingUncheckedUpdateManyWithoutTeacherProfileInput>
   }
 
   export type UserCreateWithoutAvailabilityInput = {
@@ -16556,18 +16313,18 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
     bookingsAsUser?: BookingCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
+    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
     receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
     givenReviews?: ReviewCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAvailabilityInput = {
@@ -16579,18 +16336,18 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     bookingsAsUser?: BookingUncheckedCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
     receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
     givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAvailabilityInput = {
@@ -16618,18 +16375,18 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
+    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAvailabilityInput = {
@@ -16641,69 +16398,18 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUncheckedUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUncheckedUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
-  }
-
-  export type UserCreateWithoutBookingsAsUserInput = {
-    id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: Date | string | null
-    password?: string | null
-    image?: string | null
-    bio?: string | null
-    gender?: string | null
-    role?: $Enums.Role
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
-    receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
-    givenReviews?: ReviewCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
-    availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
-  }
-
-  export type UserUncheckedCreateWithoutBookingsAsUserInput = {
-    id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: Date | string | null
-    password?: string | null
-    image?: string | null
-    bio?: string | null
-    gender?: string | null
-    role?: $Enums.Role
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-    receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
-    givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
-    availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
-  }
-
-  export type UserCreateOrConnectWithoutBookingsAsUserInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutBookingsAsUserInput, UserUncheckedCreateWithoutBookingsAsUserInput>
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type TeacherProfileCreateWithoutBookingsInput = {
@@ -16711,7 +16417,7 @@ export namespace Prisma {
     specialization?: string | null
     videoUrl?: string | null
     yearsOfExperience?: number | null
-    approvalStatus?: $Enums.ApprovalStatus
+    approvalStatus?: string
     isAvailable?: boolean
     averageRating?: number
     reviewCount?: number
@@ -16726,7 +16432,7 @@ export namespace Prisma {
     specialization?: string | null
     videoUrl?: string | null
     yearsOfExperience?: number | null
-    approvalStatus?: $Enums.ApprovalStatus
+    approvalStatus?: string
     isAvailable?: boolean
     averageRating?: number
     reviewCount?: number
@@ -16739,14 +16445,65 @@ export namespace Prisma {
     create: XOR<TeacherProfileCreateWithoutBookingsInput, TeacherProfileUncheckedCreateWithoutBookingsInput>
   }
 
+  export type UserCreateWithoutBookingsAsUserInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    password?: string | null
+    image?: string | null
+    bio?: string | null
+    gender?: string | null
+    role?: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
+    receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
+    givenReviews?: ReviewCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutBookingsAsUserInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    password?: string | null
+    image?: string | null
+    bio?: string | null
+    gender?: string | null
+    role?: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
+    receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
+    givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutBookingsAsUserInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutBookingsAsUserInput, UserUncheckedCreateWithoutBookingsAsUserInput>
+  }
+
   export type ReviewCreateWithoutBookingInput = {
     id?: string
     rating: number
     comment?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutGivenReviewsInput
     teacher: UserCreateNestedOneWithoutReceivedReviewsInput
+    user: UserCreateNestedOneWithoutGivenReviewsInput
   }
 
   export type ReviewUncheckedCreateWithoutBookingInput = {
@@ -16766,6 +16523,45 @@ export namespace Prisma {
 
   export type ReviewCreateManyBookingInputEnvelope = {
     data: ReviewCreateManyBookingInput | ReviewCreateManyBookingInput[]
+  }
+
+  export type TeacherProfileUpsertWithoutBookingsInput = {
+    update: XOR<TeacherProfileUpdateWithoutBookingsInput, TeacherProfileUncheckedUpdateWithoutBookingsInput>
+    create: XOR<TeacherProfileCreateWithoutBookingsInput, TeacherProfileUncheckedCreateWithoutBookingsInput>
+    where?: TeacherProfileWhereInput
+  }
+
+  export type TeacherProfileUpdateToOneWithWhereWithoutBookingsInput = {
+    where?: TeacherProfileWhereInput
+    data: XOR<TeacherProfileUpdateWithoutBookingsInput, TeacherProfileUncheckedUpdateWithoutBookingsInput>
+  }
+
+  export type TeacherProfileUpdateWithoutBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    specialization?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    approvalStatus?: StringFieldUpdateOperationsInput | string
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    averageRating?: FloatFieldUpdateOperationsInput | number
+    reviewCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutTeacherProfileNestedInput
+  }
+
+  export type TeacherProfileUncheckedUpdateWithoutBookingsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    specialization?: NullableStringFieldUpdateOperationsInput | string | null
+    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
+    approvalStatus?: StringFieldUpdateOperationsInput | string
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    averageRating?: FloatFieldUpdateOperationsInput | number
+    reviewCount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserUpsertWithoutBookingsAsUserInput = {
@@ -16788,18 +16584,18 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
+    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     availability?: TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBookingsAsUserInput = {
@@ -16811,57 +16607,18 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUncheckedUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     availability?: TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
-  }
-
-  export type TeacherProfileUpsertWithoutBookingsInput = {
-    update: XOR<TeacherProfileUpdateWithoutBookingsInput, TeacherProfileUncheckedUpdateWithoutBookingsInput>
-    create: XOR<TeacherProfileCreateWithoutBookingsInput, TeacherProfileUncheckedCreateWithoutBookingsInput>
-    where?: TeacherProfileWhereInput
-  }
-
-  export type TeacherProfileUpdateToOneWithWhereWithoutBookingsInput = {
-    where?: TeacherProfileWhereInput
-    data: XOR<TeacherProfileUpdateWithoutBookingsInput, TeacherProfileUncheckedUpdateWithoutBookingsInput>
-  }
-
-  export type TeacherProfileUpdateWithoutBookingsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    specialization?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
-    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean
-    averageRating?: FloatFieldUpdateOperationsInput | number
-    reviewCount?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutTeacherProfileNestedInput
-  }
-
-  export type TeacherProfileUncheckedUpdateWithoutBookingsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    specialization?: NullableStringFieldUpdateOperationsInput | string | null
-    videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    yearsOfExperience?: NullableIntFieldUpdateOperationsInput | number | null
-    approvalStatus?: EnumApprovalStatusFieldUpdateOperationsInput | $Enums.ApprovalStatus
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean
-    averageRating?: FloatFieldUpdateOperationsInput | number
-    reviewCount?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type ReviewUpsertWithWhereUniqueWithoutBookingInput = {
@@ -16880,92 +16637,6 @@ export namespace Prisma {
     data: XOR<ReviewUpdateManyMutationInput, ReviewUncheckedUpdateManyWithoutBookingInput>
   }
 
-  export type BookingCreateWithoutReviewsInput = {
-    id?: string
-    startTime: Date | string
-    endTime: Date | string
-    status?: $Enums.BookingStatus
-    notes?: string | null
-    meetingLink?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    canceledBy?: string | null
-    cancelReason?: string | null
-    user: UserCreateNestedOneWithoutBookingsAsUserInput
-    teacherProfile: TeacherProfileCreateNestedOneWithoutBookingsInput
-  }
-
-  export type BookingUncheckedCreateWithoutReviewsInput = {
-    id?: string
-    userId: string
-    teacherProfileId: string
-    startTime: Date | string
-    endTime: Date | string
-    status?: $Enums.BookingStatus
-    notes?: string | null
-    meetingLink?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    canceledBy?: string | null
-    cancelReason?: string | null
-  }
-
-  export type BookingCreateOrConnectWithoutReviewsInput = {
-    where: BookingWhereUniqueInput
-    create: XOR<BookingCreateWithoutReviewsInput, BookingUncheckedCreateWithoutReviewsInput>
-  }
-
-  export type UserCreateWithoutGivenReviewsInput = {
-    id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: Date | string | null
-    password?: string | null
-    image?: string | null
-    bio?: string | null
-    gender?: string | null
-    role?: $Enums.Role
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    bookingsAsUser?: BookingCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
-    receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
-    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
-    availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
-  }
-
-  export type UserUncheckedCreateWithoutGivenReviewsInput = {
-    id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: Date | string | null
-    password?: string | null
-    image?: string | null
-    bio?: string | null
-    gender?: string | null
-    role?: $Enums.Role
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    bookingsAsUser?: BookingUncheckedCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-    receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
-    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
-    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
-    availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
-  }
-
-  export type UserCreateOrConnectWithoutGivenReviewsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutGivenReviewsInput, UserUncheckedCreateWithoutGivenReviewsInput>
-  }
-
   export type UserCreateWithoutReceivedReviewsInput = {
     id?: string
     name?: string | null
@@ -16975,18 +16646,18 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
     bookingsAsUser?: BookingCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
-    givenReviews?: ReviewCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
     notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
+    givenReviews?: ReviewCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReceivedReviewsInput = {
@@ -16998,18 +16669,18 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     bookingsAsUser?: BookingUncheckedCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-    givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
     notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
+    givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReceivedReviewsInput = {
@@ -17017,102 +16688,90 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutReceivedReviewsInput, UserUncheckedCreateWithoutReceivedReviewsInput>
   }
 
-  export type BookingUpsertWithoutReviewsInput = {
-    update: XOR<BookingUpdateWithoutReviewsInput, BookingUncheckedUpdateWithoutReviewsInput>
-    create: XOR<BookingCreateWithoutReviewsInput, BookingUncheckedCreateWithoutReviewsInput>
-    where?: BookingWhereInput
+  export type UserCreateWithoutGivenReviewsInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    password?: string | null
+    image?: string | null
+    bio?: string | null
+    gender?: string | null
+    role?: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    bookingsAsUser?: BookingCreateNestedManyWithoutUserInput
+    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
+    receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
   }
 
-  export type BookingUpdateToOneWithWhereWithoutReviewsInput = {
-    where?: BookingWhereInput
-    data: XOR<BookingUpdateWithoutReviewsInput, BookingUncheckedUpdateWithoutReviewsInput>
+  export type UserUncheckedCreateWithoutGivenReviewsInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    password?: string | null
+    image?: string | null
+    bio?: string | null
+    gender?: string | null
+    role?: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    bookingsAsUser?: BookingUncheckedCreateNestedManyWithoutUserInput
+    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
+    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
+    receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
   }
 
-  export type BookingUpdateWithoutReviewsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    canceledBy?: NullableStringFieldUpdateOperationsInput | string | null
-    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
-    user?: UserUpdateOneRequiredWithoutBookingsAsUserNestedInput
-    teacherProfile?: TeacherProfileUpdateOneRequiredWithoutBookingsNestedInput
-  }
-
-  export type BookingUncheckedUpdateWithoutReviewsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    teacherProfileId?: StringFieldUpdateOperationsInput | string
-    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
-    notes?: NullableStringFieldUpdateOperationsInput | string | null
-    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    canceledBy?: NullableStringFieldUpdateOperationsInput | string | null
-    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type UserUpsertWithoutGivenReviewsInput = {
-    update: XOR<UserUpdateWithoutGivenReviewsInput, UserUncheckedUpdateWithoutGivenReviewsInput>
+  export type UserCreateOrConnectWithoutGivenReviewsInput = {
+    where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutGivenReviewsInput, UserUncheckedCreateWithoutGivenReviewsInput>
-    where?: UserWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutGivenReviewsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutGivenReviewsInput, UserUncheckedUpdateWithoutGivenReviewsInput>
+  export type BookingCreateWithoutReviewsInput = {
+    id?: string
+    startTime: Date | string
+    endTime: Date | string
+    status?: string
+    notes?: string | null
+    meetingLink?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    canceledBy?: string | null
+    cancelReason?: string | null
+    teacherProfile: TeacherProfileCreateNestedOneWithoutBookingsInput
+    user: UserCreateNestedOneWithoutBookingsAsUserInput
   }
 
-  export type UserUpdateWithoutGivenReviewsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    bookingsAsUser?: BookingUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
-    receivedReviews?: ReviewUpdateManyWithoutTeacherNestedInput
-    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
-    availability?: TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
+  export type BookingUncheckedCreateWithoutReviewsInput = {
+    id?: string
+    userId: string
+    teacherProfileId: string
+    startTime: Date | string
+    endTime: Date | string
+    status?: string
+    notes?: string | null
+    meetingLink?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    canceledBy?: string | null
+    cancelReason?: string | null
   }
 
-  export type UserUncheckedUpdateWithoutGivenReviewsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    bookingsAsUser?: BookingUncheckedUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-    receivedReviews?: ReviewUncheckedUpdateManyWithoutTeacherNestedInput
-    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
-    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
-    availability?: TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
+  export type BookingCreateOrConnectWithoutReviewsInput = {
+    where: BookingWhereUniqueInput
+    create: XOR<BookingCreateWithoutReviewsInput, BookingUncheckedCreateWithoutReviewsInput>
   }
 
   export type UserUpsertWithoutReceivedReviewsInput = {
@@ -17135,18 +16794,18 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
-    givenReviews?: ReviewUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
     notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
+    givenReviews?: ReviewUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     availability?: TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReceivedReviewsInput = {
@@ -17158,69 +16817,116 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUncheckedUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-    givenReviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
     notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
+    givenReviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     availability?: TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
   }
 
-  export type UserCreateWithoutNotificationsReceivedInput = {
-    id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: Date | string | null
-    password?: string | null
-    image?: string | null
-    bio?: string | null
-    gender?: string | null
-    role?: $Enums.Role
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    bookingsAsUser?: BookingCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
-    receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
-    givenReviews?: ReviewCreateNestedManyWithoutUserInput
-    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
-    availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+  export type UserUpsertWithoutGivenReviewsInput = {
+    update: XOR<UserUpdateWithoutGivenReviewsInput, UserUncheckedUpdateWithoutGivenReviewsInput>
+    create: XOR<UserCreateWithoutGivenReviewsInput, UserUncheckedCreateWithoutGivenReviewsInput>
+    where?: UserWhereInput
   }
 
-  export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
-    id?: string
-    name?: string | null
-    email?: string | null
-    emailVerified?: Date | string | null
-    password?: string | null
-    image?: string | null
-    bio?: string | null
-    gender?: string | null
-    role?: $Enums.Role
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    bookingsAsUser?: BookingUncheckedCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
-    receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
-    givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
-    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
-    availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+  export type UserUpdateToOneWithWhereWithoutGivenReviewsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutGivenReviewsInput, UserUncheckedUpdateWithoutGivenReviewsInput>
   }
 
-  export type UserCreateOrConnectWithoutNotificationsReceivedInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutNotificationsReceivedInput, UserUncheckedCreateWithoutNotificationsReceivedInput>
+  export type UserUpdateWithoutGivenReviewsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    bookingsAsUser?: BookingUpdateManyWithoutUserNestedInput
+    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
+    receivedReviews?: ReviewUpdateManyWithoutTeacherNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    availability?: TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutGivenReviewsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    bookingsAsUser?: BookingUncheckedUpdateManyWithoutUserNestedInput
+    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
+    receivedReviews?: ReviewUncheckedUpdateManyWithoutTeacherNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    availability?: TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type BookingUpsertWithoutReviewsInput = {
+    update: XOR<BookingUpdateWithoutReviewsInput, BookingUncheckedUpdateWithoutReviewsInput>
+    create: XOR<BookingCreateWithoutReviewsInput, BookingUncheckedCreateWithoutReviewsInput>
+    where?: BookingWhereInput
+  }
+
+  export type BookingUpdateToOneWithWhereWithoutReviewsInput = {
+    where?: BookingWhereInput
+    data: XOR<BookingUpdateWithoutReviewsInput, BookingUncheckedUpdateWithoutReviewsInput>
+  }
+
+  export type BookingUpdateWithoutReviewsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    canceledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
+    teacherProfile?: TeacherProfileUpdateOneRequiredWithoutBookingsNestedInput
+    user?: UserUpdateOneRequiredWithoutBookingsAsUserNestedInput
+  }
+
+  export type BookingUncheckedUpdateWithoutReviewsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    teacherProfileId?: StringFieldUpdateOperationsInput | string
+    startTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    endTime?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    canceledBy?: NullableStringFieldUpdateOperationsInput | string | null
+    cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserCreateWithoutNotificationsSentInput = {
@@ -17232,18 +16938,18 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
     bookingsAsUser?: BookingCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
+    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
     receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
     givenReviews?: ReviewCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationCreateNestedManyWithoutReceiverInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
     availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsSentInput = {
@@ -17255,18 +16961,18 @@ export namespace Prisma {
     image?: string | null
     bio?: string | null
     gender?: string | null
-    role?: $Enums.Role
+    role?: string
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     bookingsAsUser?: BookingUncheckedCreateNestedManyWithoutUserInput
-    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
     receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
     givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
-    notificationsReceived?: NotificationUncheckedCreateNestedManyWithoutReceiverInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsSentInput = {
@@ -17274,61 +16980,55 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutNotificationsSentInput, UserUncheckedCreateWithoutNotificationsSentInput>
   }
 
-  export type UserUpsertWithoutNotificationsReceivedInput = {
-    update: XOR<UserUpdateWithoutNotificationsReceivedInput, UserUncheckedUpdateWithoutNotificationsReceivedInput>
+  export type UserCreateWithoutNotificationsReceivedInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    password?: string | null
+    image?: string | null
+    bio?: string | null
+    gender?: string | null
+    role?: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    bookingsAsUser?: BookingCreateNestedManyWithoutUserInput
+    notificationsSent?: NotificationCreateNestedManyWithoutSenderInput
+    receivedReviews?: ReviewCreateNestedManyWithoutTeacherInput
+    givenReviews?: ReviewCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    availability?: TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutNotificationsReceivedInput = {
+    id?: string
+    name?: string | null
+    email?: string | null
+    emailVerified?: Date | string | null
+    password?: string | null
+    image?: string | null
+    bio?: string | null
+    gender?: string | null
+    role?: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    bookingsAsUser?: BookingUncheckedCreateNestedManyWithoutUserInput
+    notificationsSent?: NotificationUncheckedCreateNestedManyWithoutSenderInput
+    receivedReviews?: ReviewUncheckedCreateNestedManyWithoutTeacherInput
+    givenReviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    availability?: TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+    teacherProfile?: TeacherProfileUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutNotificationsReceivedInput = {
+    where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutNotificationsReceivedInput, UserUncheckedCreateWithoutNotificationsReceivedInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutNotificationsReceivedInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutNotificationsReceivedInput, UserUncheckedUpdateWithoutNotificationsReceivedInput>
-  }
-
-  export type UserUpdateWithoutNotificationsReceivedInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    bookingsAsUser?: BookingUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
-    receivedReviews?: ReviewUpdateManyWithoutTeacherNestedInput
-    givenReviews?: ReviewUpdateManyWithoutUserNestedInput
-    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
-    availability?: TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    email?: NullableStringFieldUpdateOperationsInput | string | null
-    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    bookingsAsUser?: BookingUncheckedUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
-    receivedReviews?: ReviewUncheckedUpdateManyWithoutTeacherNestedInput
-    givenReviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
-    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
-    availability?: TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
   }
 
   export type UserUpsertWithoutNotificationsSentInput = {
@@ -17351,18 +17051,18 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
+    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUpdateManyWithoutReceiverNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     availability?: TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsSentInput = {
@@ -17374,18 +17074,75 @@ export namespace Prisma {
     image?: NullableStringFieldUpdateOperationsInput | string | null
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     gender?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    role?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     bookingsAsUser?: BookingUncheckedUpdateManyWithoutUserNestedInput
-    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
     receivedReviews?: ReviewUncheckedUpdateManyWithoutTeacherNestedInput
     givenReviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
-    notificationsReceived?: NotificationUncheckedUpdateManyWithoutReceiverNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     availability?: TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUpsertWithoutNotificationsReceivedInput = {
+    update: XOR<UserUpdateWithoutNotificationsReceivedInput, UserUncheckedUpdateWithoutNotificationsReceivedInput>
+    create: XOR<UserCreateWithoutNotificationsReceivedInput, UserUncheckedCreateWithoutNotificationsReceivedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutNotificationsReceivedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutNotificationsReceivedInput, UserUncheckedUpdateWithoutNotificationsReceivedInput>
+  }
+
+  export type UserUpdateWithoutNotificationsReceivedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    bookingsAsUser?: BookingUpdateManyWithoutUserNestedInput
+    notificationsSent?: NotificationUpdateManyWithoutSenderNestedInput
+    receivedReviews?: ReviewUpdateManyWithoutTeacherNestedInput
+    givenReviews?: ReviewUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    availability?: TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutNotificationsReceivedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    gender?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    bookingsAsUser?: BookingUncheckedUpdateManyWithoutUserNestedInput
+    notificationsSent?: NotificationUncheckedUpdateManyWithoutSenderNestedInput
+    receivedReviews?: ReviewUncheckedUpdateManyWithoutTeacherNestedInput
+    givenReviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    availability?: TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
+    teacherProfile?: TeacherProfileUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type AccountCreateManyUserInput = {
@@ -17402,24 +17159,42 @@ export namespace Prisma {
     session_state?: string | null
   }
 
-  export type SessionCreateManyUserInput = {
-    id?: string
-    sessionToken: string
-    expires: Date | string
-  }
-
   export type BookingCreateManyUserInput = {
     id?: string
     teacherProfileId: string
     startTime: Date | string
     endTime: Date | string
-    status?: $Enums.BookingStatus
+    status?: string
     notes?: string | null
     meetingLink?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     canceledBy?: string | null
     cancelReason?: string | null
+  }
+
+  export type NotificationCreateManySenderInput = {
+    id?: string
+    type: string
+    title: string
+    message: string
+    isRead?: boolean
+    createdAt?: Date | string
+    receiverId: string
+    entityId?: string | null
+    entityType?: string | null
+  }
+
+  export type NotificationCreateManyReceiverInput = {
+    id?: string
+    type: string
+    title: string
+    message: string
+    isRead?: boolean
+    createdAt?: Date | string
+    senderId?: string | null
+    entityId?: string | null
+    entityType?: string | null
   }
 
   export type ReviewCreateManyTeacherInput = {
@@ -17442,28 +17217,10 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type NotificationCreateManyReceiverInput = {
+  export type SessionCreateManyUserInput = {
     id?: string
-    type: $Enums.NotificationType
-    title: string
-    message: string
-    isRead?: boolean
-    createdAt?: Date | string
-    senderId?: string | null
-    entityId?: string | null
-    entityType?: string | null
-  }
-
-  export type NotificationCreateManySenderInput = {
-    id?: string
-    type: $Enums.NotificationType
-    title: string
-    message: string
-    isRead?: boolean
-    createdAt?: Date | string
-    receiverId: string
-    entityId?: string | null
-    entityType?: string | null
+    sessionToken: string
+    expires: Date | string
   }
 
   export type TeacherAvailabilityCreateManyTeacherInput = {
@@ -17518,29 +17275,11 @@ export namespace Prisma {
     session_state?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
-  export type SessionUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sessionToken?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sessionToken?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SessionUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sessionToken?: StringFieldUpdateOperationsInput | string
-    expires?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type BookingUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17556,7 +17295,7 @@ export namespace Prisma {
     teacherProfileId?: StringFieldUpdateOperationsInput | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17571,7 +17310,7 @@ export namespace Prisma {
     teacherProfileId?: StringFieldUpdateOperationsInput | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17580,14 +17319,86 @@ export namespace Prisma {
     cancelReason?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type NotificationUpdateWithoutSenderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    receiver?: UserUpdateOneRequiredWithoutNotificationsReceivedNestedInput
+  }
+
+  export type NotificationUncheckedUpdateWithoutSenderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    receiverId?: StringFieldUpdateOperationsInput | string
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutSenderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    receiverId?: StringFieldUpdateOperationsInput | string
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type NotificationUpdateWithoutReceiverInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    sender?: UserUpdateOneWithoutNotificationsSentNestedInput
+  }
+
+  export type NotificationUncheckedUpdateWithoutReceiverInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    senderId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type NotificationUncheckedUpdateManyWithoutReceiverInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    message?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    senderId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityId?: NullableStringFieldUpdateOperationsInput | string | null
+    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type ReviewUpdateWithoutTeacherInput = {
     id?: StringFieldUpdateOperationsInput | string
     rating?: IntFieldUpdateOperationsInput | number
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    booking?: BookingUpdateOneRequiredWithoutReviewsNestedInput
     user?: UserUpdateOneRequiredWithoutGivenReviewsNestedInput
+    booking?: BookingUpdateOneRequiredWithoutReviewsNestedInput
   }
 
   export type ReviewUncheckedUpdateWithoutTeacherInput = {
@@ -17616,8 +17427,8 @@ export namespace Prisma {
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    booking?: BookingUpdateOneRequiredWithoutReviewsNestedInput
     teacher?: UserUpdateOneRequiredWithoutReceivedReviewsNestedInput
+    booking?: BookingUpdateOneRequiredWithoutReviewsNestedInput
   }
 
   export type ReviewUncheckedUpdateWithoutUserInput = {
@@ -17640,76 +17451,22 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type NotificationUpdateWithoutReceiverInput = {
+  export type SessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
-    title?: StringFieldUpdateOperationsInput | string
-    message?: StringFieldUpdateOperationsInput | string
-    isRead?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entityId?: NullableStringFieldUpdateOperationsInput | string | null
-    entityType?: NullableStringFieldUpdateOperationsInput | string | null
-    sender?: UserUpdateOneWithoutNotificationsSentNestedInput
+    sessionToken?: StringFieldUpdateOperationsInput | string
+    expires?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type NotificationUncheckedUpdateWithoutReceiverInput = {
+  export type SessionUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
-    title?: StringFieldUpdateOperationsInput | string
-    message?: StringFieldUpdateOperationsInput | string
-    isRead?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    senderId?: NullableStringFieldUpdateOperationsInput | string | null
-    entityId?: NullableStringFieldUpdateOperationsInput | string | null
-    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionToken?: StringFieldUpdateOperationsInput | string
+    expires?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type NotificationUncheckedUpdateManyWithoutReceiverInput = {
+  export type SessionUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
-    title?: StringFieldUpdateOperationsInput | string
-    message?: StringFieldUpdateOperationsInput | string
-    isRead?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    senderId?: NullableStringFieldUpdateOperationsInput | string | null
-    entityId?: NullableStringFieldUpdateOperationsInput | string | null
-    entityType?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type NotificationUpdateWithoutSenderInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
-    title?: StringFieldUpdateOperationsInput | string
-    message?: StringFieldUpdateOperationsInput | string
-    isRead?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    entityId?: NullableStringFieldUpdateOperationsInput | string | null
-    entityType?: NullableStringFieldUpdateOperationsInput | string | null
-    receiver?: UserUpdateOneRequiredWithoutNotificationsReceivedNestedInput
-  }
-
-  export type NotificationUncheckedUpdateWithoutSenderInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
-    title?: StringFieldUpdateOperationsInput | string
-    message?: StringFieldUpdateOperationsInput | string
-    isRead?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    receiverId?: StringFieldUpdateOperationsInput | string
-    entityId?: NullableStringFieldUpdateOperationsInput | string | null
-    entityType?: NullableStringFieldUpdateOperationsInput | string | null
-  }
-
-  export type NotificationUncheckedUpdateManyWithoutSenderInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: EnumNotificationTypeFieldUpdateOperationsInput | $Enums.NotificationType
-    title?: StringFieldUpdateOperationsInput | string
-    message?: StringFieldUpdateOperationsInput | string
-    isRead?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    receiverId?: StringFieldUpdateOperationsInput | string
-    entityId?: NullableStringFieldUpdateOperationsInput | string | null
-    entityType?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionToken?: StringFieldUpdateOperationsInput | string
+    expires?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TeacherAvailabilityUpdateWithoutTeacherInput = {
@@ -17747,7 +17504,7 @@ export namespace Prisma {
     userId: string
     startTime: Date | string
     endTime: Date | string
-    status?: $Enums.BookingStatus
+    status?: string
     notes?: string | null
     meetingLink?: string | null
     createdAt?: Date | string
@@ -17760,7 +17517,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17776,7 +17533,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17791,7 +17548,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     startTime?: DateTimeFieldUpdateOperationsInput | Date | string
     endTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    status?: EnumBookingStatusFieldUpdateOperationsInput | $Enums.BookingStatus
+    status?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     meetingLink?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17816,8 +17573,8 @@ export namespace Prisma {
     comment?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutGivenReviewsNestedInput
     teacher?: UserUpdateOneRequiredWithoutReceivedReviewsNestedInput
+    user?: UserUpdateOneRequiredWithoutGivenReviewsNestedInput
   }
 
   export type ReviewUncheckedUpdateWithoutBookingInput = {

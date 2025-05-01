@@ -230,35 +230,7 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.Role = exports.$Enums.Role = {
-  USER: 'USER',
-  TEACHER: 'TEACHER',
-  ADMIN: 'ADMIN'
-};
 
-exports.ApprovalStatus = exports.$Enums.ApprovalStatus = {
-  PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  REJECTED: 'REJECTED'
-};
-
-exports.BookingStatus = exports.$Enums.BookingStatus = {
-  PENDING: 'PENDING',
-  CONFIRMED: 'CONFIRMED',
-  CANCELED: 'CANCELED',
-  COMPLETED: 'COMPLETED',
-  NO_SHOW: 'NO_SHOW'
-};
-
-exports.NotificationType = exports.$Enums.NotificationType = {
-  BOOKING_REQUEST: 'BOOKING_REQUEST',
-  BOOKING_CONFIRMED: 'BOOKING_CONFIRMED',
-  BOOKING_CANCELED: 'BOOKING_CANCELED',
-  BOOKING_REMINDER: 'BOOKING_REMINDER',
-  REVIEW_RECEIVED: 'REVIEW_RECEIVED',
-  ACCOUNT_UPDATE: 'ACCOUNT_UPDATE',
-  ADMIN_MESSAGE: 'ADMIN_MESSAGE'
-};
 
 exports.Prisma.ModelName = {
   Account: 'Account',

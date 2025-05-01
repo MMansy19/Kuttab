@@ -13,6 +13,16 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com', 'img.icons8.com'], // Added icons8 domain
   },
+  // Add webpack configuration to exclude problematic directories
+  webpack: (config, { isServer }) => {
+    // Exclude the Cookies directory from being processed
+    config.watchOptions = {
+      ...config.watchOptions,
+      ignored: ['**/.git/**', '**/node_modules/**', '**/Cookies/**', 'C:\\Users\\mahmo\\Cookies/**']
+    };
+    
+    return config;
+  },
 };
 
 module.exports = nextConfig;
