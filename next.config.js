@@ -1,25 +1,23 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ... your existing config ...
-
-  // Add these new settings:
+  swcMinify: true,
+  poweredByHeader: false,
+  reactStrictMode: true,
+  
+  // Keep essential experimental features but remove problematic ones
   experimental: {
-    webpackBuildWorker: true, // Enable isolated build
-    serverComponentsExternalPackages: ['fs', 'path'] // Isolate FS access
+    serverComponentsExternalPackages: ['@prisma/client']
   },
-
+  
+  // Simplified webpack configuration
   webpack: (config) => {
-    // Completely disable file system watching
     config.watchOptions = {
-      ignored: ['**/.*', '**/node_modules/**', '**/.next/**'],
+      ignored: ['**/node_modules/**', '**/.next/**'],
       poll: false,
     };
-
-    // Prevent scanning protected directories
-    config.snapshot = {
-      managedPaths: [/^(.+?[\\/]node_modules[\\/])/],
-      immutablePaths: [],
-    };
-
+    
     return config;
   }
 }
+
+module.exports = nextConfig;

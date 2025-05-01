@@ -24,19 +24,32 @@ const markAsReadSchema = z.object({
   ids: z.array(z.string()).optional(), // Optional, if not provided, mark all as read
 });
 
-export async function GET(request: NextRequest) {
+// Helper function to validate session
+async function validateSession(request: NextRequest) {
   // Check rate limiting
   const rateLimitResult = await apiLimiter(request);
   if (rateLimitResult) return rateLimitResult;
 
   // Verify auth
   const session = await getServerSession(authOptions);
-  if (!session) {
+  
+  if (!session || !session.user?.id) {
+    console.error("Auth validation failed: No valid session");
     return NextResponse.json(
-      { error: "يجب تسجيل الدخول" },
+      { error: "يجب تسجيل الدخول أولاً" },
       { status: 401 }
     );
   }
+  
+  return { session };
+}
+
+export async function GET(request: NextRequest) {
+  // Validate session
+  const sessionResult = await validateSession(request);
+  if ('status' in sessionResult) return sessionResult;
+  
+  const { session } = sessionResult;
 
   return validateRequest(getNotificationsQuerySchema, async (req, data) => {
     try {
@@ -95,6 +108,7 @@ export async function GET(request: NextRequest) {
         },
       });
     } catch (error: any) {
+      console.error("Error in notifications GET:", error);
       return NextResponse.json(
         { error: error.message || "حدث خطأ ما" },
         { status: 500 }
@@ -104,18 +118,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  // Check rate limiting
-  const rateLimitResult = await apiLimiter(request);
-  if (rateLimitResult) return rateLimitResult;
-
-  // Verify auth
-  const session = await getServerSession(authOptions);
-  if (!session) {
-    return NextResponse.json(
-      { error: "يجب تسجيل الدخول" },
-      { status: 401 }
-    );
-  }
+  // Validate session
+  const sessionResult = await validateSession(request);
+  if ('status' in sessionResult) return sessionResult;
+  
+  const { session } = sessionResult;
 
   return validateRequest(markAsReadSchema, async (req, data) => {
     try {
@@ -150,6 +157,7 @@ export async function PATCH(request: NextRequest) {
         unreadCount,
       });
     } catch (error: any) {
+      console.error("Error updating notifications:", error);
       return NextResponse.json(
         { error: error.message || "خطأ في تحديث الإشعارات" },
         { status: 400 }

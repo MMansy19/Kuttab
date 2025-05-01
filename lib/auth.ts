@@ -37,19 +37,32 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
-        return user;
+        // Transform the Prisma User to match NextAuth User interface
+        // This ensures we have non-null values for required fields
+        return {
+          id: user.id,
+          name: user.name || "",
+          email: user.email || "",
+          image: user.image,
+          role: user.role,
+        };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account, trigger }) {
+      // Initial sign in
       if (user) {
         token.id = user.id;
         token.email = user.email;
         token.role = user.role;
         token.name = user.name;
         token.image = user.image;
+        // Add issued at time for token rotation validation
+        token.iat = Math.floor(Date.now() / 1000);
       }
+      
+      // Return token with minimal modification to reduce session updates
       return token;
     },
     async session({ session, token }) {
@@ -70,6 +83,26 @@ export const authOptions: NextAuthOptions = {
   },
   session: {
     strategy: "jwt",
+    // Extend session lifetime to reduce frequent renewals
+    maxAge: 24 * 60 * 60, // 24 hours
+  },
+  jwt: {
+    // Extend token max age to match session
+    maxAge: 24 * 60 * 60, // 24 hours
   },
   secret: process.env.NEXTAUTH_SECRET,
+  // Prevent excessive debug logging
+  debug: process.env.NODE_ENV === "development",
+  // Only send cookie on same-origin requests
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: true,
+      },
+    },
+  },
 };

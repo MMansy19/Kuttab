@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { FaBell } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 import Badge from "./ui/Badge";
+import { useSession } from "next-auth/react";
+import { refreshSession, handleAuthError, clearSessionCache } from "@/lib/session";
 
 interface Notification {
   id: string;
@@ -17,23 +19,88 @@ interface Notification {
 }
 
 export default function NotificationBell() {
+  const { data: session, status } = useSession();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef(true);
 
-  // Fetch notifications on component mount
-  useEffect(() => {
-    fetchNotifications();
-
-    // Set up polling for new notifications every minute
-    const intervalId = setInterval(fetchNotifications, 60000);
+  // Memoized fetch function to prevent unnecessary re-creation
+  const fetchNotifications = useCallback(async () => {
+    // Don't attempt to fetch if not authenticated or component is unmounted
+    if (status !== "authenticated" || !session || !isMountedRef.current) {
+      return;
+    }
     
-    // Clean up interval on component unmount
-    return () => clearInterval(intervalId);
-  }, []);
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await fetch("/api/notifications?limit=5&unread=true", {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'same-origin'
+      });
+      
+      if (!response.ok) {
+        // Handle auth errors with our utility
+        if (await handleAuthError(response.status)) {
+          return;
+        }
+        
+        // Handle other errors
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "فشل في جلب الإشعارات");
+      }
+
+      const data = await response.json();
+      
+      if (isMountedRef.current) {
+        setNotifications(data.data || []);
+        setUnreadCount(data.metadata?.unreadCount || 0);
+      }
+    } catch (err: any) {
+      console.error("Error fetching notifications:", err);
+      if (isMountedRef.current) {
+        setError(err.message || "حدث خطأ أثناء جلب الإشعارات");
+      }
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [status, session]);
+
+  // Set up polling with cleanup
+  useEffect(() => {
+    isMountedRef.current = true;
+    
+    // Only fetch notifications if the user is authenticated
+    if (status === "authenticated" && session) {
+      fetchNotifications();
+
+      // Set up polling for new notifications every minute, with debounce
+      fetchTimeoutRef.current = setTimeout(() => {
+        if (isMountedRef.current) {
+          fetchNotifications();
+        }
+      }, 60000); // 1 minute
+    }
+    
+    // Clean up on component unmount
+    return () => {
+      isMountedRef.current = false;
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+      }
+    };
+  }, [status, session, fetchNotifications]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -49,31 +116,13 @@ export default function NotificationBell() {
     };
   }, []);
 
-  // Fetch notifications from the API
-  const fetchNotifications = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const response = await fetch("/api/notifications?limit=5&unread=true");
-      
-      if (!response.ok) {
-        throw new Error("Failed to fetch notifications");
-      }
-
-      const data = await response.json();
-      setNotifications(data.data || []);
-      setUnreadCount(data.metadata?.unreadCount || 0);
-    } catch (err: any) {
-      console.error("Error fetching notifications:", err);
-      setError(err.message || "An error occurred");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Mark a notification as read
   const markAsRead = async (id: string, event: React.MouseEvent) => {
+    // Don't attempt to mark if not authenticated
+    if (status !== "authenticated" || !session) {
+      return;
+    }
+    
     event.stopPropagation(); // Prevent dropdown from closing
     
     try {
@@ -82,11 +131,17 @@ export default function NotificationBell() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: 'same-origin',
         body: JSON.stringify({ isRead: true }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update notification");
+        // Handle auth errors with our utility
+        if (await handleAuthError(response.status)) {
+          return;
+        }
+        
+        throw new Error("فشل في تحديث حالة الإشعار");
       }
 
       // Update local state
@@ -105,23 +160,32 @@ export default function NotificationBell() {
 
   // Mark all as read
   const markAllAsRead = async (event: React.MouseEvent) => {
+    // Don't attempt to mark if not authenticated
+    if (status !== "authenticated" || !session) {
+      return;
+    }
+    
     event.stopPropagation(); // Prevent dropdown from closing
     
     try {
-      // Ideally we would have a bulk update API endpoint, but for now we'll update each one
-      const promises = notifications
-        .filter(notification => !notification.isRead)
-        .map(notification => 
-          fetch(`/api/notifications/${notification.id}`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ isRead: true }),
-          })
-        );
+      // Use the PATCH endpoint with no IDs to mark all as read
+      const response = await fetch(`/api/notifications`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({ isRead: true }),
+      });
 
-      await Promise.all(promises);
+      if (!response.ok) {
+        // Handle auth errors with our utility
+        if (await handleAuthError(response.status)) {
+          return;
+        }
+        
+        throw new Error("فشل في تحديث حالة الإشعارات");
+      }
 
       // Update local state
       setNotifications(
@@ -154,6 +218,11 @@ export default function NotificationBell() {
         return "bg-gray-500";
     }
   };
+
+  // If user is not authenticated, don't render the notification bell
+  if (status !== "authenticated" || !session) {
+    return null;
+  }
 
   return (
     <div className="relative" ref={dropdownRef}>

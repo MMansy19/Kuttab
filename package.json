@@ -8,13 +8,10 @@
     "clean": "node clean.js",
     "clean:deep": "rd /s /q node_modules & rd /s /q .next & rd /s /q generated",
     "install:safe": "npm install --ignore-scripts && npx prisma generate --no-engine",
-    "prisma:fix": "npx @prisma/internals download --version 6.6.0",
-    "build:safe": "cross-env NODE_OPTIONS=--max-old-space-size=4096 NEXT_DISABLE_FILE_SYSTEM_API=1 next build",
-    "build": "node build-prep.js && npm run prisma:fix && cross-env NODE_OPTIONS=--max-old-space-size=4096 next build --config next.config.build.js --no-lint",
-    "build-original": "node clean.js && prisma generate && next build",
+    "prisma:generate": "prisma generate",
+    "build": "prisma generate && next build && node vercel-build.js",
     "start": "next start",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "npm run prisma:fix",
     "db:seed": "prisma db seed"
   },
   "prisma": {
