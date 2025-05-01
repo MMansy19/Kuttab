@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { FaBell } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
-import {Badge} from "./ui/Badge";
+import Badge from "./ui/Badge";
 
 interface Notification {
   id: string;
