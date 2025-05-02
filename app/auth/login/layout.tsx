@@ -1,8 +1,8 @@
-import { Metadata } from 'next';
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Login | KOTTAB",
-  description: "Sign in to your KOTTAB account",
+  title: "تسجيل الدخول - كُتّاب",
+  description: "قم بتسجيل الدخول إلى حسابك في منصة كُتّاب لتعلم القرآن والعلوم الإسلامية",
 };
 
 export default function LoginLayout({
@@ -10,5 +10,5 @@ export default function LoginLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <>{children}</>;
 }
