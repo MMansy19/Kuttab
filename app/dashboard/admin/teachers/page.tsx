@@ -724,7 +724,7 @@ function TeacherDetails({ teacher, onBack, onVerify, onFeatureToggle }: TeacherD
             </div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-white">{teacher.name}</h3>
             <div className="flex items-center mt-2">
-              <RatingComp rating={teacher.rating} size="lg" />
+              <RatingComp initialRating={teacher.rating} size="lg" />
               <span className="text-gray-600 dark:text-gray-400 ml-2">({teacher.rating})</span>
             </div>
             
