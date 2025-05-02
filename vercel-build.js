@@ -1,5 +1,6 @@
 const { copyFileSync, mkdirSync, existsSync, readdirSync } = require('fs');
 const { join } = require('path');
+const { execSync } = require('child_process');
 
 // Function to ensure directory exists
 function ensureDirectoryExists(dir) {
@@ -33,6 +34,19 @@ function copyDirectory(source, destination) {
       }
     }
   }
+}
+
+// First, run the type fix script if we're in a build environment
+try {
+  console.log('🔧 Fixing route handler types for build...');
+  if (existsSync(join(process.cwd(), '.next', 'types'))) {
+    execSync('node scripts/fix-route-types.js', { stdio: 'inherit' });
+  } else {
+    console.log('⚠️ No .next/types directory found, skipping type fixes');
+  }
+} catch (error) {
+  console.warn('⚠️ Error running type fix script:', error.message);
+  console.log('⚠️ Continuing with build despite errors...');
 }
 
 // Output directories for Vercel

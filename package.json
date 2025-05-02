@@ -11,12 +11,13 @@
     "prisma:generate": "prisma generate",
     "db:setup": "node ./scripts/setup-production-db.js",
     "prisma:fix": "node prisma-fix.js",
-    "build": "cross-env PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1 node prisma-fix.js && next build && node vercel-build.js",
+    "build": "cross-env PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1 node prisma-fix.js && next build && node scripts/fix-route-types.js && node vercel-build.js",
     "start": "next start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:seed": "prisma db seed",
     "vercel:validate": "node ./scripts/validate-vercel-config.js",
-    "predeploy": "npm run vercel:validate"
+    "predeploy": "npm run vercel:validate",
+    "fix:types": "node scripts/fix-route-types.js"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
