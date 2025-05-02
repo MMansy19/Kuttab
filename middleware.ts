@@ -167,16 +167,8 @@ export async function middleware(req: NextRequest) {
 
   // If accessing the root path while logged in
   if (token && pathname === "/") {
-    const userRole = token.role as string;
-    return NextResponse.redirect(new URL(roleRedirections[userRole as keyof typeof roleRedirections] || "/", req.url));
-  }
-
-  // If accessing the dashboard root, redirect to role-specific dashboard
-  if (token && pathname === "/dashboard") {
-    const userRole = token.role as string;
-    return NextResponse.redirect(
-      new URL(roleRedirections[userRole as keyof typeof roleRedirections] || "/", req.url)
-    );
+    // Redirect to main dashboard instead of role-specific dashboard
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
   // Add the security headers to the response

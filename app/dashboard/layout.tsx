@@ -11,9 +11,9 @@ export default async function DashboardLayout({
 }) {
   const session = await getServerSession(authOptions);
   
-  // if (!session) {
-  //   redirect("/auth/login");
-  // }
+  if (!session) {
+    redirect("/auth/login");
+  }
 
   // Shared dashboard layout with sidebar navigation
   return (
@@ -29,7 +29,7 @@ export default async function DashboardLayout({
             <div className="flex items-center space-x-4">
               <span className="text-gray-700 dark:text-gray-300">
                 مرحباً، 
-                {/* {session.user.name} */}
+                {session.user.name}
               </span>
             </div>
           </header>

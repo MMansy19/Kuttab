@@ -5,15 +5,14 @@ import { ReactNode } from 'react';
 
 /**
  * Enhanced SessionProvider that configures proper session caching and optimization
- * This helps prevent multiple redundant session requests
  */
 export default function SessionProvider({ children }: { children: ReactNode }) {
   return (
     <NextAuthSessionProvider 
-      // Refresh session only when needed, not on every render
-      refetchInterval={0} 
-      // Only refetch on window focus if the session might be expired
-      refetchOnWindowFocus={false}
+      // Refresh session every 5 minutes (300 seconds)
+      refetchInterval={300} 
+      // Refetch on window focus to ensure session state is current
+      refetchOnWindowFocus={true}
     >
       {children}
     </NextAuthSessionProvider>

@@ -156,7 +156,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
     // Set a small timeout to allow the success message to be seen
     setTimeout(() => {
       // Hard redirect to dashboard bypassing router
-      router.push(url || '/dashboard');
+      window.location.href = url || '/dashboard';
     }, 1500);
   };
 
@@ -198,7 +198,12 @@ const AuthForm = ({ type }: AuthFormProps) => {
         console.log("Sign in result:", result);
 
         if (result?.error) {
-          throw new Error(result.error);
+          // Handle specific error types
+          if (result.error === "CredentialsSignin") {
+            throw new Error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+          } else {
+            throw new Error(result.error);
+          }
         }
 
         if (!result?.url) {
@@ -208,10 +213,11 @@ const AuthForm = ({ type }: AuthFormProps) => {
         // Success! Show message and redirect
         setSuccess("تم تسجيل الدخول بنجاح! جاري التحويل...");
         
-        // Redirect after a short delay so the user sees the success message
+        // Use a direct window location approach for more reliable redirection
         setTimeout(() => {
-          console.log("Redirecting to:", result.url);
-          router.push(result.url || callbackUrl || `/dashboard/${formData.role.toLocaleLowerCase()}`);
+          const redirectUrl = result.url || callbackUrl || `/dashboard/${formData.role.toLocaleLowerCase()}`;
+          console.log("Redirecting to:", redirectUrl);
+          window.location.href = redirectUrl;
         }, 1500);
         
       } else {

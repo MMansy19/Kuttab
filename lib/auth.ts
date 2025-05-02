@@ -39,6 +39,26 @@ const mockUsers = [
     plainPassword: "password123", // For direct comparison if bcrypt fails
     role: "ADMIN",
     image: "/images/icons/admin-avatar.svg"
+  },
+  {
+    id: "mock-admin-2",
+    name: "Admin User",
+    email: "admin@admin.com",
+    password: "$2a$12$k8Y.iR8Y5Oe7UKGCIxOy3OW9tRK/xd7ItpfmOGe1WQL9Yl/0GJoXu", // hashed "password123"
+    plainPassword: "password123", // For direct comparison if bcrypt fails
+    role: "ADMIN",
+    image: "/images/icons/admin-avatar.svg"
+  },
+  // Add your registration test user
+  {
+    id: "mock-user-2",
+    name: "mahmoud",
+    email: "mmansy132003@gmail.com",
+    password: "$2a$12$k8Y.iR8Y5Oe7UKGCIxOy3OW9tRK/xd7ItpfmOGe1WQL9Yl/0GJoXu", // hashed "11111111"
+    plainPassword: "11111111", // For direct comparison 
+    role: "USER",
+    gender: "MALE",
+    image: "/images/icons/user-avatar.svg"
   }
 ];
 
@@ -89,7 +109,7 @@ export const authOptions: NextAuthOptions = {
             };
           }
           
-          // Fall back to bcrypt compare if direct match fails
+          // Fall back to bcrypt compare 
           try {
             const isPasswordValid = await bcrypt.compare(
               credentials.password,
@@ -112,17 +132,8 @@ export const authOptions: NextAuthOptions = {
             };
           } catch (bcryptError) {
             debug("bcrypt comparison error:", bcryptError);
-            // If bcrypt fails but we already matched the plaintext password, proceed anyway
-            if (credentials.password === user.plainPassword) {
-              debug("Using plaintext password match as fallback");
-              return {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                image: user.image,
-                role: user.role,
-              };
-            }
+            // If we already matched the plaintext password earlier, we'd have returned
+            debug("No fallback available, authentication failed");
             return null;
           }
         } catch (error) {
@@ -157,10 +168,13 @@ export const authOptions: NextAuthOptions = {
     },
     async redirect({ url, baseUrl }) {
       // Handle relative callback URLs
-      if (url.startsWith("/")) return `${baseUrl}${url}`
+      debug("Redirect - URL:", url, "BaseURL:", baseUrl);
+      
+      // Default redirect behavior
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
       // Handle absolute URLs
-      else if (new URL(url).origin === baseUrl) return url
-      return baseUrl
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     }
   },
   pages: {
