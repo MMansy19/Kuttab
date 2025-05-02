@@ -302,7 +302,11 @@ export async function PATCH(request: NextRequest) {
       const booking = await prisma.booking.findUnique({
         where: { id },
         include: {
-          teacherProfile: true,
+          teacherProfile: {
+            include: {
+              user: true
+            }
+          },
           user: true,
         },
       });

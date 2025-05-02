@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { isFrontendOnlyMode } from "@/lib/config";
 
 // Validation schema for booking updates
 const bookingUpdateSchema = z.object({
@@ -10,6 +11,9 @@ const bookingUpdateSchema = z.object({
   teacherNotes: z.string().max(1000).optional(),
   cancelReason: z.string().max(500).optional(), // Changed from cancellationReason to cancelReason
 });
+
+// Type for route context params
+type RouteContext = { params: { id: string } };
 
 // GET a single booking by ID
 export async function GET(
@@ -21,6 +25,38 @@ export async function GET(
     
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    // Mock data for frontend-only mode
+    if (isFrontendOnlyMode) {
+      return NextResponse.json({
+        id: params.id,
+        userId: "mock-user-1",
+        teacherProfileId: "teacher-1",
+        startTime: new Date("2025-05-10T10:00:00Z").toISOString(),
+        endTime: new Date("2025-05-10T11:00:00Z").toISOString(),
+        status: "CONFIRMED",
+        notes: "Demo booking in frontend-only mode",
+        meetingLink: "https://meet.google.com/demo",
+        createdAt: new Date("2025-05-01T12:00:00Z").toISOString(),
+        updatedAt: new Date("2025-05-01T12:30:00Z").toISOString(),
+        user: {
+          id: "mock-user-1",
+          name: "طالب نموذجي",
+          image: "/images/kid-learns-online.png",
+          email: "demo@example.com"
+        },
+        teacherProfile: {
+          id: "teacher-1",
+          user: {
+            id: "mock-teacher-1",
+            name: "أحمد محمد",
+            image: "/images/learn-quran.jpg",
+            email: "teacher@example.com"
+          }
+        },
+        reviews: []
+      });
     }
     
     // Get the booking with related data
@@ -85,6 +121,19 @@ export async function PATCH(
     
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    // Mock response for frontend-only mode
+    if (isFrontendOnlyMode) {
+      return NextResponse.json({
+        message: "Booking updated successfully",
+        booking: {
+          id: params.id,
+          status: "CONFIRMED",
+          notes: "Updated in frontend-only mode",
+          updatedAt: new Date().toISOString()
+        }
+      });
     }
     
     // Get the booking
@@ -244,6 +293,20 @@ export async function DELETE(
     
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    
+    // Mock response for frontend-only mode
+    if (isFrontendOnlyMode) {
+      return NextResponse.json({
+        message: "Booking cancelled successfully",
+        booking: {
+          id: params.id,
+          status: "CANCELLED",
+          cancelReason: "Cancelled in frontend-only mode",
+          canceledBy: session.user.id,
+          updatedAt: new Date().toISOString()
+        }
+      });
     }
     
     // Get the booking

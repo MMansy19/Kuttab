@@ -153,3 +153,11 @@
 - For prisma errors, try `npx prisma generate` to update client
 
 TELL ME AGAIN STEPS TO RUN THIS APP
+
+
+Testing Frontend-Only Mode
+Once deployed, you can log in using one of these demo accounts:
+
+- Regular User: Email: demo@example.com, Password: password123
+- Teacher: Email: teacher@example.com, Password: password123
+- Admin: Email: admin@example.com, Password: password123

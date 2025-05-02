@@ -3,10 +3,10 @@
  */
 
 // Determine if we're running in frontend-only mode
-// This will be true if DATABASE_URL is not provided in production
-export const isFrontendOnlyMode = process.env.NEXT_PUBLIC_FRONTEND_ONLY === 'true' || 
-  (process.env.NODE_ENV === 'production' && 
-   (!process.env.DATABASE_URL || process.env.DATABASE_URL === 'frontend-only'));
+// This will be true if NEXT_PUBLIC_FRONTEND_ONLY is set to 'true' or if DATABASE_URL is 'frontend-only'
+export const isFrontendOnlyMode = 
+  process.env.NEXT_PUBLIC_FRONTEND_ONLY === 'true' || 
+  process.env.DATABASE_URL === 'frontend-only';
 
 // Console output is suppressed in production
 if (process.env.NODE_ENV !== 'production') {
