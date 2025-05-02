@@ -3,7 +3,8 @@
  * This overrides the incorrect type definitions in the Next.js generated files.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest } from 'next/dist/server/web/spec-extension/request';
+import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 
 // Fix for route parameters in Next.js App Router
 declare module 'next/dist/server/app-render/entry-base' {
