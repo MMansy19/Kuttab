@@ -12,13 +12,10 @@ const bookingUpdateSchema = z.object({
   cancelReason: z.string().max(500).optional(), // Changed from cancellationReason to cancelReason
 });
 
-// Type for route context params
-type RouteContext = { params: { id: string } };
-
 // GET a single booking by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -30,7 +27,7 @@ export async function GET(
     // Mock data for frontend-only mode
     if (isFrontendOnlyMode) {
       return NextResponse.json({
-        id: params.id,
+        id: context.params.id,
         userId: "mock-user-1",
         teacherProfileId: "teacher-1",
         startTime: new Date("2025-05-10T10:00:00Z").toISOString(),
@@ -61,7 +58,7 @@ export async function GET(
     
     // Get the booking with related data
     const booking = await prisma.booking.findUnique({
-      where: { id: params.id },
+      where: { id: context.params.id },
       include: {
         user: {
           select: {
@@ -114,7 +111,7 @@ export async function GET(
 // PATCH to update booking status
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -128,7 +125,7 @@ export async function PATCH(
       return NextResponse.json({
         message: "Booking updated successfully",
         booking: {
-          id: params.id,
+          id: context.params.id,
           status: "CONFIRMED",
           notes: "Updated in frontend-only mode",
           updatedAt: new Date().toISOString()
@@ -138,7 +135,7 @@ export async function PATCH(
     
     // Get the booking
     const booking = await prisma.booking.findUnique({
-      where: { id: params.id },
+      where: { id: context.params.id },
       include: {
         teacherProfile: true,
       },
@@ -202,7 +199,7 @@ export async function PATCH(
     };
     
     const updatedBooking = await prisma.booking.update({
-      where: { id: params.id },
+      where: { id: context.params.id },
       data: updatedData,
       include: {
         user: {
@@ -286,7 +283,7 @@ export async function PATCH(
 // DELETE to cancel a booking (soft delete)
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -300,7 +297,7 @@ export async function DELETE(
       return NextResponse.json({
         message: "Booking cancelled successfully",
         booking: {
-          id: params.id,
+          id: context.params.id,
           status: "CANCELLED",
           cancelReason: "Cancelled in frontend-only mode",
           canceledBy: session.user.id,
@@ -311,7 +308,7 @@ export async function DELETE(
     
     // Get the booking
     const booking = await prisma.booking.findUnique({
-      where: { id: params.id },
+      where: { id: context.params.id },
       include: {
         teacherProfile: true,
       },
@@ -337,7 +334,7 @@ export async function DELETE(
     
     // Update booking to cancelled status with the correct field name
     const cancelledBooking = await prisma.booking.update({
-      where: { id: params.id },
+      where: { id: context.params.id },
       data: {
         status: "CANCELLED",
         cancelReason: reason, // Using the correct field name as per Prisma schema
