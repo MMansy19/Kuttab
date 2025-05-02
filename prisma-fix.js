@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 const https = require('https');
-const { getDatabaseUrl, getPrismaProvider } = require('./lib/db-config');
 
 // Constants
 const PRISMA_VERSION = '6.6.0';
@@ -16,149 +15,108 @@ if (!fs.existsSync(ENGINES_DIR)) {
   console.log('✅ Created Prisma engines directory');
 }
 
-// Direct download of the engine from Prisma CDN
-const downloadEngine = () => {
-  return new Promise((resolve, reject) => {
-    // The URL pattern for Prisma engines (this may change in future versions)
-    const engineUrl = `https://binaries.prisma.sh/all_commits/${PRISMA_VERSION}/windows/${WINDOWS_ENGINE_FILENAME}`;
-    const enginePath = path.join(ENGINES_DIR, WINDOWS_ENGINE_FILENAME);
-    
-    console.log(`📥 Downloading Prisma engine from: ${engineUrl}`);
-    
-    // Create a write stream to save the file
-    const fileStream = fs.createWriteStream(enginePath);
-    
-    https.get(engineUrl, (response) => {
-      if (response.statusCode === 200) {
-        response.pipe(fileStream);
-        fileStream.on('finish', () => {
-          fileStream.close();
-          console.log('✅ Engine downloaded successfully');
-          resolve(true);
-        });
-      } else if (response.statusCode === 302 || response.statusCode === 301) {
-        // Handle redirects
-        console.log(`↪️ Redirecting to: ${response.headers.location}`);
-        https.get(response.headers.location, (redirectResponse) => {
-          redirectResponse.pipe(fileStream);
-          fileStream.on('finish', () => {
-            fileStream.close();
-            console.log('✅ Engine downloaded successfully after redirect');
-            resolve(true);
-          });
-        }).on('error', (e) => {
-          fs.unlinkSync(enginePath);
-          reject(e);
-        });
-      } else {
-        fs.unlinkSync(enginePath);
-        reject(new Error(`Failed to download: ${response.statusCode}`));
-      }
-    }).on('error', (e) => {
-      fs.unlinkSync(enginePath);
-      reject(e);
-    });
-  });
-};
+// Get database URL from environment with fallback
+function getDatabaseUrl() {
+  // Default to environment variable
+  let databaseUrl = process.env.DATABASE_URL;
 
-// Try different approaches to get Prisma working
-const runPrismaFix = async () => {
-  try {
-    console.log('🔧 Starting Prisma engine fix...');
-    
-    // Approach 1: Try standard generate with environment variables to skip binary downloads
-    try {
-      console.log('🔄 Approach 1: Using Prisma CLI with custom flags...');
-      execSync('npx prisma generate --no-engine', { 
-        stdio: 'inherit',
-        env: { 
-          ...process.env,
-          PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: "1"
-        }
-      });
-      console.log('✅ Successfully generated Prisma client');
-      return true;
-    } catch (err) {
-      console.log(`⚠️ Approach 1 failed: ${err.message}`);
+  // If in development and no explicit DATABASE_URL is provided, use SQLite
+  if (process.env.NODE_ENV !== 'production' && !databaseUrl) {
+    databaseUrl = 'file:./dev.db';
+    console.log('Using SQLite for development');
+  } 
+  // For production, ensure we have a proper PostgreSQL URL
+  else if (process.env.NODE_ENV === 'production') {
+    if (!databaseUrl || !databaseUrl.startsWith('postgresql')) {
+      console.warn('WARNING: No valid PostgreSQL DATABASE_URL found in production environment!');
+      console.warn('Vercel deployment requires a PostgreSQL database connection.');
+    } else {
+      console.log('Using PostgreSQL database connection for production');
     }
-    
-    // Approach 2: Direct download
-    try {
-      console.log('🔄 Approach 2: Direct download of engine binaries...');
-      await downloadEngine();
-      
-      console.log('⚡ Generating client with existing engine...');
-      execSync('npx prisma generate --no-engine', { 
-        stdio: 'inherit',
-        env: {
-          ...process.env,
-          PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: "1"
-        }
-      });
-      console.log('✅ Successfully generated client with pre-downloaded engine');
-      return true;
-    } catch (err) {
-      console.log(`⚠️ Approach 2 failed: ${err.message}`);
-    }
-    
-    // Approach 3: Use the client without the engines (Accelerate mode)
-    console.log('🔄 Approach 3: Generating client in accelerate-only mode...');
-    execSync('npx prisma generate --no-engine', { stdio: 'inherit' });
-    console.log('⚠️ Generated client without engine (only for use with Prisma Accelerate)');
-    
-    console.log('🎉 Prisma setup completed with best available option');
-    return true;
-  } catch (error) {
-    console.error(`❌ All approaches failed: ${error.message}`);
-    return false;
   }
-};
 
-// Main function 
+  return databaseUrl;
+}
+
+// Get database provider based on the URL
+function getDatabaseProvider(databaseUrl) {
+  if (!databaseUrl) return 'postgresql'; // Default to PostgreSQL for production
+  
+  if (databaseUrl.startsWith('file:')) {
+    return 'sqlite';
+  } else if (databaseUrl.startsWith('postgresql')) {
+    return 'postgresql';
+  } else {
+    console.warn('Unrecognized database URL format, defaulting to PostgreSQL');
+    return 'postgresql';
+  }
+}
+
+// Main function to fix Prisma schema
 function ensureProperPrismaSetup() {
   console.log('🔧 Ensuring proper Prisma setup for deployment...');
   
   try {
     // Get database configuration based on environment
     const databaseUrl = getDatabaseUrl();
-    const provider = getPrismaProvider(databaseUrl);
+    const dbProvider = getDatabaseProvider(databaseUrl);
     
-    console.log(`Using database provider: ${provider}`);
+    console.log(`Using database provider: ${dbProvider}`);
     
     // Read the current schema
     const schemaPath = path.join(process.cwd(), 'prisma', 'schema.prisma');
     let schemaContent = fs.readFileSync(schemaPath, 'utf8');
     
-    // Check if the provider matches what's in the schema
-    const currentProviderMatch = schemaContent.match(/provider\s*=\s*"([^"]+)"/);
-    const currentProvider = currentProviderMatch ? currentProviderMatch[1] : null;
+    // First, ensure the generator is correctly set to "prisma-client-js"
+    const generatorMatch = schemaContent.match(/generator\s+client\s*{[^}]*provider\s*=\s*"([^"]+)"/s);
+    const currentGenerator = generatorMatch ? generatorMatch[1] : null;
     
-    console.log(`Current provider in schema: ${currentProvider}, Target provider: ${provider}`);
-    
-    if (currentProvider !== provider) {
-      // In production, we need to ensure the schema uses postgresql
-      console.log(`Updating schema provider from ${currentProvider} to ${provider}...`);
-      
+    // Fix the generator if needed - this must be "prisma-client-js"
+    if (currentGenerator && currentGenerator !== "prisma-client-js") {
+      console.log(`Fixing generator from "${currentGenerator}" to "prisma-client-js"...`);
       schemaContent = schemaContent.replace(
-        /provider\s*=\s*"([^"]+)"/,
-        `provider = "${provider}"`
+        /generator\s+client\s*{[^}]*provider\s*=\s*"([^"]+)"/s,
+        (match) => match.replace(currentGenerator, "prisma-client-js")
+      );
+    }
+    
+    // Now check and update the database provider if needed
+    const dbProviderMatch = schemaContent.match(/datasource\s+db\s*{[^}]*provider\s*=\s*"([^"]+)"/s);
+    const currentDbProvider = dbProviderMatch ? dbProviderMatch[1] : null;
+    
+    console.log(`Current database provider: ${currentDbProvider}, Target: ${dbProvider}`);
+    
+    if (currentDbProvider !== dbProvider) {
+      console.log(`Updating database provider from "${currentDbProvider}" to "${dbProvider}"...`);
+      
+      // Replace the database provider in the datasource block
+      schemaContent = schemaContent.replace(
+        /datasource\s+db\s*{[^}]*provider\s*=\s*"([^"]+)"/s,
+        (match) => match.replace(currentDbProvider, dbProvider)
       );
       
-      // Update the URL as well
+      // Update URL to use environment variable
       schemaContent = schemaContent.replace(
-        /url\s*=\s*"[^"]+"/,
-        `url = env("DATABASE_URL")`
+        /datasource\s+db\s*{[^}]*url\s*=\s*"[^"]+"/s,
+        (match) => match.replace(/url\s*=\s*"[^"]+"/, 'url = env("DATABASE_URL")')
       );
       
+      // Write the updated schema back to disk
       fs.writeFileSync(schemaPath, schemaContent);
       console.log('✅ Schema updated successfully');
     } else {
-      console.log('✅ Schema provider is already correctly configured');
+      console.log('✅ Schema database provider is already correctly configured');
     }
     
-    // Run prisma generate to ensure the client is updated
+    // Run prisma generate with appropriate flags for better compatibility
     console.log('Generating Prisma client...');
-    execSync('npx prisma generate', { stdio: 'inherit' });
+    execSync('npx prisma generate', { 
+      stdio: 'inherit',
+      env: {
+        ...process.env,
+        PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: "1"
+      }
+    });
     console.log('✅ Prisma client generated successfully');
     
     return true;
@@ -177,5 +135,3 @@ if (require.main === module) {
 }
 
 module.exports = { ensureProperPrismaSetup };
-
-runPrismaFix();

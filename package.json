@@ -11,7 +11,7 @@
     "prisma:generate": "prisma generate",
     "db:setup": "node ./scripts/setup-production-db.js",
     "prisma:fix": "node prisma-fix.js",
-    "build": "node prisma-fix.js && prisma generate && node ./scripts/setup-production-db.js && next build && node vercel-build.js",
+    "build": "cross-env PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1 node prisma-fix.js && next build && node vercel-build.js",
     "start": "next start",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:seed": "prisma db seed",
