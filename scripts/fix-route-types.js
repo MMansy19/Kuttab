@@ -5,19 +5,21 @@
 
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
+const { glob } = require('glob'); // Fix: import glob properly for v11
 
 /**
  * Find all generated route type files
  * @returns {Promise<string[]>}
  */
 async function findGeneratedRouteTypes() {
-  return new Promise((resolve, reject) => {
-    glob('.next/types/app/**/route.ts', (err, files) => {
-      if (err) return reject(err);
-      resolve(files);
-    });
-  });
+  try {
+    // Using glob as a promise-based function for v11
+    const files = await glob('.next/types/app/**/route.ts');
+    return files;
+  } catch (err) {
+    console.error('Error finding route types:', err);
+    throw err;
+  }
 }
 
 /**
@@ -35,6 +37,12 @@ function fixRouteTypes(filePath) {
       '{ params: {$1} }'
     );
     
+    // Fix RouteContext = { params: Promise<SegmentParams> } to { params: SegmentParams }
+    content = content.replace(
+      /type RouteContext = \{\s*params:\s*Promise<SegmentParams>\s*\}/g,
+      'type RouteContext = { params: SegmentParams }'
+    );
+
     // Fix params?: { id: string } | undefined to params: { id: string }
     content = content.replace(
       /params\?:\s*{([^}]*)}\s*\|\s*undefined/g,
