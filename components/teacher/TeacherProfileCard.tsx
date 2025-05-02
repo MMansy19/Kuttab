@@ -83,9 +83,9 @@ export function TeacherProfileCard({
             <div className="flex-1 text-center md:text-right">
               <h3 className="text-xl font-bold text-gray-900 dark:text-white">{teacher.name}</h3>
               
-              {variant !== 'compact' && teacher.title && (
+              {variant !== 'compact' && teacher.specialization && (
                 <p className="text-emerald-600 dark:text-emerald-400 font-medium">
-                  {teacher.title}
+                  {teacher.specialization}
                 </p>
               )}
               
@@ -102,15 +102,15 @@ export function TeacherProfileCard({
                   />
                 ))}
                 <span className="text-sm text-gray-600 dark:text-gray-400 ml-1">
-                  ({teacher.reviewCount || 0})
+                  ({Math.round(teacher.rating || 0)})
                 </span>
               </div>
               
               {variant !== 'compact' && (
                 <div className="mt-2 flex flex-wrap gap-2 justify-center md:justify-end">
-                  {teacher.specialties?.slice(0, 3).map((specialty, index) => (
+                  {teacher.subjects?.slice(0, 3).map((subject: string, index: number) => (
                     <Badge key={index}>
-                      {specialty}
+                      {subject}
                     </Badge>
                   ))}
                 </div>
@@ -134,7 +134,7 @@ export function TeacherProfileCard({
                 <FaCalendarAlt />
               </div>
               <div className="text-sm text-gray-500 dark:text-gray-400">سنوات الخبرة</div>
-              <div className="font-bold text-gray-900 dark:text-white">{teacher.yearsOfExperience || '0'}</div>
+              <div className="font-bold text-gray-900 dark:text-white">{teacher.experience || '0'}</div>
             </div>
             <div className="py-3 text-center">
               <div className="text-emerald-600 dark:text-emerald-400 flex justify-center">
