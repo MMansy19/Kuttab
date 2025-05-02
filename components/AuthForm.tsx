@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { z } from "zod";
@@ -39,6 +38,26 @@ type UserGender = "MALE" | "FEMALE";
 type AuthFormProps = {
   type: "login" | "signup";
 };
+// Loading component to show while the form is loading
+function AuthFormLoading() {
+  return (
+    <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto mb-6"></div>
+        <div className="space-y-5">
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-2"></div>
+          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-2"></div>
+          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-2"></div>
+          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded mt-4"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 const AuthForm = ({ type }: AuthFormProps) => {
   const router = useRouter();
@@ -260,6 +279,7 @@ const AuthForm = ({ type }: AuthFormProps) => {
   }, [callbackUrl]);
 
   return (
+    <Suspense fallback={<AuthFormLoading />}>
     <div dir="rtl" className="w-full max-w-md mx-auto p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
       <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">
         {type === "login" ? "تسجيل الدخول" : "إنشاء حساب جديد"}
@@ -553,6 +573,8 @@ const AuthForm = ({ type }: AuthFormProps) => {
         )}
       </form>
     </div>
+    </Suspense>
+
   );
 };
 

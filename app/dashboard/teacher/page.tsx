@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -177,6 +177,7 @@ export default function TeacherDashboard() {
   }
 
   return (
+          <Suspense fallback={<div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div><span className="sr-only">جاري التحميل...</span></div>}>
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white" dir="rtl">لوحة تحكم المعلم</h1>
@@ -369,5 +370,6 @@ export default function TeacherDashboard() {
         </div>
       </section>
     </div>
+      </Suspense>
   );
 }

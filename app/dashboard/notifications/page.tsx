@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { FaBell, FaCheck, FaTrash } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
@@ -255,6 +255,7 @@ export default function NotificationsPage() {
   }
 
   return (
+      <Suspense fallback={<div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div><span className="sr-only">جاري التحميل...</span></div>}>
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white" dir="rtl">الإشعارات</h1>
@@ -414,5 +415,6 @@ export default function NotificationsPage() {
         </div>
       )}
     </div>
+      </Suspense>
   );
 }

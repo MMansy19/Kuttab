@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-const AuthError = () => {
+const ErrorContent = () => {
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
 
@@ -58,6 +58,14 @@ const AuthError = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const AuthError = () => {
+  return (
+      <Suspense fallback={<div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div><span className="sr-only">جاري التحميل...</span></div>}>
+      <ErrorContent />
+    </Suspense>
   );
 };
 
