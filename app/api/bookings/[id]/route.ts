@@ -14,7 +14,7 @@ const bookingUpdateSchema = z.object({
 
 // GET a single booking by ID
 export async function GET(
-  req: NextRequest,
+  request: NextRequest,
   context: { params: { id: string } }
 ) {
   try {
@@ -110,7 +110,7 @@ export async function GET(
 
 // PATCH to update booking status
 export async function PATCH(
-  req: NextRequest,
+  request: NextRequest,
   context: { params: { id: string } }
 ) {
   try {
@@ -145,7 +145,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
     
-    const body = await req.json();
+    const body = await request.json();
     
     // Validate update data
     const result = bookingUpdateSchema.safeParse(body);
@@ -282,7 +282,7 @@ export async function PATCH(
 
 // DELETE to cancel a booking (soft delete)
 export async function DELETE(
-  req: NextRequest,
+  request: NextRequest,
   context: { params: { id: string } }
 ) {
   try {
@@ -329,7 +329,7 @@ export async function DELETE(
     }
     
     // Get cancellation reason from query params
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = new URL(request.url);
     const reason = searchParams.get("reason") || "Cancelled by user";
     
     // Update booking to cancelled status with the correct field name
