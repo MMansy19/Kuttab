@@ -32,6 +32,12 @@ const mockUsers = [
   }
 ];
 
+// Force frontend-only mode when DATABASE_URL is not available or explicitly set
+const forceFrontendOnly = process.env.DATABASE_URL === undefined || 
+                        process.env.DATABASE_URL === 'frontend-only' || 
+                        process.env.NEXT_PUBLIC_FRONTEND_ONLY === 'true' || 
+                        isFrontendOnlyMode === true;
+
 // Remove PrismaAdapter to fix compatibility issues
 export const authOptions: NextAuthOptions = {
   // Adapter removed due to Prisma version incompatibilities
@@ -48,7 +54,8 @@ export const authOptions: NextAuthOptions = {
         }
 
         // In frontend-only mode, use mock users instead of database
-        if (isFrontendOnlyMode) {
+        if (forceFrontendOnly) {
+          console.log("Using frontend-only mode with mock users");
           const user = mockUsers.find(user => user.email === credentials.email);
           if (!user || !user.password) {
             return null;
@@ -72,31 +79,59 @@ export const authOptions: NextAuthOptions = {
           };
         }
 
-        // Normal database authentication when not in frontend-only mode
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        // Only try database operations if we're not in frontend-only mode
+        try {
+          // Normal database authentication when not in frontend-only mode
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+          });
 
-        if (!user || !user.password) {
-          return null
+          if (!user || !user.password) {
+            return null
+          }
+
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+
+          if (!isPasswordValid) {
+            return null
+          }
+
+          return {
+            id: user.id,
+            name: user.name || (user.email ? user.email.split('@')[0] : 'user'), // Fallback name
+            email: user.email || '', // Ensure email is never null
+            image: user.image,
+            role: user.role,
+          };
+        } catch (error) {
+          console.error("Database error, falling back to mock users:", error);
+          
+          // Fallback to mock users if database fails
+          const user = mockUsers.find(user => user.email === credentials.email);
+          if (!user || !user.password) {
+            return null;
+          }
+
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+
+          if (!isPasswordValid) {
+            return null;
+          }
+
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            role: user.role,
+          };
         }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
-
-        if (!isPasswordValid) {
-          return null
-        }
-
-        return {
-          id: user.id,
-          name: user.name || (user.email ? user.email.split('@')[0] : 'user'), // Fallback name
-          email: user.email || '', // Ensure email is never null
-          image: user.image,
-          role: user.role,
-        };
       },
     }),
   ],
