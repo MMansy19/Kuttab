@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest } from 'next/dist/server/web/spec-extension/request';
+import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { z } from "zod";
 import { getServerSession } from "next-auth/next";
 import prisma from "@/lib/prisma";
