@@ -493,7 +493,7 @@ export default function TeacherProfilePage() {
                     <li className="flex justify-between text-sm">
                       <span className="text-gray-600 dark:text-gray-400">انضم في</span>
                       <span className="text-gray-900 dark:text-white font-medium">
-                        {new Date(teacher.joinedDate).toLocaleDateString("ar-SA")}
+                        {teacher.joinedDate ? new Date(teacher.joinedDate).toLocaleDateString("ar-SA") : "غير معروف"}
                       </span>
                     </li>
                   </ul>

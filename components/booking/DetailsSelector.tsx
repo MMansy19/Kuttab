@@ -6,17 +6,19 @@ import { FaUser, FaEnvelope, FaPhone, FaUserGraduate, FaCommentAlt, FaArrowRight
 import { Button } from '../ui/Button';
 import { cn } from '@/utils/cn';
 
+type FormValues = {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  participantCount: number;
+  goal: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
+};
+
 interface DetailsSelectorPlops {
-  initialValues: {
-    name: string;
-    email: string;
-    phone: string;
-    message: string;
-    participantCount: number;
-    goal: string;
-    level: 'beginner' | 'intermediate' | 'advanced';
-  };
-  onSubmit: (values: typeof initialValues) => void;
+  initialValues: FormValues;
+  onSubmit: (values: FormValues) => void;
   onBack: () => void;
   isGroupSession?: boolean;
   maxParticipants?: number;
@@ -90,7 +92,7 @@ export default function DetailsSelector({
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.pleventDefault();
+    e.preventDefault();
     
     if (activeSection === 'personal') {
       // When on personal section, validate only personal fields then move to learning section
@@ -98,7 +100,7 @@ export default function DetailsSelector({
         name: true,
         email: true,
         phone: true,
-        participantCount: isGroupSession ? true : false
+        ...(isGroupSession ? { participantCount: true } : {})
       });
       
       try {
@@ -160,7 +162,7 @@ export default function DetailsSelector({
                 name: true,
                 email: true,
                 phone: true,
-                participantCount: isGroupSession ? true : false
+                ...(isGroupSession ? { participantCount: true } : {})
               });
               
               try {

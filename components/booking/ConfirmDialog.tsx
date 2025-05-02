@@ -178,7 +178,7 @@ export default function ConfirmDialog({
         </Button>
         
         <Button
-          variant="primary"
+          variant="success"
           onClick={onConfirm}
           disabled={!agreed || isSubmitting}
           className="min-w-[120px]"

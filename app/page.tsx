@@ -551,8 +551,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Add CSS for text gradient */}
-      <style jsx global>{`
+      {/* Add CSS for text gradient and animations */}
+      <style dangerouslySetInnerHTML={{ __html: `
         .text-gradient {
           background-clip: text;
           -webkit-background-clip: text;
@@ -574,7 +574,7 @@ export default function Home() {
             transform: translateY(0px);
           }
         }
-      `}</style>
+      `}} />
     </main>
   );
 }

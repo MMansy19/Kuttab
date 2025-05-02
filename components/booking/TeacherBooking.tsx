@@ -342,7 +342,7 @@ export default function TeacherBooking({ teacher, availabilitySlots }: TeacherBo
                     الذهاب للوحة التحكم
                   </Button>
                   <Button
-                    variant="primary"
+                    variant="success"
                     onClick={() => router.push('/teachers')}
                   >
                     تصفح المعلمين
