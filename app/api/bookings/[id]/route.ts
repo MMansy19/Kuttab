@@ -14,7 +14,7 @@ const bookingUpdateSchema = z.object({
 // GET a single booking by ID
 export async function GET(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -25,7 +25,7 @@ export async function GET(
     
     // Get the booking with related data
     const booking = await prisma.booking.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       include: {
         user: {
           select: {
@@ -78,7 +78,7 @@ export async function GET(
 // PATCH to update booking status
 export async function PATCH(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -89,7 +89,7 @@ export async function PATCH(
     
     // Get the booking
     const booking = await prisma.booking.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       include: {
         teacherProfile: true,
       },
@@ -153,7 +153,7 @@ export async function PATCH(
     };
     
     const updatedBooking = await prisma.booking.update({
-      where: { id: context.params.id },
+      where: { id: params.id },
       data: updatedData,
       include: {
         user: {
@@ -237,7 +237,7 @@ export async function PATCH(
 // DELETE to cancel a booking (soft delete)
 export async function DELETE(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -248,7 +248,7 @@ export async function DELETE(
     
     // Get the booking
     const booking = await prisma.booking.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       include: {
         teacherProfile: true,
       },
@@ -274,7 +274,7 @@ export async function DELETE(
     
     // Update booking to cancelled status with the correct field name
     const cancelledBooking = await prisma.booking.update({
-      where: { id: context.params.id },
+      where: { id: params.id },
       data: {
         status: "CANCELLED",
         cancelReason: reason, // Using the correct field name as per Prisma schema
