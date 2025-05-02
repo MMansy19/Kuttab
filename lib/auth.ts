@@ -2,6 +2,35 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
+import { isFrontendOnlyMode } from "./config";
+
+// Mock users for frontend-only mode
+const mockUsers = [
+  {
+    id: "mock-user-1",
+    name: "Demo User",
+    email: "demo@example.com",
+    password: "$2a$12$k8Y.iR8Y5Oe7UKGCIxOy3OW9tRK/xd7ItpfmOGe1WQL9Yl/0GJoXu", // hashed "password123"
+    role: "USER",
+    image: "/images/icons/user-avatar.svg"
+  },
+  {
+    id: "mock-teacher-1",
+    name: "Demo Teacher",
+    email: "teacher@example.com",
+    password: "$2a$12$k8Y.iR8Y5Oe7UKGCIxOy3OW9tRK/xd7ItpfmOGe1WQL9Yl/0GJoXu", // hashed "password123"
+    role: "TEACHER",
+    image: "/images/icons/teacher-avatar.svg"
+  },
+  {
+    id: "mock-admin-1",
+    name: "Demo Admin",
+    email: "admin@example.com",
+    password: "$2a$12$k8Y.iR8Y5Oe7UKGCIxOy3OW9tRK/xd7ItpfmOGe1WQL9Yl/0GJoXu", // hashed "password123"
+    role: "ADMIN",
+    image: "/images/icons/admin-avatar.svg"
+  }
+];
 
 // Remove PrismaAdapter to fix compatibility issues
 export const authOptions: NextAuthOptions = {
@@ -18,6 +47,32 @@ export const authOptions: NextAuthOptions = {
           return null // Return null instead of throwing error
         }
 
+        // In frontend-only mode, use mock users instead of database
+        if (isFrontendOnlyMode) {
+          const user = mockUsers.find(user => user.email === credentials.email);
+          if (!user || !user.password) {
+            return null;
+          }
+
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.password
+          );
+
+          if (!isPasswordValid) {
+            return null;
+          }
+
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            role: user.role,
+          };
+        }
+
+        // Normal database authentication when not in frontend-only mode
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
@@ -89,7 +144,7 @@ export const authOptions: NextAuthOptions = {
   jwt: {
     maxAge: 30 * 24 * 60 * 60, // Match session maxAge
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || 'frontend-only-deployment-secret',
   debug: process.env.NODE_ENV === "development",
   cookies: {
     sessionToken: {

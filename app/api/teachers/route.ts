@@ -5,6 +5,8 @@ import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { rateLimit } from "@/utils/rate-limiter";
 import { validateRequest } from "@/utils/validation";
+import { mockTeachers } from "@/data/mock-teachers";
+import { isFrontendOnlyMode } from "@/lib/config";
 
 // Rate limiter for this endpoint
 const apiLimiter = rateLimit({
@@ -48,6 +50,48 @@ export async function GET(request: NextRequest) {
     };
     const skip = (page - 1) * limit;
 
+    // If in frontend-only mode, use mock data
+    if (isFrontendOnlyMode) {
+      // Filter mock data based on query parameters
+      let filteredTeachers = [...mockTeachers];
+      
+      if (approvalStatus) {
+        filteredTeachers = filteredTeachers.filter(t => t.approvalStatus === approvalStatus);
+      }
+      
+      if (isAvailable !== undefined) {
+        filteredTeachers = filteredTeachers.filter(t => t.isAvailable === isAvailable);
+      }
+      
+      if (minRating !== undefined) {
+        filteredTeachers = filteredTeachers.filter(t => t.averageRating >= minRating);
+      }
+      
+      if (search) {
+        const searchLower = search.toLowerCase();
+        filteredTeachers = filteredTeachers.filter(t => 
+          t.user.name.toLowerCase().includes(searchLower) || 
+          (t.user.bio && t.user.bio.toLowerCase().includes(searchLower)) ||
+          (t.specialization && t.specialization.toLowerCase().includes(searchLower))
+        );
+      }
+      
+      // Paginate results
+      const paginatedTeachers = filteredTeachers.slice(skip, skip + limit);
+      const totalTeachers = filteredTeachers.length;
+      
+      return NextResponse.json({
+        data: paginatedTeachers,
+        metadata: {
+          total: totalTeachers,
+          page,
+          limit,
+          totalPages: Math.ceil(totalTeachers / limit),
+        },
+      });
+    }
+
+    // Normal database flow when not in frontend-only mode
     // Build search filters
     const filters: any = {};
     if (approvalStatus) filters.approvalStatus = approvalStatus;
@@ -129,6 +173,31 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // If in frontend-only mode, return mock response
+    if (isFrontendOnlyMode) {
+      return NextResponse.json({
+        data: {
+          id: "mock-teacher-new",
+          userId: session.user.id,
+          specialization: "حفظ القرآن الكريم",
+          approvalStatus: "PENDING",
+          isAvailable: true,
+          averageRating: 0,
+          reviewCount: 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          user: {
+            id: session.user.id,
+            name: session.user.name,
+            email: session.user.email,
+            image: session.user.image,
+            bio: "بيانات نموذجية في وضع العرض",
+          },
+        },
+        message: "تم إنشاء ملف المعلم بنجاح وهو قيد المراجعة (وضع العرض)"
+      });
+    }
+
     const body = await request.json();
     const validatedData = teacherProfileSchema.parse(body);
 
@@ -210,6 +279,31 @@ export async function PATCH(request: NextRequest) {
   }
 
   try {
+    // If in frontend-only mode, return mock response
+    if (isFrontendOnlyMode) {
+      return NextResponse.json({
+        data: {
+          id: "mock-teacher-updated",
+          userId: session.user.id,
+          specialization: "حفظ القرآن الكريم - تم التحديث",
+          approvalStatus: "APPROVED",
+          isAvailable: true,
+          averageRating: 5,
+          reviewCount: 1,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          user: {
+            id: session.user.id,
+            name: session.user.name,
+            email: session.user.email,
+            image: session.user.image,
+            bio: "بيانات نموذجية محدثة في وضع العرض",
+          },
+        },
+        message: "تم تحديث ملف المعلم بنجاح (وضع العرض)"
+      });
+    }
+
     const body = await request.json();
     const { id, approvalStatus, ...updateData } = body;
 

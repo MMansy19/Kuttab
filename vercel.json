@@ -8,6 +8,7 @@
     "NEXTAUTH_URL": "https://${VERCEL_URL}",
     "VERCEL_ENV": "production",
     "NEXTAUTH_SECRET": "${NEXTAUTH_SECRET}",
-    "DATABASE_URL": "${DATABASE_URL}"
+    "DATABASE_URL": "frontend-only",
+    "NEXT_PUBLIC_FRONTEND_ONLY": "true"
   }
 }

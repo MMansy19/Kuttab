@@ -8,6 +8,11 @@ const PRISMA_VERSION = '6.6.0';
 const ENGINES_DIR = path.join(__dirname, 'node_modules', '@prisma', 'engines');
 const WINDOWS_ENGINE_FILENAME = 'query_engine-windows.dll.node';
 
+// Check if we're in frontend-only mode
+const isFrontendOnlyMode = process.env.NEXT_PUBLIC_FRONTEND_ONLY === 'true' || 
+  (process.env.NODE_ENV === 'production' && 
+  (!process.env.DATABASE_URL || process.env.DATABASE_URL === 'frontend-only'));
+
 // Create engines directory if it doesn't exist
 console.log('📂 Ensuring Prisma engines directory exists...');
 if (!fs.existsSync(ENGINES_DIR)) {
@@ -17,6 +22,12 @@ if (!fs.existsSync(ENGINES_DIR)) {
 
 // Get database URL from environment with fallback
 function getDatabaseUrl() {
+  // If in frontend-only mode, return a placeholder value
+  if (isFrontendOnlyMode) {
+    console.log('🖥️ Running in frontend-only mode');
+    return 'frontend-only';
+  }
+
   // Default to environment variable
   let databaseUrl = process.env.DATABASE_URL;
 
@@ -29,7 +40,8 @@ function getDatabaseUrl() {
   else if (process.env.NODE_ENV === 'production') {
     if (!databaseUrl || !databaseUrl.startsWith('postgresql')) {
       console.warn('WARNING: No valid PostgreSQL DATABASE_URL found in production environment!');
-      console.warn('Vercel deployment requires a PostgreSQL database connection.');
+      console.warn('Deploying in frontend-only mode...');
+      return 'frontend-only';
     } else {
       console.log('Using PostgreSQL database connection for production');
     }
@@ -40,7 +52,9 @@ function getDatabaseUrl() {
 
 // Get database provider based on the URL
 function getDatabaseProvider(databaseUrl) {
-  if (!databaseUrl) return 'postgresql'; // Default to PostgreSQL for production
+  if (!databaseUrl || databaseUrl === 'frontend-only') {
+    return 'postgresql'; // Default to PostgreSQL for schema structure
+  }
   
   if (databaseUrl.startsWith('file:')) {
     return 'sqlite';
@@ -62,7 +76,31 @@ function ensureProperPrismaSetup() {
     const dbProvider = getDatabaseProvider(databaseUrl);
     
     console.log(`Using database provider: ${dbProvider}`);
+    console.log(`Frontend-only mode: ${isFrontendOnlyMode ? 'Enabled' : 'Disabled'}`);
     
+    // In frontend-only mode, we'll still generate the Prisma client
+    // but we won't try to connect to a database
+    if (isFrontendOnlyMode) {
+      console.log('Generating Prisma client for frontend-only mode...');
+      try {
+        execSync('npx prisma generate', { 
+          stdio: 'inherit',
+          env: {
+            ...process.env,
+            PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING: "1"
+          }
+        });
+        console.log('✅ Prisma client generated successfully for frontend-only mode');
+      } catch (error) {
+        console.error('⚠️ Error generating Prisma client:', error.message);
+        console.log('⚠️ Continuing with deployment anyway as we are in frontend-only mode');
+      }
+      
+      // In frontend-only mode, we don't need to do any other setup
+      return true;
+    }
+    
+    // Only proceed with normal setup if not in frontend-only mode
     // Read the current schema
     const schemaPath = path.join(process.cwd(), 'prisma', 'schema.prisma');
     let schemaContent = fs.readFileSync(schemaPath, 'utf8');
@@ -122,6 +160,13 @@ function ensureProperPrismaSetup() {
     return true;
   } catch (error) {
     console.error('❌ Error ensuring proper Prisma setup:', error);
+    
+    // If we're in frontend-only mode, continue despite errors
+    if (isFrontendOnlyMode) {
+      console.log('⚠️ Continuing with deployment anyway as we are in frontend-only mode');
+      return true;
+    }
+    
     return false;
   }
 }
@@ -129,7 +174,7 @@ function ensureProperPrismaSetup() {
 // Run the function if executed directly
 if (require.main === module) {
   const success = ensureProperPrismaSetup();
-  if (!success) {
+  if (!success && !isFrontendOnlyMode) {
     process.exit(1);
   }
 }
