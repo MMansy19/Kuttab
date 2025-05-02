@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest } from 'next/dist/server/web/spec-extension/request';
+import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { z } from "zod";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -148,6 +149,29 @@ export async function GET(request: NextRequest) {
   })(request);
 }
 
+async function checkOverlappingBooking(teacherProfileId: string, startTime: Date, endTime: Date) {
+  return prisma.booking.findFirst({
+    where: {
+      teacherProfileId,
+      status: { in: ["PENDING", "CONFIRMED"] },
+      OR: [
+        {
+          startTime: { lte: startTime },
+          endTime: { gt: startTime },
+        },
+        {
+          startTime: { lt: endTime },
+          endTime: { gte: endTime },
+        },
+        {
+          startTime: { gte: startTime },
+          endTime: { lte: endTime },
+        },
+      ],
+    },
+  });
+}
+
 export async function POST(request: NextRequest) {
   // Check rate limiting
   const rateLimitResult = await apiLimiter(request);
@@ -185,26 +209,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Check if time slot is available (no overlapping bookings)
-      const overlappingBooking = await prisma.booking.findFirst({
-        where: {
-          teacherProfileId,
-          status: { in: ["PENDING", "CONFIRMED"] },
-          OR: [
-            {
-              startTime: { lte: startTime },
-              endTime: { gt: startTime },
-            },
-            {
-              startTime: { lt: endTime },
-              endTime: { gte: endTime },
-            },
-            {
-              startTime: { gte: startTime },
-              endTime: { lte: endTime },
-            },
-          ],
-        },
-      });
+      const overlappingBooking = await checkOverlappingBooking(teacherProfileId, startTime, endTime);
 
       if (overlappingBooking) {
         return NextResponse.json(

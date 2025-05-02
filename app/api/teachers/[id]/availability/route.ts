@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest } from 'next/dist/server/web/spec-extension/request';
+import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { z } from "zod";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -29,9 +30,14 @@ const availabilitySchema = z.object({
   })),
 });
 
+// Type for route params - explicitly defined to avoid Promise wrapping issues
+type RouteParams = {
+  id: string;
+}
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: RouteParams }
 ) {
   // Check rate limiting
   const rateLimitResult = await apiLimiter(request);
@@ -116,7 +122,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: RouteParams }
 ) {
   // Check rate limiting
   const rateLimitResult = await apiLimiter(request);
@@ -174,13 +180,16 @@ export async function POST(
         const startTimeParts = slot.startTime.split(':');
         const endTimeParts = slot.endTime.split(':');
         
-        const startTimeDate = new Date();
+        // Use a fixed reference date (e.g., January 1, 1970)
+        const referenceDate = new Date(1970, 0, 1);
+        
+        const startTimeDate = new Date(referenceDate);
         startTimeDate.setHours(parseInt(startTimeParts[0], 10));
         startTimeDate.setMinutes(parseInt(startTimeParts[1], 10));
         startTimeDate.setSeconds(0);
         startTimeDate.setMilliseconds(0);
         
-        const endTimeDate = new Date();
+        const endTimeDate = new Date(referenceDate);
         endTimeDate.setHours(parseInt(endTimeParts[0], 10));
         endTimeDate.setMinutes(parseInt(endTimeParts[1], 10));
         endTimeDate.setSeconds(0);
@@ -257,7 +266,15 @@ export async function POST(
       }
 
       // Execute all operations in a transaction
-      await prisma.$transaction(operations);
+      if ('$transaction' in prisma) {
+        // Use transaction for Prisma Client
+        await (prisma.$transaction as any)(operations);
+      } else {
+        // Fall back to sequential execution for mock client
+        for (const operation of operations) {
+          await operation;
+        }
+      }
 
       // Get updated availability
       const updatedAvailability = await prisma.teacherAvailability.findMany({

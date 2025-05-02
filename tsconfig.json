@@ -27,18 +27,26 @@
       {
         "name": "next"
       }
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
     ]
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
-    ".next-build/types/**/*.ts",
-    ".next-temp/types/**/*.ts",
-    ".next/types/**/*.ts",
+    "clean.js",
     "next-env.d.ts",
-    "build-output/types/**/*.ts"
-, "clean.js"  ],
+    ".next/types/**/*.ts",
+    "types/**/*.d.ts"
+  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".next-build",
+    ".next-temp",
+    "build-output",
+    // Don't exclude .next entirely to allow generated types to be processed
+    ".next/cache"
   ]
 }

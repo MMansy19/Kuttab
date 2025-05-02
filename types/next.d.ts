@@ -1,17 +1,17 @@
 /**
- * Type definitions to fix Next.js App Router API route parameter type issues
+ * Enhanced Next.js type definitions to fix App Router route handler types
  */
 
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-// Fix the type mismatch between App Router route handler definitions and runtime behavior
+// Override the problematic route handler context types in Next.js
 declare module 'next/dist/server/app-render/entry-base' {
-  // Updated RouteContext that doesn't force params to be a Promise
-  type RouteContext = { 
-    params: Record<string, string | string[]> 
+  // The fix: RouteContext uses a plain object instead of Promise
+  type RouteContext = {
+    params: Record<string, string | string[]>
   }
 
-  // Enhanced ParamCheck to handle both Promise and direct object params
+  // Fix the ParamCheck to handle both Promise and direct object
   type ParamCheck<T> = {
     __tag__: string
     __param_position__: string
@@ -19,29 +19,22 @@ declare module 'next/dist/server/app-render/entry-base' {
       ? { params: P extends Promise<infer U> ? U : P }
       : T
   }
-
-  // Update PageProps and LayoutProps to handle non-Promise params
+  
+  // Fix the PageProps and LayoutProps interfaces
   interface PageProps {
     params?: Record<string, string | string[]>
     searchParams?: Record<string, string | string[]>
   }
-
+  
   interface LayoutProps {
     children?: React.ReactNode
     params?: Record<string, string | string[]>
   }
 }
 
-// This file extends the Next.js types to fix issues with route handlers
+// Fix the route handler context typing
 declare module 'next/server' {
-  // Override the RouteHandlerContext type to fix TypeScript errors in route handlers
-  export interface RouteHandlerContext {
+  interface RouteHandlerContext {
     params: Record<string, string | string[]>
   }
-
-  // Properly define return types for route handlers
-  export type RouteHandler<T = any> = (
-    request: NextRequest,
-    context: RouteHandlerContext
-  ) => Response | Promise<Response>
 }

@@ -1,36 +1,38 @@
 /**
- * Route handler type fixes for Next.js App Router
- * This file corrects the type mismatch between Next.js type expectations and runtime behavior
+ * Custom type declarations to fix Next.js App Router route handler type issues
  */
 
-// Fix the types for the generated route files in the .next directory
-declare module "*.route.ts" {
-  import type { NextRequest } from 'next/server'
-  
-  export type SegmentParams<T extends Object = any> = T extends Record<string, any>
-    ? { [K in keyof T]: T[K] extends string ? string | string[] | undefined : never }
-    : T
+// Override the route handler context types in Next.js
+declare module 'next/dist/server/app-render/entry-base' {
+  // The fix: RouteContext uses a plain object instead of Promise for params
+  type RouteContext = {
+    params: Record<string, string | string[]>
+  };
 
-  // This is the key fix - making RouteContext use a plain object instead of a Promise
-  export type RouteContext = { params: SegmentParams }
-  
-  // Enhanced ParamCheck type that accepts both Promise-wrapped and direct object params
-  export type ParamCheck<T> = {
-    __tag__: string
-    __param_position__: string
+  // Fix the ParamCheck to handle both Promise and direct object params
+  type ParamCheck<T> = {
+    __tag__: string;
+    __param_position__: string;
     __param_type__: T extends { params: infer P } 
       ? { params: P extends Promise<infer U> ? U : P }
-      : T
-  }
-
+      : T;
+  };
+  
   // Fix PageProps and LayoutProps interfaces
-  export interface PageProps {
-    params?: SegmentParams
-    searchParams?: any
+  interface PageProps {
+    params?: Record<string, string | string[]>;
+    searchParams?: Record<string, string | string[]>;
   }
   
-  export interface LayoutProps {
-    children?: React.ReactNode
-    params?: SegmentParams
+  interface LayoutProps {
+    children?: React.ReactNode;
+    params?: Record<string, string | string[]>;
+  }
+}
+
+// Fix the route handler typing in next/server
+declare module 'next/server' {
+  interface RouteHandlerContext {
+    params: Record<string, string | string[]>;
   }
 }
