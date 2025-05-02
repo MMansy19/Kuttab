@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 const https = require('https');
+const { getDatabaseUrl, getPrismaProvider } = require('./lib/db-config');
 
 // Constants
 const PRISMA_VERSION = '6.6.0';
@@ -112,5 +113,69 @@ const runPrismaFix = async () => {
     return false;
   }
 };
+
+// Main function 
+function ensureProperPrismaSetup() {
+  console.log('🔧 Ensuring proper Prisma setup for deployment...');
+  
+  try {
+    // Get database configuration based on environment
+    const databaseUrl = getDatabaseUrl();
+    const provider = getPrismaProvider(databaseUrl);
+    
+    console.log(`Using database provider: ${provider}`);
+    
+    // Read the current schema
+    const schemaPath = path.join(process.cwd(), 'prisma', 'schema.prisma');
+    let schemaContent = fs.readFileSync(schemaPath, 'utf8');
+    
+    // Check if the provider matches what's in the schema
+    const currentProviderMatch = schemaContent.match(/provider\s*=\s*"([^"]+)"/);
+    const currentProvider = currentProviderMatch ? currentProviderMatch[1] : null;
+    
+    console.log(`Current provider in schema: ${currentProvider}, Target provider: ${provider}`);
+    
+    if (currentProvider !== provider) {
+      // In production, we need to ensure the schema uses postgresql
+      console.log(`Updating schema provider from ${currentProvider} to ${provider}...`);
+      
+      schemaContent = schemaContent.replace(
+        /provider\s*=\s*"([^"]+)"/,
+        `provider = "${provider}"`
+      );
+      
+      // Update the URL as well
+      schemaContent = schemaContent.replace(
+        /url\s*=\s*"[^"]+"/,
+        `url = env("DATABASE_URL")`
+      );
+      
+      fs.writeFileSync(schemaPath, schemaContent);
+      console.log('✅ Schema updated successfully');
+    } else {
+      console.log('✅ Schema provider is already correctly configured');
+    }
+    
+    // Run prisma generate to ensure the client is updated
+    console.log('Generating Prisma client...');
+    execSync('npx prisma generate', { stdio: 'inherit' });
+    console.log('✅ Prisma client generated successfully');
+    
+    return true;
+  } catch (error) {
+    console.error('❌ Error ensuring proper Prisma setup:', error);
+    return false;
+  }
+}
+
+// Run the function if executed directly
+if (require.main === module) {
+  const success = ensureProperPrismaSetup();
+  if (!success) {
+    process.exit(1);
+  }
+}
+
+module.exports = { ensureProperPrismaSetup };
 
 runPrismaFix();

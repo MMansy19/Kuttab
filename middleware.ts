@@ -42,7 +42,10 @@ export async function middleware(req: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
-  console.log("Middleware token check:", token ? "Token exists" : "No token", "Path:", req.nextUrl.pathname);
+  // Remove console.log in production
+  if (process.env.NODE_ENV !== "production") {
+    console.log("Middleware token check:", token ? "Token exists" : "No token", "Path:", req.nextUrl.pathname);
+  }
 
   const { pathname, searchParams } = req.nextUrl;
   const callbackUrl = searchParams.get("callbackUrl");
@@ -75,7 +78,10 @@ export async function middleware(req: NextRequest) {
 
   // If trying to access a protected route without being logged in
   if (isProtectedPath && !token) {
-    console.log("Access to protected path without token, redirecting to login");
+    if (process.env.NODE_ENV !== "production") {
+      console.log("Access to protected path without token, redirecting to login");
+    }
+    
     if (isApiRequest) {
       return NextResponse.json(
         { error: "يجب تسجيل الدخول أولاً" },
@@ -85,14 +91,16 @@ export async function middleware(req: NextRequest) {
     
     const url = new URL("/auth/login", req.url);
     // Save the requested URL as callbackUrl to redirect after successful login
-    url.searchParams.set("callbackUrl", pathname);
+    url.searchParams.set("callbackUrl", encodeURIComponent(pathname));
     return NextResponse.redirect(url);
   }
 
   // If logged in and trying to access a protected route without proper role
   if (isProtectedPath && token) {
     const userRole = token.role as string;
-    console.log("User role:", userRole, "for protected path:", pathname);
+    if (process.env.NODE_ENV !== "production") {
+      console.log("User role:", userRole, "for protected path:", pathname);
+    }
     
     const allowedRoles = Object.entries(protectedPaths).find(([path]) =>
       pathname.startsWith(path)
@@ -117,7 +125,10 @@ export async function middleware(req: NextRequest) {
   // If trying to access auth pages while logged in
   if (token && (pathname === "/auth/login" || pathname === "/auth/signup")) {
     const userRole = token.role as string;
-    console.log("User already logged in, redirecting to dashboard for role:", userRole);
+    
+    if (process.env.NODE_ENV !== "production") {
+      console.log("User already logged in, redirecting to dashboard for role:", userRole);
+    }
     
     // If there's a valid callback URL, try to honor it if the user has permission
     if (callbackUrl) {
@@ -146,28 +157,23 @@ export async function middleware(req: NextRequest) {
       
       // If the callback path is protected and user has access, or it's a public path
       if (isCallbackProtected || publicPaths.some(path => callbackPath.startsWith(path))) {
-        // Use a direct URL construction to avoid issues with URL parsing
-        console.log("Redirecting to callback URL:", callbackPath);
         return NextResponse.redirect(new URL(callbackPath, req.url));
       }
     }
     
     // Default to role-based redirections
-    console.log("Redirecting to role-specific dashboard:", roleRedirections[userRole as keyof typeof roleRedirections]);
     return NextResponse.redirect(new URL(roleRedirections[userRole as keyof typeof roleRedirections] || "/", req.url));
   }
 
   // If accessing the root path while logged in
   if (token && pathname === "/") {
     const userRole = token.role as string;
-    console.log("User at root path, redirecting to dashboard for role:", userRole);
     return NextResponse.redirect(new URL(roleRedirections[userRole as keyof typeof roleRedirections] || "/", req.url));
   }
 
   // If accessing the dashboard root, redirect to role-specific dashboard
   if (token && pathname === "/dashboard") {
     const userRole = token.role as string;
-    console.log("User at dashboard root, redirecting to specific dashboard for role:", userRole);
     return NextResponse.redirect(
       new URL(roleRedirections[userRole as keyof typeof roleRedirections] || "/", req.url)
     );

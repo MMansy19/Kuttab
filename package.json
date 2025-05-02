@@ -9,10 +9,14 @@
     "clean:deep": "rd /s /q node_modules & rd /s /q .next & rd /s /q generated",
     "install:safe": "npm install --ignore-scripts && npx prisma generate --no-engine",
     "prisma:generate": "prisma generate",
-    "build": "prisma generate && next build && node vercel-build.js",
+    "db:setup": "node ./scripts/setup-production-db.js",
+    "prisma:fix": "node prisma-fix.js",
+    "build": "node prisma-fix.js && prisma generate && node ./scripts/setup-production-db.js && next build && node vercel-build.js",
     "start": "next start",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "vercel:validate": "node ./scripts/validate-vercel-config.js",
+    "predeploy": "npm run vercel:validate"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

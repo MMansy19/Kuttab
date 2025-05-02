@@ -17,6 +17,19 @@ const nextConfig = {
     };
     
     return config;
+  },
+
+  // Add proper environment variable handling
+  env: {
+    NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV || 'development',
+  },
+  
+  // Enable experimental features for improved Vercel deployment
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+    optimizeCss: true,
   }
 }
 

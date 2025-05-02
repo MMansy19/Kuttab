@@ -6,6 +6,8 @@
   "framework": "nextjs",
   "env": {
     "NEXTAUTH_URL": "https://${VERCEL_URL}",
-    "VERCEL_ENV": "production"
+    "VERCEL_ENV": "production",
+    "NEXTAUTH_SECRET": "${NEXTAUTH_SECRET}",
+    "DATABASE_URL": "${DATABASE_URL}"
   }
 }
