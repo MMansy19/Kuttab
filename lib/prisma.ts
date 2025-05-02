@@ -29,6 +29,10 @@ class MockPrismaClient {
   }
 }
 
+// Force frontend-only mode for development until database is properly configured
+const forceFrontendOnly = true;
+const shouldUseMockClient = forceFrontendOnly || isFrontendOnlyMode;
+
 // PrismaClient initialization with better error handling
 const globalForPrisma = globalThis as unknown as { 
   prisma: PrismaClient | MockPrismaClient 
@@ -36,11 +40,16 @@ const globalForPrisma = globalThis as unknown as {
 
 // Use mock client in frontend-only mode
 export const prisma = globalForPrisma.prisma || 
-  (isFrontendOnlyMode 
+  (shouldUseMockClient 
     ? new MockPrismaClient() as unknown as PrismaClient
     : new PrismaClient({
         log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
       }));
+
+// Log which client is being used for debugging
+if (process.env.NODE_ENV === 'development') {
+  console.log(`[Prisma] Using ${shouldUseMockClient ? 'MOCK' : 'REAL'} database client`);
+}
 
 // Prevent multiple instances of Prisma Client in development
 if (process.env.NODE_ENV !== 'production') {

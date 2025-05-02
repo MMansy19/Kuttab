@@ -4,13 +4,21 @@ import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { isFrontendOnlyMode } from "./config";
 
-// Mock users for frontend-only mode
+// Helper function for debug logging in development
+const debug = (...args: any[]) => {
+  if (process.env.NODE_ENV === "development") {
+    console.log("[Auth Debug]", ...args);
+  }
+};
+
+// Mock users for frontend-only mode with plain text password for testing
 const mockUsers = [
   {
     id: "mock-user-1",
     name: "Demo User",
     email: "demo@example.com",
     password: "$2a$12$k8Y.iR8Y5Oe7UKGCIxOy3OW9tRK/xd7ItpfmOGe1WQL9Yl/0GJoXu", // hashed "password123"
+    plainPassword: "password123", // For direct comparison if bcrypt fails
     role: "USER",
     image: "/images/icons/user-avatar.svg"
   },
@@ -19,6 +27,7 @@ const mockUsers = [
     name: "Demo Teacher",
     email: "teacher@example.com",
     password: "$2a$12$k8Y.iR8Y5Oe7UKGCIxOy3OW9tRK/xd7ItpfmOGe1WQL9Yl/0GJoXu", // hashed "password123"
+    plainPassword: "password123", // For direct comparison if bcrypt fails
     role: "TEACHER",
     image: "/images/icons/teacher-avatar.svg"
   },
@@ -27,16 +36,16 @@ const mockUsers = [
     name: "Demo Admin",
     email: "admin@example.com",
     password: "$2a$12$k8Y.iR8Y5Oe7UKGCIxOy3OW9tRK/xd7ItpfmOGe1WQL9Yl/0GJoXu", // hashed "password123"
+    plainPassword: "password123", // For direct comparison if bcrypt fails
     role: "ADMIN",
     image: "/images/icons/admin-avatar.svg"
   }
 ];
 
-// Force frontend-only mode when DATABASE_URL is not available or explicitly set
-const forceFrontendOnly = process.env.DATABASE_URL === undefined || 
-                        process.env.DATABASE_URL === 'frontend-only' || 
-                        process.env.NEXT_PUBLIC_FRONTEND_ONLY === 'true' || 
-                        isFrontendOnlyMode === true;
+// Always force frontend-only mode for now to ensure mock users are used
+const forceFrontendOnly = true;
+
+debug("Auth configuration loading. Frontend-only mode:", forceFrontendOnly);
 
 // Remove PrismaAdapter to fix compatibility issues
 export const authOptions: NextAuthOptions = {
@@ -49,88 +58,76 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
+        debug("Authorization attempt for email:", credentials?.email);
+
         if (!credentials?.email || !credentials?.password) {
-          return null // Return null instead of throwing error
+          debug("Missing credentials");
+          return null;
         }
 
-        // In frontend-only mode, use mock users instead of database
-        if (forceFrontendOnly) {
-          console.log("Using frontend-only mode with mock users");
-          const user = mockUsers.find(user => user.email === credentials.email);
-          if (!user || !user.password) {
-            return null;
-          }
-
-          const isPasswordValid = await bcrypt.compare(
-            credentials.password,
-            user.password
-          );
-
-          if (!isPasswordValid) {
-            return null;
-          }
-
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            role: user.role,
-          };
-        }
-
-        // Only try database operations if we're not in frontend-only mode
         try {
-          // Normal database authentication when not in frontend-only mode
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
-          });
-
-          if (!user || !user.password) {
-            return null
-          }
-
-          const isPasswordValid = await bcrypt.compare(
-            credentials.password,
-            user.password
-          );
-
-          if (!isPasswordValid) {
-            return null
-          }
-
-          return {
-            id: user.id,
-            name: user.name || (user.email ? user.email.split('@')[0] : 'user'), // Fallback name
-            email: user.email || '', // Ensure email is never null
-            image: user.image,
-            role: user.role,
-          };
-        } catch (error) {
-          console.error("Database error, falling back to mock users:", error);
-          
-          // Fallback to mock users if database fails
+          // Always use mock users mode for now to debug
+          debug("Using mock users for authentication");
           const user = mockUsers.find(user => user.email === credentials.email);
-          if (!user || !user.password) {
+          
+          if (!user) {
+            debug("User not found in mock data");
             return null;
           }
-
-          const isPasswordValid = await bcrypt.compare(
-            credentials.password,
-            user.password
-          );
-
-          if (!isPasswordValid) {
+          
+          debug("Found user:", user.email, "with role:", user.role);
+          
+          // Try direct password comparison first for debugging
+          if (credentials.password === user.plainPassword) {
+            debug("Direct password match successful");
+            return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              image: user.image,
+              role: user.role,
+            };
+          }
+          
+          // Fall back to bcrypt compare if direct match fails
+          try {
+            const isPasswordValid = await bcrypt.compare(
+              credentials.password,
+              user.password
+            );
+            
+            debug("bcrypt password comparison result:", isPasswordValid);
+            
+            if (!isPasswordValid) {
+              debug("Password invalid");
+              return null;
+            }
+            
+            return {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              image: user.image,
+              role: user.role,
+            };
+          } catch (bcryptError) {
+            debug("bcrypt comparison error:", bcryptError);
+            // If bcrypt fails but we already matched the plaintext password, proceed anyway
+            if (credentials.password === user.plainPassword) {
+              debug("Using plaintext password match as fallback");
+              return {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                image: user.image,
+                role: user.role,
+              };
+            }
             return null;
           }
-
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            role: user.role,
-          };
+        } catch (error) {
+          debug("Authentication error:", error);
+          return null;
         }
       },
     }),
@@ -192,4 +189,4 @@ export const authOptions: NextAuthOptions = {
       },
     },
   },
-}
+};
