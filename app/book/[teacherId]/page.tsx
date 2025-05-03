@@ -78,7 +78,7 @@ const availabilityData = [
 
 export default function BookTeacherPage() {
   const params = useParams();
-  const teacherId = params.teacherId as string;
+  const teacherId = params?.teacherId as string;
   const [isLoading, setIsLoading] = useState(true);
   const [teacher, setTeacher] = useState<Teacher | null>(null);
   const [availabilitySlots, setAvailabilitySlots] = useState<SlotType[]>([]);

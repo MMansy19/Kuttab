@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 
 export default function ClientLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const isDashboard = pathname.startsWith('/dashboard');
+  const isDashboard = pathname?.startsWith('/dashboard') || false;
   const [isLoaded, setIsLoaded] = useState(false);
   
   useEffect(() => {

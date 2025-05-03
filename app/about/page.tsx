@@ -1,9 +1,11 @@
+'use client';
+
 import React from "react";
 import { FaBookOpenReader } from "react-icons/fa6";
 import { FaMicrophone, FaUserGraduate, FaGlobe, FaBook, FaChalkboardTeacher, FaHandsHelping, FaUniversity, FaLightbulb } from "react-icons/fa";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card, CardContent } from "@/components/ui/Card";
-import { motion } from "@/utils/framer-motion";
+import { motion } from "framer-motion";
 
 // Animation variants
 const fadeIn = {

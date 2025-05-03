@@ -9,7 +9,7 @@ const ErrorContent = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const errorMessage = searchParams.get("error");
+    const errorMessage = searchParams?.get("error") || null;
     setError(errorMessage);
   }, [searchParams]);
 

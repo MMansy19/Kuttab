@@ -4,7 +4,7 @@ import SessionProvider from '../components/SessionProvider';
 import ToastContainer from '../components/ui/Toast';
 import { ThemeProvider } from '../context/ThemeContext';
 import ClientLayout from '../components/ClientLayout';
-import { AnimatePresence } from '@/utils/framer-motion';
+import { AnimatePresence } from '../utils/framer-motion';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

@@ -6,7 +6,7 @@ import { FaUserCircle, FaEye, FaCalendarCheck, FaStar, FaQuran, FaUserGraduate }
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
-  motion, 
+  motion,
   AnimatePresence,
   useAnimation,
   useMotionValue,
