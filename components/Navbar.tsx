@@ -1,23 +1,25 @@
 "use client";
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import NotificationBell from './NotificationBell';
 import { FaUser } from 'react-icons/fa';
-import { useTheme } from '../context/ThemeContext';
-import { ThemeSwitcher } from './ui/ThemeSwitcher';
+import { motion } from '@/utils/framer-motion';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
 
   return (
-    <nav dir="rtl" className="w-full bg-white dark:bg-gray-900 text-emerald-900 dark:text-white py-4 px-2 sm:px-6 flex flex-col sm:flex-row items-center justify-between shadow-md transition-colors duration-300 border-b border-accent">
+    <nav dir="rtl" className="w-full bg-white dark:bg-gray-900   dark:text-white py-4 px-2 sm:px-6 flex flex-col sm:flex-row items-center justify-between shadow-md transition-colors duration-300 border-b border-accent">
       <div className="flex items-center gap-2 mb-2 sm:mb-0">
         <div className="flex items-center">
-          <Image src="/images/logo.svg" alt="كُتّاب" width={40} height={40} className="mr-2" />
-          <span className="text-3xl font-bold tracking-tight text-accent">كُتّاب <span className="text-emerald-700 dark:text-emerald-400">|</span> KOTTAB</span>
+           <motion.h3 
+            className="text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-blue-600 inline-block text-transparent bg-clip-text"
+              whileHover={{ scale: 1.05 }}
+            >
+            <span>كُتّاب <span className="text-emerald-700 dark:text-emerald-400 opacity-30 mx-1">|</span> <span dir="ltr" className="inline-block">iKuttab</span></span>
+            </motion.h3>
         </div>
       </div>
       
