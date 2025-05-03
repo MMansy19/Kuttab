@@ -18,8 +18,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <SessionProvider>
           <ThemeProvider>
             <AnimatePresence mode="wait">
-              <ClientLayout>{children}</ClientLayout>
-              <ToastContainer />
+              <ClientLayout key="client-layout">{children}</ClientLayout>
+              <ToastContainer key="toast-container" />
             </AnimatePresence>
           </ThemeProvider>
         </SessionProvider>

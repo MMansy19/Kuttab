@@ -2,7 +2,7 @@
 
 import type { Teacher } from '../../types';
 import TeacherCard from '../../components/TeacherCard';
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import teachersData from '../../data/teachers';
 import { FaFilter, FaSearch, FaSortAmountDown, FaBook, FaStar, FaUserGraduate, FaQuran, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
@@ -28,7 +28,7 @@ const sortOptions = [
   { id: 'experience', label: 'الأكثر خبرة' },
   { id: 'newest', label: 'الأحدث' }
 ];
-  
+
 // Hero section items
 interface HeroStat {
   icon: React.ReactNode;
@@ -236,6 +236,46 @@ export default function TeachersPage() {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [teachers] = useState<Teacher[]>(teachersData);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Handle media queries safely with useEffect
+  useEffect(() => {
+    const checkIfMobile = () => {
+      if (typeof window !== 'undefined') {
+        setIsMobile(window.matchMedia('(max-width: 768px)').matches);
+      }
+    };
+    
+    // Check initially
+    checkIfMobile();
+    
+    // Set up listener for window resize
+    if (typeof window !== 'undefined') {
+      const mediaQueryList = window.matchMedia('(max-width: 768px)');
+      
+      // Modern approach with addEventListener
+      if (mediaQueryList.addEventListener) {
+        mediaQueryList.addEventListener('change', checkIfMobile);
+      }
+      // Fallback for older browsers
+      else if ('addListener' in mediaQueryList) {
+        // @ts-ignore - for older browser support
+        mediaQueryList.addListener(checkIfMobile);
+      }
+      
+      // Cleanup
+      return () => {
+        if (mediaQueryList.removeEventListener) {
+          mediaQueryList.removeEventListener('change', checkIfMobile);
+        }
+        // @ts-ignore - for older browser support
+        else if ('removeListener' in mediaQueryList) {
+          // @ts-ignore - for older browser support
+          mediaQueryList.removeListener(checkIfMobile);
+        }
+      };
+    }
+  }, []);
 
   // Get all unique specializations
   const specializations = useMemo(() => {
@@ -489,7 +529,7 @@ export default function TeachersPage() {
         
         {/* Sidebar Filter */}
         <AnimatePresence>
-          {(showMobileFilters || !window.matchMedia('(max-width: 768px)').matches) && (
+          {(showMobileFilters || !isMobile) && (
             <motion.aside 
               className={`${showMobileFilters ? 'fixed inset-0 z-50 md:relative md:z-auto' : 'w-full md:w-72 lg:w-80 mb-4 md:mb-0 flex-shrink-0'}`}
               initial={{ opacity: 0, x: -20 }}
@@ -889,7 +929,7 @@ export default function TeachersPage() {
                   }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </motion.div>
                 <motion.div 

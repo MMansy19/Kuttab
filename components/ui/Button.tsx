@@ -56,23 +56,28 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, rounded, asChild = false, whileHover, whileTap, animate, initial, transition, variants, as, ...props }, ref) => {
-    const Component = as || (whileHover || whileTap || animate || initial || transition || variants ? motion.button : 'button');
+    // Check if any motion props are provided
+    const hasMotionProps = !!(whileHover || whileTap || animate || initial || transition || variants);
     
-    const motionProps = {
+    // Determine which component to use
+    const Component = as || (hasMotionProps ? motion.button : 'button');
+    
+    // Only include motion props if we're using a motion component
+    const componentProps = hasMotionProps ? {
+      ...props,
       whileHover,
       whileTap, 
       animate,
       initial,
       transition,
       variants
-    };
+    } : props;
     
     return (
       <Component
         className={cn(buttonVariants({ variant, size, rounded, className }))}
         ref={ref}
-        {...motionProps}
-        {...props}
+        {...componentProps}
       />
     );
   }
