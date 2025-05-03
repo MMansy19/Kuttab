@@ -1,3 +1,14 @@
+# Naming:
+- iKuttab
+- AlKuttab
+- KuttabNow
+- KuttabOne
+- KuttabX 
+
+KuttabNow – Feels dynamic and on-demand
+
+AlKuttab – Classical, trusted feel
+
 # KOTTAB - Task Management and Project Roadmap
 
 *Last Updated: May 2, 2025*
