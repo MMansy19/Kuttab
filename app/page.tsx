@@ -70,11 +70,11 @@ export default function Home() {
                 </div>
               </div>
               
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white" dir="rtl">
-                تعلم 
-                <span className="text-gradient bg-gradient-to-r from-emerald-400 to-blue-500"> القرآن الكريم </span>
-                مع أفضل المعلمين
-              </h1>
+                  <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight" dir="rtl">
+                  تعلم 
+                  <span className="text-gradient bg-gradient-to-r from-emerald-400 to-blue-500"> القرآن الكريم </span>
+                  مع أفضل المعلمين
+                  </h1>
               
               <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto lg:mx-0" dir="rtl">
                 منصة كُـــتَّـــاب تجمع بين الطلاب والمعلمين المتميزين لجلسات تعليمية عالية الجودة عبر الإنترنت. ابدأ رحلتك التعليمية الآن.
