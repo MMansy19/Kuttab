@@ -42,7 +42,7 @@ export default function OptimizedImage({
           alt={safeAlt} 
           fill
           sizes={`(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw`}
-          loading={priority ? 'eager' : 'lazy'}
+          loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? 'high' : 'auto'}
           quality={80}
           className="object-cover"
@@ -57,6 +57,7 @@ export default function OptimizedImage({
       {...getOptimizedImageProps(safeSrc, safeAlt, width, height, priority)}
       className={className}
       fetchPriority={priority ? 'high' : 'auto'}
+      loading={priority ? "eager" : "lazy"}
     />
   );
 }

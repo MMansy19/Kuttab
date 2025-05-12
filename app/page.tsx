@@ -5,30 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { FaBook, FaUserGraduate, FaCalendarAlt, FaGlobe, FaAward, FaMedal, FaLaptop, FaComment, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaUserCircle } from "react-icons/fa";
 
-// SEO metadata for the Home page
-export const metadata = {
-  title: 'كُتّاب | منصة تعليم القرآن الكريم والعلوم الإسلامية عن بعد',
-  description: 'منصة كُتّاب التعليمية لحفظ القرآن الكريم وتعلم التجويد والعلوم الإسلامية عبر الإنترنت مع أفضل المعلمين المتخصصين',
-  keywords: [
-    'تعليم القرآن عن بعد',
-    'حفظ القرآن أونلاين',
-    'دروس تجويد',
-    'معلم قرآن',
-    'كُتّاب إلكتروني',
-    'تعليم إسلامي',
-    'دروس قرآن عبر الإنترنت',
-    'تحفيظ قرآن للأطفال',
-    'تجويد القرآن',
-    'تعلم القراءات',
-    'معلمين قرآن معتمدين',
-    'دروس إسلامية أونلاين'
-  ],
-  openGraph: {
-    title: 'كُتّاب | منصة تعليم القرآن الكريم عن بعد',
-    description: 'تعلم القرآن الكريم والتجويد مع أفضل المعلمين عن طريق منصة كُتّاب التعليمية',
-    images: [{ url: '/images/og-image.jpg' }],
-  },
-};
+
 export default function Home() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   
@@ -93,11 +70,11 @@ export default function Home() {
                 </div>
               </div>
               
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white" dir="rtl">
-                تعلم 
-                <span className="text-gradient bg-gradient-to-r from-emerald-400 to-blue-500"> القرآن الكريم </span>
-                مع أفضل المعلمين
-              </h1>
+                  <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight" dir="rtl">
+                  تعلم 
+                  <span className="text-gradient bg-gradient-to-r from-emerald-400 to-blue-500"> القرآن الكريم </span>
+                  مع أفضل المعلمين
+                  </h1>
               
               <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto lg:mx-0" dir="rtl">
                 منصة كُـــتَّـــاب تجمع بين الطلاب والمعلمين المتميزين لجلسات تعليمية عالية الجودة عبر الإنترنت. ابدأ رحلتك التعليمية الآن.

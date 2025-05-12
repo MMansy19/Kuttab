@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import NotificationBell from './NotificationBell';
+import NotificationBell from '@/components/notifications/NotificationBell';
 import { FaUser } from 'react-icons/fa';
 
 export default function Navbar() {
@@ -44,9 +44,6 @@ export default function Navbar() {
 
       {/* Auth and User Actions */}
       <div className={`flex items-center gap-2 mt-2 sm:mt-0 ${isMenuOpen ? 'block' : 'hidden'} sm:flex`}>
-        {/* Theme Switcher */}
-        {/* <ThemeSwitcher variant="icon" className="mr-2" /> */}
-
         {session ? (
           <div className="flex items-center gap-3">
             {/* Notification Bell */}
