@@ -9,8 +9,8 @@ export function generateOrganizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'كتّاب',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://kuttab.vercel.app',
-    logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://kuttab.vercel.app'}/images/logo.webp`,
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    logo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/images/logo.webp`,
     sameAs: [
       'https://facebook.com/kottab',
       'https://twitter.com/kottab',
@@ -40,7 +40,7 @@ export function generateCourseSchema(course: {
     provider: {
       '@type': 'Organization',
       name: course.provider,
-      sameAs: process.env.NEXT_PUBLIC_SITE_URL || 'https://kuttab.vercel.app',
+      sameAs: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
     },
     url: course.url,
   };

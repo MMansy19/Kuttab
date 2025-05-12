@@ -531,8 +531,8 @@ export default function Home() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left md:max-w-lg">
-              <h2 className="text-3xl font-bold mb-4" dir="rtl">ابدأ رحلة التعلم مع كُـــتَّـــاب اليوم</h2>
-              <p className="text-lg text-emerald-100" dir="rtl">انضم إلى آلاف الطلاب الذين يتعلمون القرآن الكريم والعلوم الإسلامية على منصتنا</p>
+              <h2 className="text-3xl font-bold mb-4" >ابدأ رحلة التعلم مع كُـــتَّـــاب اليوم</h2>
+              <p className="text-lg text-emerald-100" >انضم إلى آلاف الطلاب الذين يتعلمون القرآن الكريم والعلوم الإسلامية على منصتنا</p>
             </div>
             <div className="flex flex-wrap gap-4 justify-center md:justify-end">
               <Link 

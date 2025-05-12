@@ -149,32 +149,76 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
       setError(err instanceof Error ? err.message : 'Failed to update notifications');
     }
   }, [session?.user, refreshNotifications]);
-
-  // Set up polling for new notifications
+  // Track document visibility to optimize polling
+  const [isDocumentVisible, setIsDocumentVisible] = useState<boolean>(true);
+  const visibilityRef = useRef<boolean>(true);
+  
+  // Update visibility state when document visibility changes
   useEffect(() => {
+    if (typeof document === 'undefined') return;
+    
+    const handleVisibilityChange = () => {
+      const isVisible = document.visibilityState === 'visible';
+      setIsDocumentVisible(isVisible);
+      visibilityRef.current = isVisible;
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+  
+  // Set up polling for new notifications with visibility-aware behavior
+  useEffect(() => {
+    // Don't poll if user isn't authenticated
+    if (!session?.user) return;
+    
+    // Function to start polling with adaptive interval based on visibility
     const startPolling = async () => {
       // Initial fetch
       await refreshNotifications();
       
-      // Set up recurring poll
+      // Set up recurring poll with adaptive timing
       const poll = async () => {
-        await refreshNotifications();
-        pollingTimeoutRef.current = setTimeout(poll, pollingInterval);
+        try {
+          // Skip polling when tab is not visible to save resources,
+          // but still poll occasionally (with longer interval)
+          if (visibilityRef.current) {
+            await refreshNotifications();
+            pollingTimeoutRef.current = setTimeout(poll, pollingInterval);
+          } else {
+            // Poll less frequently when tab is not visible
+            pollingTimeoutRef.current = setTimeout(poll, pollingInterval * 3);
+          }
+        } catch (err) {
+          console.error("Error in notification polling:", err);
+          // If polling fails, try again but with backoff
+          pollingTimeoutRef.current = setTimeout(poll, pollingInterval * 2);
+        }
       };
       
       pollingTimeoutRef.current = setTimeout(poll, pollingInterval);
     };
     
-    // Only start polling if user is authenticated
-    if (session?.user) {
-      startPolling();
-    }
+    // Start the polling
+    startPolling();
+    
+    // Refresh when tab becomes visible again
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'visible') {
+        await refreshNotifications();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     
     // Cleanup function to clear timeout when component unmounts
     return () => {
       if (pollingTimeoutRef.current) {
         clearTimeout(pollingTimeoutRef.current);
       }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [session?.user, pollingInterval, refreshNotifications]);
 

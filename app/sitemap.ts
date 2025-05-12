@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 
 // Generate the sitemap dynamically
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kuttab.vercel.app';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   
   // Get the current date for lastModified
   const currentDate = new Date();

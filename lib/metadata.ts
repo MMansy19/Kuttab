@@ -3,7 +3,7 @@ import { Metadata } from "next";
 // Default metadata configuration for the entire site
 // Override in specific pages as needed
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://kuttab.vercel.app';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export const defaultMetadata: Metadata = {
   metadataBase: new URL(siteUrl),

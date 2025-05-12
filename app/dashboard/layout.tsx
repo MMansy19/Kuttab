@@ -8,11 +8,21 @@ export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}) {  // Get the session with debug logging in non-production environments
   const session = await getServerSession(authOptions);
   
+  if (process.env.NODE_ENV !== "production") {
+    console.log("Dashboard layout session check:", session ? "Session found" : "No session");
+    if (session) {
+      console.log("Session user:", session.user);
+    }
+  }
+  
+  // If no session is found, redirect to login with a callback URL to return here
   if (!session) {
-    redirect("/auth/login");
+    console.error("No session found in dashboard layout - redirecting to login");
+    const callbackUrl = `/dashboard`;
+    redirect(`/auth/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
   }
 
   // Shared dashboard layout with sidebar navigation

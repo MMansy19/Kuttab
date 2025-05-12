@@ -117,6 +117,8 @@ interface ApiResponse<T = any> {
   error: string | null;
   status: number;
   ok: boolean;
+  requestId?: string;
+  responseTime?: number;
 }
 
 async function parseResponse(response: Response) {
@@ -145,6 +147,14 @@ export async function fetcher<T = any>(url: string, options: FetcherOptions = {}
     ...fetchOptions.headers
   };
 
+  // Request timing for performance monitoring
+  const startTime = performance.now();
+  let endTime: number;
+  let requestId = `req_${Date.now()}`;
+
+  // Add request ID for tracing in logs
+  (headers as Record<string, string>)['X-Request-ID'] = requestId;
+
   if (requireAuth) {
     const token = getAuthToken();
     if (token) {
@@ -155,15 +165,28 @@ export async function fetcher<T = any>(url: string, options: FetcherOptions = {}
           data: null,
           error: 'Authentication required',
           status: 401,
-          ok: false
+          ok: false,
+          requestId
         };
       }
     }
   }
 
   try {
+    // First attempt
     let response = await fetch(url, { ...fetchOptions, headers });
+    
+    // Add retry logic for specific network errors
+    const shouldRetry = response.status >= 500 || response.status === 429;
+    if (shouldRetry && !fetchOptions.signal?.aborted && fetchOptions.method !== 'POST') {
+      // Wait a bit before retrying
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Try once more
+      response = await fetch(url, { ...fetchOptions, headers });
+    }
 
+    // Handle token refresh if needed
     if (response.status === 401 && requireAuth) {
       const refreshResult = await refreshToken();
       if (refreshResult.success) {
@@ -175,37 +198,126 @@ export async function fetcher<T = any>(url: string, options: FetcherOptions = {}
           data: null,
           error: 'Session expired. Please login again.',
           status: 401,
-          ok: false
+          ok: false,
+          requestId
         };
       }
     }
 
+    endTime = performance.now();
+    
     const data = await parseResponse(response);
+    
+    // Log response time for monitoring
+    const responseTime = Math.round(endTime - startTime);
+    if (responseTime > 1000 && !skipErrorHandling) {
+      console.warn(`[Fetch] Slow request ${requestId}: ${url} took ${responseTime}ms`);
+    }
+    
     return {
       data: response.ok ? data : null,
       error: response.ok ? null : getErrorMessage(response, data),
       status: response.status,
-      ok: response.ok
+      ok: response.ok,
+      requestId,
+      responseTime
     };
   } catch (error) {
+    endTime = performance.now();
+    
     if (!skipErrorHandling) {
-      console.error('Fetch error:', error);
+      console.error(`[Fetch] Error ${requestId}:`, error, {
+        url,
+        method: fetchOptions.method || 'GET',
+        responseTime: Math.round(endTime - startTime)
+      });
     }
+    
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Network error occurred',
       status: 0,
-      ok: false
+      ok: false,
+      requestId,
+      responseTime: Math.round(endTime - startTime)
     };
   }
 }
 
 export const http = {
-  get: <T = any>(url: string, options?: FetcherOptions) => fetcher<T>(url, { ...options, method: 'GET' }),
-  post: <T = any>(url: string, body: any, options?: FetcherOptions) => fetcher<T>(url, { ...options, method: 'POST', body: JSON.stringify(body) }),
-  put: <T = any>(url: string, body: any, options?: FetcherOptions) => fetcher<T>(url, { ...options, method: 'PUT', body: JSON.stringify(body) }),
-  patch: <T = any>(url: string, body: any, options?: FetcherOptions) => fetcher<T>(url, { ...options, method: 'PATCH', body: JSON.stringify(body) }),
-  delete: <T = any>(url: string, options?: FetcherOptions) => fetcher<T>(url, { ...options, method: 'DELETE' }),
+  /**
+   * Make a GET request
+   * @param url URL to fetch
+   * @param options Additional fetch options
+   * @returns ApiResponse with data or error
+   */
+  get: <T = any>(url: string, options?: FetcherOptions) => 
+    fetcher<T>(url, { ...options, method: 'GET' }),
+    
+  /**
+   * Make a POST request with JSON body
+   * @param url URL to fetch
+   * @param body Request body (will be JSON.stringified)
+   * @param options Additional fetch options
+   * @returns ApiResponse with data or error
+   */
+  post: <T = any>(url: string, body: any, options?: FetcherOptions) => 
+    fetcher<T>(url, { ...options, method: 'POST', body: JSON.stringify(body) }),
+    
+  /**
+   * Make a PUT request with JSON body
+   * @param url URL to fetch
+   * @param body Request body (will be JSON.stringified)
+   * @param options Additional fetch options
+   * @returns ApiResponse with data or error
+   */
+  put: <T = any>(url: string, body: any, options?: FetcherOptions) => 
+    fetcher<T>(url, { ...options, method: 'PUT', body: JSON.stringify(body) }),
+    
+  /**
+   * Make a PATCH request with JSON body
+   * @param url URL to fetch
+   * @param body Request body (will be JSON.stringified)
+   * @param options Additional fetch options
+   * @returns ApiResponse with data or error
+   */
+  patch: <T = any>(url: string, body: any, options?: FetcherOptions) => 
+    fetcher<T>(url, { ...options, method: 'PATCH', body: JSON.stringify(body) }),
+    
+  /**
+   * Make a DELETE request
+   * @param url URL to fetch
+   * @param options Additional fetch options
+   * @returns ApiResponse with data or error
+   */
+  delete: <T = any>(url: string, options?: FetcherOptions) => 
+    fetcher<T>(url, { ...options, method: 'DELETE' }),
+    
+  /**
+   * Upload a file with multipart/form-data
+   * @param url URL to fetch
+   * @param formData FormData object with file and other form fields
+   * @param options Additional fetch options
+   * @returns ApiResponse with data or error
+   */
+  upload: <T = any>(url: string, formData: FormData, options?: FetcherOptions) => {
+    const uploadOptions: FetcherOptions = {
+      ...options,
+      method: 'POST',
+      body: formData,
+      // Don't set Content-Type header, browser will set it with correct boundary
+      headers: {
+        ...(options?.headers || {}),
+      },
+    };
+    
+    // Remove Content-Type from headers to let browser set it
+    if (uploadOptions.headers && 'Content-Type' in uploadOptions.headers) {
+      delete uploadOptions.headers['Content-Type'];
+    }
+    
+    return fetcher<T>(url, uploadOptions);
+  }
 };
 
 export default fetcher;

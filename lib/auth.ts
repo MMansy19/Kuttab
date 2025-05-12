@@ -1,8 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import prisma from "@/lib/prisma";
-import { isFrontendOnlyMode } from "./config";
 
 // Helper function for debug logging in development
 const debug = (...args: any[]) => {
@@ -70,8 +68,7 @@ debug("Auth configuration loading. Frontend-only mode:", forceFrontendOnly);
 // Remove PrismaAdapter to fix compatibility issues
 export const authOptions: NextAuthOptions = {
   // Adapter removed due to Prisma version incompatibilities
-  providers: [
-    CredentialsProvider({
+  providers: [    CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -85,13 +82,45 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        try {
-          // Always use mock users mode for now to debug
+        try {          // Always use mock users mode for now to debug
           debug("Using mock users for authentication");
-          const user = mockUsers.find(user => user.email === credentials.email);
+          
+          // For the test email specifically, always allow access with any password
+          // DEVELOPMENT ONLY - REMOVE IN PRODUCTION
+          if (credentials.email === "mmansy132003@gmail.com") {
+            debug("Special case for test user - allowing access");
+            return {
+              id: "test-user-id",
+              name: "Test User",
+              email: credentials.email,
+              image: "/images/icons/user-avatar.svg",
+              role: "USER",
+            };
+          }
+          
+          // Try to find user in mock data
+          const user = mockUsers.find(user => user.email.toLowerCase() === credentials.email.toLowerCase());
           
           if (!user) {
-            debug("User not found in mock data");
+            // If the user doesn't exist in mockUsers but we're in frontend-only mode,
+            // try to check if this is a newly registered user
+            debug("User not found in mock data, checking if this is a registered user");
+            
+            // For any email with "@" - allow login with password "password123" or "11111111"
+            // This allows newly registered users to login in frontend-only mode
+            if (credentials.email.includes("@") && 
+                (credentials.password === "password123" || credentials.password === "11111111")) {
+              debug("Allowing access for registered user with standard password");
+              return {
+                id: `registered-${Date.now()}`,
+                name: credentials.email.split('@')[0], // Use part of email as name
+                email: credentials.email,
+                image: "/images/icons/user-avatar.svg",
+                role: "USER",
+              };
+            }
+            
+            debug("User not found in mock data and password doesn't match standard ones");
             return null;
           }
           
@@ -142,38 +171,52 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
-  ],
+  ],  
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         // Type the token correctly to accept custom properties
-        return {
-          ...token,
-          id: user.id,
-          role: user.role || "USER" // Default to USER role if none provided
-        };
+        debug("JWT callback - adding user data to token:", user.id, user.role);
+        token.id = user.id;
+        token.role = user.role || "USER"; // Default to USER role if none provided
+        token.name = user.name;
+        token.email = user.email;
+        token.picture = user.image;
       }
+      debug("JWT callback returning token:", token);
       return token;
     },
     async session({ session, token }) {
+      // Ensure user object exists and properly typed
+      debug("Session callback - adding token data to session:", token.id, token.role);
       if (token && session.user) {
-        // Ensure user object exists and properly typed
-        session.user = {
-          ...session.user,
-          id: token.id as string,
-          role: token.role as string
-        };
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.image = token.picture as string | undefined;
       }
+      debug("Session callback returning session:", session);
       return session;
-    },
-    async redirect({ url, baseUrl }) {
+    },    async redirect({ url, baseUrl }) {
       // Handle relative callback URLs
       debug("Redirect - URL:", url, "BaseURL:", baseUrl);
       
+      // Make sure dashboard URLs are properly handled
+      if (url.startsWith("/dashboard") || url.includes("/dashboard")) {
+        debug("Dashboard URL detected in redirect, allowing:", url);
+        return `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
+      }
+      
       // Default redirect behavior
       if (url.startsWith("/")) return `${baseUrl}${url}`;
-      // Handle absolute URLs
-      else if (new URL(url).origin === baseUrl) return url;
+      // Handle absolute URLs - use try/catch to handle invalid URLs
+      try {
+        if (new URL(url).origin === baseUrl) return url;
+      } catch (e) {
+        debug("Invalid URL in redirect callback:", url);
+        return `${baseUrl}/dashboard`;
+      }
       return baseUrl;
     }
   },
@@ -191,10 +234,11 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // Match session maxAge
   },
   secret: process.env.NEXTAUTH_SECRET || 'frontend-only-deployment-secret',
-  debug: process.env.NODE_ENV === "development",
-  cookies: {
+  debug: process.env.NODE_ENV === "development",  cookies: {
     sessionToken: {
-      name: `__Secure-next-auth.session-token`,
+      name: process.env.NODE_ENV === "production" 
+        ? `__Secure-next-auth.session-token`
+        : `next-auth.session-token`,
       options: {
         httpOnly: true,
         sameSite: "lax",

@@ -136,7 +136,7 @@ export default function Footer() {
             <h4 className="text-lg font-bold text-emerald-800 dark:text-emerald-300">اشترك في النشرة البريدية</h4>
             <p className="text-gray-600 dark:text-gray-400">احصل على آخر الأخبار والتحديثات</p>
           </div>
-          <div className="flex w-full md:w-auto">
+          <div className="flex w-full md:w-auto gap-2">
             <input
               type="email"
               placeholder="البريد الإلكتروني"

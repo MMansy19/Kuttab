@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import type { Teacher } from '../types';
+import Image from 'next/image';
+import { getOptimizedImageProps } from '@/utils/image-optimization';
 
 interface TeacherProfileProps {
   teacher: Teacher & {
@@ -11,17 +13,23 @@ interface TeacherProfileProps {
   };
 }
 
-const TeacherAvatar: React.FC<{ avatarUrl?: string; name: string }> = ({ avatarUrl, name }) => (
-  avatarUrl ? (
-    <img
-      src={avatarUrl}
-      alt={name}
-      className="w-24 h-24 rounded-full border-2 border-emerald-300 dark:border-emerald-700 object-cover bg-gray-100 dark:bg-gray-900"
-    />
+const TeacherAvatar: React.FC<{ avatarUrl?: string; name: string }> = ({ avatarUrl, name }) => {
+  return avatarUrl ? (
+    <div className="w-24 h-24 rounded-full border-2 border-emerald-300 dark:border-emerald-700 overflow-hidden">
+      <Image
+        src={avatarUrl}
+        alt={name}
+        width={96}
+        height={96}
+        className="object-cover bg-gray-100 dark:bg-gray-900"
+        priority={true} // This is an important image that should load early
+        quality={90}
+      />
+    </div>
   ) : (
     <FaUserCircle className="w-24 h-24 text-gray-400" />
-  )
-);
+  );
+};
 
 const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher }) => {
   return (
@@ -64,7 +72,12 @@ const TeacherProfile: React.FC<TeacherProfileProps> = ({ teacher }) => {
       {teacher.videoUrl ? (
         <div className="mt-6">
           <span className="font-semibold text-emerald-900 dark:text-emerald-200">فيديو تعريفي:</span>
-          <video controls className="w-full mt-2 rounded shadow">
+          <video 
+            controls 
+            className="w-full mt-2 rounded shadow"
+            preload="metadata"
+            poster={teacher.avatarUrl || '/images/placeholder-video.webp'}
+          >
             <source src={teacher.videoUrl} type="video/mp4" />
             متصفحك لا يدعم تشغيل الفيديو.
           </video>

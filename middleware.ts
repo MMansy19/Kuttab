@@ -36,15 +36,28 @@ const publicPaths = [
 ];
 
 export async function middleware(req: NextRequest) {
-  const token = await getToken({
+  // Add detailed debugging for token extraction
+  const tokenOptions = {
     req,
     secureCookie: process.env.NODE_ENV === "production",
-    secret: process.env.NEXTAUTH_SECRET,
-  });
+    secret: process.env.NEXTAUTH_SECRET || 'frontend-only-deployment-secret',
+    // Don't use raw token to prevent potential decoding issues
+    raw: false
+  };
+  
+  const token = await getToken(tokenOptions);
 
-  // Remove console.log in production
+  // Enhanced debugging in development mode
   if (process.env.NODE_ENV !== "production") {
-    console.log("Middleware token check:", token ? "Token exists" : "No token", "Path:", req.nextUrl.pathname);
+    console.log(`Middleware executing for path: ${req.nextUrl.pathname}`);
+    console.log(`Token status: ${token ? "Present" : "Missing"}`);
+    if (token) {
+      console.log(`Token data: id=${token.id}, role=${token.role}, email=${token.email}`);
+    }
+    
+    // Log cookies for debugging
+    const cookieHeader = req.headers.get('cookie') || 'No cookies';
+    console.log(`Request cookies: ${cookieHeader}`);
   }
 
   const { pathname, searchParams } = req.nextUrl;
@@ -121,13 +134,19 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(redirectUrl);
     }
   }
-
   // If trying to access auth pages while logged in
   if (token && (pathname === "/auth/login" || pathname === "/auth/signup")) {
     const userRole = token.role as string;
     
     if (process.env.NODE_ENV !== "production") {
       console.log("User already logged in, redirecting to dashboard for role:", userRole);
+    }
+    
+    // Check for an explicit redirect request parameter (for debugging redirects)
+    const skipRedirect = req.nextUrl.searchParams.get("skipRedirect");
+    if (skipRedirect === "true") {
+      console.log("Skipping auth page redirect due to skipRedirect parameter");
+      return response;
     }
     
     // If there's a valid callback URL, try to honor it if the user has permission
@@ -150,6 +169,18 @@ export async function middleware(req: NextRequest) {
         ? decodedCallbackUrl 
         : `/${decodedCallbackUrl}`;
       
+      if (process.env.NODE_ENV !== "production") {
+        console.log("Processing callback URL:", callbackPath);
+      }
+      
+      // Give preference to dashboard URLs
+      if (callbackPath.startsWith('/dashboard')) {
+        if (process.env.NODE_ENV !== "production") {
+          console.log("Dashboard callback detected, redirecting to:", callbackPath);
+        }
+        return NextResponse.redirect(new URL(callbackPath, req.url));
+      }
+      
       // Check if the callback URL is to a protected path
       const isCallbackProtected = Object.entries(protectedPaths).some(([path, roles]) => 
         callbackPath.startsWith(path) && roles.includes(userRole)
@@ -161,8 +192,12 @@ export async function middleware(req: NextRequest) {
       }
     }
     
-    // Default to role-based redirections
-    return NextResponse.redirect(new URL(roleRedirections[userRole as keyof typeof roleRedirections] || "/", req.url));
+    // Default to role-based redirections - this is the most reliable approach
+    const redirectUrl = roleRedirections[userRole as keyof typeof roleRedirections] || "/dashboard";
+    if (process.env.NODE_ENV !== "production") {
+      console.log("Using role-based redirect to:", redirectUrl);
+    }
+    return NextResponse.redirect(new URL(redirectUrl, req.url));
   }
 
   // If accessing the root path while logged in

@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Teacher } from '@/types';
-import { FaArrowLeft, FaArrowRight, FaCheckCircle, FaCalendarAlt, FaClock, FaUserAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaCalendarAlt, FaClock, FaUserAlt, FaCheckCircle } from 'react-icons/fa';
 import { SlotType } from '../AvailabilityCalendar';
-import { format, parseISO, addMinutes, differenceInMinutes } from 'date-fns';
+import { parseISO, format, differenceInMinutes } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -16,27 +16,38 @@ import SlotSelector from './SlotSelector';
 import DetailsSelector from './DetailsSelector';
 import ConfirmDialog from './ConfirmDialog';
 import BookingSummary from './BookingSummary';
+import BookingSteps, { BookingStep } from './BookingSteps';
+import BookingSuccess from './BookingSuccess';
+import { tryCatch } from '@/utils/error-handling';
 
 interface TeacherBookingProps {
   teacher: Teacher;
   availabilitySlots: SlotType[];
 }
 
-type BookingStep = 'date' | 'time' | 'details' | 'confirm' | 'success';
+interface BookingDetailsType {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+  participantCount: number;
+  goal: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
+}
 
 export default function TeacherBooking({ teacher, availabilitySlots }: TeacherBookingProps) {
-  // State
+  // State management for the multi-step booking flow
   const [currentStep, setCurrentStep] = useState<BookingStep>('date');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<SlotType | null>(null);
-  const [bookingDetails, setBookingDetails] = useState({
+  const [bookingDetails, setBookingDetails] = useState<BookingDetailsType>({
     name: '',
     email: '',
     phone: '',
     message: '',
     participantCount: 1,
     goal: '',
-    level: 'beginner' as 'beginner' | 'intermediate' | 'advanced',
+    level: 'beginner',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
@@ -45,60 +56,63 @@ export default function TeacherBooking({ teacher, availabilitySlots }: TeacherBo
   
   const router = useRouter();
 
-  // Filter slots based on selected date
-  const filteredSlots = selectedDate 
-    ? availabilitySlots.filter(slot => {
-        const slotDate = parseISO(slot.startTime);
-        return (
-          slotDate.getDate() === selectedDate.getDate() &&
-          slotDate.getMonth() === selectedDate.getMonth() &&
-          slotDate.getFullYear() === selectedDate.getFullYear()
-        );
-      })
-    : [];
+  // Memoized filtered slots based on selected date for better performance
+  const filteredSlots = useMemo(() => 
+    selectedDate 
+      ? availabilitySlots.filter(slot => {
+          const slotDate = parseISO(slot.startTime);
+          return (
+            slotDate.getDate() === selectedDate.getDate() &&
+            slotDate.getMonth() === selectedDate.getMonth() &&
+            slotDate.getFullYear() === selectedDate.getFullYear()
+          );
+        })
+      : []
+  , [selectedDate, availabilitySlots]);
 
-  // Handle slot selection
+  // Event handlers
   const handleSelectSlot = (slot: SlotType) => {
     setSelectedSlot(slot);
     setCurrentStep('details');
   };
 
-  // Handle date selection
   const handleSelectDate = (date: Date) => {
     setSelectedDate(date);
     setSelectedSlot(null);
     setCurrentStep('time');
   };
 
-  // Handle details submission
-  const handleDetailsSubmit = (details: typeof bookingDetails) => {
+  const handleDetailsSubmit = (details: BookingDetailsType) => {
     setBookingDetails(details);
     setCurrentStep('confirm');
   };
 
-  // Handle booking confirmation
+  // Handle booking confirmation with try/catch error handling
   const handleConfirmBooking = async () => {
     if (!selectedSlot) return;
     
     setIsSubmitting(true);
     setBookingError(null);
     
-    try {
+    // Use our tryCatch utility for cleaner error handling
+    const [data, error] = await tryCatch(async () => {
       // Mock API call to book the slot
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Generate a mock booking ID
-      const mockBookingId = `BK-${Date.now().toString().slice(-8)}`;
-      setBookingId(mockBookingId);
-      
+      return `BK-${Date.now().toString().slice(-8)}`;
+    });
+    
+    if (error) {
+      setBookingError("حدث خطأ أثناء تأكيد الحجز. يرجى المحاولة مرة أخرى.");
+      console.error("Booking failed:", error);
+    } else {
+      setBookingId(data);
       setBookingConfirmed(true);
       setCurrentStep('success');
-    } catch (error) {
-      console.error("Booking failed:", error);
-      setBookingError("حدث خطأ أثناء تأكيد الحجز. يرجى المحاولة مرة أخرى.");
-    } finally {
-      setIsSubmitting(false);
     }
+    
+    setIsSubmitting(false);
   };
 
   // Handle navigation to previous step
