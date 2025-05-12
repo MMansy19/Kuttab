@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import NotificationBell from './NotificationBell';
+import NotificationBell from '@/components/notifications/NotificationBell';
 import { FaUser } from 'react-icons/fa';
 
 export default function Navbar() {
