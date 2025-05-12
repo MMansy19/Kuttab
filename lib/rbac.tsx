@@ -83,12 +83,15 @@ export function useRoleProtection(allowedRoles: UserRole[]) {
     
     // If not authenticated, redirect to login
     if (!session) {
-      router.push('/auth/login?callbackUrl=' + encodeURIComponent(window.location.pathname));
+      // Save the current path for redirect after login
+      const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+      router.push(`/auth/login?returnUrl=${returnUrl}`);
       return;
     }
     
     // If authenticated but role not allowed, redirect to appropriate dashboard
-    if (!allowedRoles.includes(userRole as UserRole)) {
+    if (userRole && !allowedRoles.includes(userRole as UserRole)) {
+      // More specific dashboard paths for better UX
       switch(userRole) {
         case 'user':
           router.push('/dashboard/user');
@@ -100,8 +103,9 @@ export function useRoleProtection(allowedRoles: UserRole[]) {
           router.push('/dashboard/admin');
           break;
         default:
-          // Fallback to login if role is undefined
+          // Fallback to login if role is undefined or invalid
           router.push('/auth/login');
+          console.error('User has invalid role:', userRole);
       }
     }
   }, [session, status, router, allowedRoles, userRole]);
