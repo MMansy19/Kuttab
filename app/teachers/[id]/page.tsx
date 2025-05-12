@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
+// Import icons from our local wrapper instead of directly from react-icons
 import { 
   FaUserGraduate, 
   FaStar, 
@@ -17,7 +18,7 @@ import {
   FaLanguage, 
   FaTrophy, 
   FaChalkboardTeacher
-} from "react-icons/fa";
+} from "@/components/ui/Icons";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Section, SectionHeader } from "@/components/ui/Section";
