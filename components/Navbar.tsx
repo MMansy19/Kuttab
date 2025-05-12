@@ -44,9 +44,6 @@ export default function Navbar() {
 
       {/* Auth and User Actions */}
       <div className={`flex items-center gap-2 mt-2 sm:mt-0 ${isMenuOpen ? 'block' : 'hidden'} sm:flex`}>
-        {/* Theme Switcher */}
-        {/* <ThemeSwitcher variant="icon" className="mr-2" /> */}
-
         {session ? (
           <div className="flex items-center gap-3">
             {/* Notification Bell */}
