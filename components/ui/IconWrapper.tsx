@@ -1,6 +1,4 @@
 'use client';
-
-import { motion } from '@/utils/framer-motion';
 import { ReactNode } from 'react';
 
 export type IconWrapperProps = {
@@ -64,13 +62,15 @@ export default function IconWrapper({
   };
 
   return (
-    <motion.div
-      className={`${color} ${sizeClasses[size]} ${className}`}
-      animate={animate !== 'none' ? animationVariants[animate] : undefined}
-      whileHover={hoverAnimate && hoverAnimate !== 'none' ? animationVariants[hoverAnimate] : undefined}
+    <div
+      className={`${color} ${sizeClasses[size]} ${
+      animate !== 'none' ? `animate-${animate}` : ''
+      } ${
+      hoverAnimate && hoverAnimate !== 'none' ? `hover:animate-${hoverAnimate}` : ''
+      } ${className}`}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }
 
