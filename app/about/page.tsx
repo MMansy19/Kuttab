@@ -1,6 +1,8 @@
+'use client';
+
 import React from "react";
 import { FaBookOpenReader } from "react-icons/fa6";
-import { FaMicrophone, FaUserGraduate, FaGlobe, FaBook } from "react-icons/fa";
+import { FaMicrophone, FaUserGraduate, FaGlobe, FaBook, FaChalkboardTeacher, FaHandsHelping, FaUniversity, FaLightbulb } from "react-icons/fa";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card, CardContent } from "@/components/ui/Card";
 
@@ -12,15 +14,17 @@ interface ServiceCardProps {
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ icon, title, description }) => (
-  <Card variant="raised" className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transition-transform hover:scale-105 hover:shadow-xl">
-    <CardContent className="p-6">
-      <div className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-        {icon}
-      </div>
-      <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{title}</h3>
-      <p className="text-gray-600 dark:text-gray-400">{description}</p>
-    </CardContent>
-  </Card>
+  <div className="h-full">
+    <Card variant="raised" className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transition-all h-full hover:shadow-xl">
+      <CardContent className="p-6">
+        <div className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          {icon}
+        </div>
+        <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{title}</h3>
+        <p className="text-gray-600 dark:text-gray-400">{description}</p>
+      </CardContent>
+    </Card>
+  </div>
 );
 
 // Services Data
@@ -47,6 +51,69 @@ const services = [
   }
 ];
 
+// Values Data
+const values = [
+  {
+    icon: <FaLightbulb size={24} />,
+    title: "الأصالة (Authenticity)",
+    description: "نحافظ على المعرفة والمنهجيات التقليدية في التعليم الإسلامي مع تكييفها للعصر الرقمي"
+  },
+  {
+    icon: <FaGlobe size={24} />,
+    title: "سهولة الوصول (Accessibility)",
+    description: "نجعل التعليم متاحًا للجميع بغض النظر عن الموقع أو الظروف المالية أو الاجتماعية"
+  },
+  {
+    icon: <FaChalkboardTeacher size={24} />,
+    title: "الإتقان (Excellence)",
+    description: "نحافظ على أعلى معايير الجودة في التعليم والتكنولوجيا لضمان تجربة تعليمية مثالية"
+  },
+  {
+    icon: <FaHandsHelping size={24} />,
+    title: "الأمة (Community)",
+    description: "نبني روابط هادفة تتجاوز الحواجز الرقمية وتعزز شعور الانتماء والمشاركة"
+  },
+  {
+    icon: <FaUniversity size={24} />,
+    title: "الخدمة (Service)",
+    description: "نضع التأثير التعليمي والمنفعة المجتمعية فوق الربح المادي كمؤسسة غير ربحية"
+  },
+  {
+    icon: <FaLightbulb size={24} />,
+    title: "الإبداع (Innovation)",
+    description: "نبتكر حلولاً إبداعية للتحديات التعليمية مع الحفاظ على احترام التقاليد الأصيلة"
+  }
+];
+
+// Goals Data
+const educationalGoals = [
+  "الحفاظ على المعرفة الإسلامية الأصيلة مع تكييفها للعصر الرقمي",
+  "تعزيز العلاقات الهادفة بين المعلمين المؤهلين والطلاب الملتزمين",
+  "دعم التعلم المستمر وإنشاء مسارات تعليمية من المستويات الأساسية إلى المتقدمة",
+  "إحياء النصوص الإسلامية الكلاسيكية من خلال أساليب تدريس معاصرة"
+];
+
+const technicalGoals = [
+  "تطوير منصة سهلة الاستخدام تلبي احتياجات المستخدمين المتنوعة",
+  "توفير أدوات تعليمية متكاملة تعزز تجربة التعلم",
+  "ضمان إمكانية الوصول العالمي للمنصة عبر مختلف المناطق والأجهزة",
+  "استخدام البيانات والمقاييس المناسبة لتحسين التجربة التعليمية باستمرار"
+];
+
+const communityGoals = [
+  "بناء مجتمع تعليمي عالمي يتجاوز الحدود الجغرافية",
+  "توفير المساواة التعليمية من خلال المنح الدراسية والأسعار المخفضة للطلاب",
+  "دعم تطوير المعلمين وتدريبهم على التدريس عبر الإنترنت بفعالية",
+  "توثيق وصيانة سلاسل الإسناد التعليمية التقليدية"
+];
+
+const GoalItem = ({ children }: { children: React.ReactNode }) => (
+  <li className="mb-2 flex items-start gap-2">
+    <span className="inline-block mt-1 h-4 w-4 rounded-full bg-emerald-200 dark:bg-emerald-800 flex-shrink-0" />
+    <span className="text-gray-700 dark:text-gray-300">{children}</span>
+  </li>
+);
+
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-white dark:bg-gray-900">
@@ -70,90 +137,149 @@ export default function AboutPage() {
               </div>
             </div>
           </div>
+        </div>
+      </Section>
 
+      {/* Vision Section */}
+      <Section background="light" spacing="large">
+        <div className="max-w-4xl mx-auto text-center">
+          <SectionHeader
+            title="رؤيتنا (Our Vision)"
+            description="أن نصبح الرائد العالمي في التعليم الإسلامي الأصيل عبر الإنترنت، حيث يتم الحفاظ على المعرفة التقليدية ونقلها من خلال علاقات هادفة بين المعلم والطالب معززة بالتكنولوجيا، مما يجعل التعليم الإسلامي عالي الجودة متاحًا لكل مسلم بغض النظر عن الموقع أو الظروف."
+            centered
+          />
+          <div className="mt-6 p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-900">
+            <p className="text-emerald-800 dark:text-emerald-300 font-medium italic">
+              "To become the global leader in authentic online Islamic education, where traditional knowledge is preserved and transmitted through meaningful teacher-student relationships empowered by technology"
+            </p>
+          </div>
         </div>
       </Section>
 
       {/* Our Mission */}
       <Section spacing="large">
         <div className="max-w-4xl mx-auto text-center">
-          <SectionHeader 
-            title="رسالتنا" 
-            description="في منصة كُتّاب، نسعى لإحياء تراث تعليم القرآن الكريم بطريقة تناسب العصر الحديث، من خلال ربط الطلاب بمعلمين ذوي خبرة وإجازات معتمدة. هدفنا الرئيسي هو تسهيل الوصول إلى تعليم قرآني عالي الجودة لكل مسلم ومسلمة حول العالم، بغض النظر عن مكانهم أو ظروفهم."
+          <SectionHeader
+            title="رسالتنا (Our Mission)"
+            description="منصة آي كُتّاب تربط معلمي العلوم الإسلامية المؤهلين بالطلاب في جميع أنحاء العالم من خلال منصة رقمية بديهية تحترم منهجيات التعليم التقليدية. نحن نيسر رحلات تعليمية مخصصة تحافظ على أصالة نقل المعرفة الإسلامية مع إزالة الحواجز الجغرافية والمالية والاجتماعية أمام التعليم."
             centered
           />
+          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-900">
+            <p className="text-blue-800 dark:text-blue-300 font-medium italic">
+              "iKuttab connects qualified teachers of Islamic sciences with students worldwide through an intuitive digital platform that honors traditional educational methodologies"
+            </p>
+          </div>
         </div>
       </Section>
 
       {/* Our Services */}
       <Section background="light" spacing="large">
-        <SectionHeader 
-          title="ماذا نقدم؟" 
-          accentColor="emerald" 
-          centered
-        />
+        <div>
+          <SectionHeader
+            title="ماذا نقدم؟"
+            accentColor="emerald"
+            centered
+          />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-          {services.map((service, index) => (
-            <ServiceCard
-              key={index}
-              icon={service.icon}
-              title={service.title}
-              description={service.description}
-            />
-          ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
+            {services.map((service, index) => (
+              <ServiceCard
+                key={index}
+                icon={service.icon}
+                title={service.title}
+                description={service.description}
+              />
+            ))}
+          </div>
         </div>
       </Section>
 
-      {/* Our Values */}
+      {/* Our Goals */}
       <Section spacing="large">
-        <div className="max-w-4xl mx-auto">
-          <SectionHeader 
-            title="قيمنا" 
+        <div className="max-w-5xl mx-auto">
+          <SectionHeader
+            title="أهدافنا (Our Goals)"
             centered
           />
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">الإتقان والجودة</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                نلتزم بتقديم تعليم قرآني عالي الجودة من خلال اختيار معلمين متميزين بإجازات معتمدة وخبرات تدريسية واسعة.
-              </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-md">
+              <div className="mb-4 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 w-12 h-12 rounded-full flex items-center justify-center">
+                <FaBook size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">الأهداف التعليمية</h3>
+              <ul className="list-none pl-0">
+                {educationalGoals.map((goal, index) => (
+                  <GoalItem key={index}>{goal}</GoalItem>
+                ))}
+              </ul>
             </div>
-            
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">المرونة والتيسير</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                نؤمن بأن التعلم يجب أن يكون متاحاً للجميع، لذلك نقدم خيارات مرنة تناسب جداول الطلاب المختلفة وظروفهم.
-              </p>
+
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-md">
+              <div className="mb-4 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-400 w-12 h-12 rounded-full flex items-center justify-center">
+                <FaLightbulb size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">الأهداف التقنية</h3>
+              <ul className="list-none pl-0">
+                {technicalGoals.map((goal, index) => (
+                  <GoalItem key={index}>{goal}</GoalItem>
+                ))}
+              </ul>
             </div>
-            
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">الأصالة والمعاصرة</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                نجمع بين طرق التعليم القرآني الأصيلة والتقنيات الحديثة لتوفير تجربة تعليمية فعالة ومتكاملة.
-              </p>
-            </div>
-            
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">الاحترام والتقدير</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                نحرص على توفير بيئة تعليمية قائمة على الاحترام المتبادل والتقدير بين المعلمين والطلاب.
-              </p>
+
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-md">
+              <div className="mb-4 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-400 w-12 h-12 rounded-full flex items-center justify-center">
+                <FaHandsHelping size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">أهداف المجتمع</h3>
+              <ul className="list-none pl-0">
+                {communityGoals.map((goal, index) => (
+                  <GoalItem key={index}>{goal}</GoalItem>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
       </Section>
-      
-      {/* Our Story */}
+
+      {/* Our Values */}
       <Section background="light" spacing="large">
+        <div className="max-w-5xl mx-auto">
+          <SectionHeader
+            title="قيمنا (Our Values)"
+            centered
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+            {values.map((value, index) => (
+              <div
+                key={index}
+                className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300"
+              >
+                <div className="flex items-center mb-4">
+                  <div className="mr-3 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-400 w-10 h-10 rounded-full flex items-center justify-center">
+                    {value.icon}
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">{value.title}</h3>
+                </div>
+                <p className="text-gray-600 dark:text-gray-400">
+                  {value.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* Our Story */}
+      <Section spacing="large">
         <div className="max-w-4xl mx-auto">
-          <SectionHeader 
-            title="قصتنا" 
+          <SectionHeader
+            title="قصتنا"
             description="بدأت منصة كُتّاب كحلم بسيط: إتاحة تعليم القرآن الكريم لكل مسلم في أي مكان وزمان. مع تزايد الحاجة إلى التعلم عن بُعد، أدركنا أهمية بناء منصة تجمع أفضل المعلمين المؤهلين مع الطلاب الراغبين في تعلم كتاب الله بإتقان."
             centered
           />
-          
+
           <div className="mt-8 p-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
             <blockquote className="text-lg text-gray-600 dark:text-gray-400 text-center italic">
               "إِنَّ أَفْضَلَكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ"
@@ -168,14 +294,14 @@ export default function AboutPage() {
         <div className="text-center">
           <h2 className="text-3xl font-bold mb-6">انضم إلى رحلة تعلم القرآن الكريم</h2>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a 
-              href="/teachers" 
+            <a
+              href="/teachers"
               className="bg-white text-emerald-700 hover:bg-gray-100 px-6 py-3 rounded-full font-medium text-lg inline-block"
             >
               تصفح المعلمين
             </a>
-            <a 
-              href="/auth/signup" 
+            <a
+              href="/auth/signup"
               className="bg-transparent border-2 border-white text-white hover:bg-white/10 px-6 py-3 rounded-full font-medium text-lg inline-block"
             >
               سجل كمتعلم

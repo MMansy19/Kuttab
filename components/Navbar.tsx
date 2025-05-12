@@ -5,8 +5,6 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import NotificationBell from './NotificationBell';
 import { FaUser } from 'react-icons/fa';
-import { useTheme } from '../context/ThemeContext';
-import { ThemeSwitcher } from './ui/ThemeSwitcher';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,9 +18,9 @@ export default function Navbar() {
           <span className="text-3xl font-bold tracking-tight text-accent">كُتّاب <span className="text-emerald-700 dark:text-emerald-400">|</span> KOTTAB</span>
         </div>
       </div>
-      
+
       {/* Mobile menu button */}
-      <button 
+      <button
         className="sm:hidden absolute top-4 left-4"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
@@ -34,7 +32,7 @@ export default function Navbar() {
           )}
         </svg>
       </button>
-      
+
       {/* Navigation Links */}
       <ul className={`flex flex-col sm:flex-row gap-2 sm:gap-4 text-lg font-bold w-full sm:w-auto text-center ${isMenuOpen ? 'block' : 'hidden'} sm:flex`}>
         <li><Link href="/" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">الرئيسية</Link></li>
@@ -43,39 +41,39 @@ export default function Navbar() {
         <li><Link href="/donate" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">تبرع</Link></li>
         <li><Link href="/contact" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">تواصل</Link></li>
       </ul>
-      
+
       {/* Auth and User Actions */}
       <div className={`flex items-center gap-2 mt-2 sm:mt-0 ${isMenuOpen ? 'block' : 'hidden'} sm:flex`}>
         {/* Theme Switcher */}
         {/* <ThemeSwitcher variant="icon" className="mr-2" /> */}
-        
+
         {session ? (
           <div className="flex items-center gap-3">
             {/* Notification Bell */}
             <NotificationBell />
-            
+
             {/* User Menu */}
             <div className="relative group">
               <button className="flex items-center gap-2 px-3 py-1 rounded bg-emerald-100 dark:bg-emerald-800 hover:bg-emerald-200 dark:hover:bg-emerald-700 transition">
                 <span className="hidden md:inline">{session.user?.name}</span>
                 <FaUser className="text-emerald-800 dark:text-emerald-400" />
               </button>
-              
+
               <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 hidden group-hover:block">
-                <Link 
+                <Link
                   href="/dashboard/user"
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   لوحة التحكم
                 </Link>
-                <Link 
+                <Link
                   href="/dashboard/notifications"
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   الإشعارات
                 </Link>
                 {session.user?.role === 'TEACHER' && (
-                  <Link 
+                  <Link
                     href="/dashboard/teacher"
                     className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
@@ -83,7 +81,7 @@ export default function Navbar() {
                   </Link>
                 )}
                 {session.user?.role === 'ADMIN' && (
-                  <Link 
+                  <Link
                     href="/dashboard/admin"
                     className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >

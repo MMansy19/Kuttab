@@ -25,7 +25,7 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
   const handleBookClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setLoadingBooking(true);
-    
+
     if (onBook) {
       try {
         onBook(teacher.id);
@@ -76,7 +76,7 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
       <p className="mt-2 text-gray-700 dark:text-gray-300 text-sm line-clamp-2">
         {teacher.bio}
       </p>
-      
+
       <div className="flex flex-wrap gap-2 mt-2">
         {teacher.subjects?.map(subject => (
           <span key={subject} className="px-3 py-1 rounded-lg bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 text-xs font-semibold flex items-center">
@@ -85,48 +85,46 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
           </span>
         ))}
       </div>
-      
+
       <div className="w-full flex gap-3 mt-auto sm:flex-col flex-row">
         <button
-          className={`flex-1 py-3 px-4 rounded-lg flex items-center justify-center gap-2 ${
-        loadingProfile ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-700'
-          } focus:bg-blue-700 text-white font-semibold transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-70`}
+          className={`flex-1 py-3 px-4 rounded-lg flex items-center justify-center gap-2 ${loadingProfile ? 'bg-blue-500' : 'bg-blue-600 hover:bg-blue-700'
+            } focus:bg-blue-700 text-white font-semibold transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-70`}
           onClick={handleViewProfile}
           disabled={loadingProfile || loadingBooking}
         >
           {loadingProfile ? (
-        <>
-          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
-          جاري التحميل
-        </>
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
+              جاري التحميل
+            </>
           ) : (
-        <>
-          <FaEye />
-          عرض الملف
-        </>
+            <>
+              <FaEye />
+              عرض الملف
+            </>
           )}
         </button>
         <button
-          className={`flex-1 py-3 px-4 rounded-lg flex items-center justify-center gap-2 ${
-        loadingBooking ? 'bg-emerald-500' : 'bg-emerald-600 hover:bg-emerald-700'
-          } focus:bg-emerald-700 text-white font-semibold transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 disabled:opacity-70`}
+          className={`flex-1 py-3 px-4 rounded-lg flex items-center justify-center gap-2 ${loadingBooking ? 'bg-emerald-500' : 'bg-emerald-600 hover:bg-emerald-700'
+            } focus:bg-emerald-700 text-white font-semibold transition-all duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 disabled:opacity-70`}
           onClick={handleBookClick}
           disabled={loadingProfile || loadingBooking}
         >
           {loadingBooking ? (
-        <>
-          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
-          جاري الحجز
-        </>
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin ml-2"></div>
+              جاري الحجز
+            </>
           ) : (
-        <>
-          <FaCalendarCheck />
-          احجز الآن
-        </>
+            <>
+              <FaCalendarCheck />
+              احجز الآن
+            </>
           )}
         </button>
       </div>
-      
+
       {teacher.isPaid && (
         <div className="absolute top-2 left-4">
           <span className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 text-xs font-medium px-2.5 py-1 rounded">
@@ -141,7 +139,7 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
           </span>
         </div>
       )}
-      
+
       <Link href={`/book/${teacher.id}`} prefetch={true} className="hidden" />
       <Link href={`/teachers/${teacher.id}`} prefetch={true} className="hidden" />
     </div>

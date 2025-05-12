@@ -35,11 +35,11 @@ export default function NotificationsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<"all" | "unread">(
-    searchParams.get("filter") === "unread" ? "unread" : "all"
+    searchParams?.get("filter") === "unread" ? "unread" : "all"
   );
 
   // Calculate current page from URL or default to 1
-  const currentPage = searchParams.get("page") 
+  const currentPage = searchParams?.get("page") 
     ? parseInt(searchParams.get("page") as string) 
     : 1;
 
@@ -214,7 +214,7 @@ export default function NotificationsPage() {
 
   // Handle pagination
   const handlePageChange = (page: number) => {
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams?.toString() || "");
     params.set("page", page.toString());
     if (selectedTab === "unread") {
       params.set("filter", "unread");
@@ -227,7 +227,7 @@ export default function NotificationsPage() {
   // Change tab
   const handleTabChange = (tab: "all" | "unread") => {
     setSelectedTab(tab);
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams(searchParams?.toString() || "");
     params.set("page", "1");
     if (tab === "unread") {
       params.set("filter", "unread");

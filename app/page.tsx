@@ -5,6 +5,30 @@ import Image from "next/image";
 import { useState } from "react";
 import { FaBook, FaUserGraduate, FaCalendarAlt, FaGlobe, FaAward, FaMedal, FaLaptop, FaComment, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaUserCircle } from "react-icons/fa";
 
+// SEO metadata for the Home page
+export const metadata = {
+  title: 'كُتّاب | منصة تعليم القرآن الكريم والعلوم الإسلامية عن بعد',
+  description: 'منصة كُتّاب التعليمية لحفظ القرآن الكريم وتعلم التجويد والعلوم الإسلامية عبر الإنترنت مع أفضل المعلمين المتخصصين',
+  keywords: [
+    'تعليم القرآن عن بعد',
+    'حفظ القرآن أونلاين',
+    'دروس تجويد',
+    'معلم قرآن',
+    'كُتّاب إلكتروني',
+    'تعليم إسلامي',
+    'دروس قرآن عبر الإنترنت',
+    'تحفيظ قرآن للأطفال',
+    'تجويد القرآن',
+    'تعلم القراءات',
+    'معلمين قرآن معتمدين',
+    'دروس إسلامية أونلاين'
+  ],
+  openGraph: {
+    title: 'كُتّاب | منصة تعليم القرآن الكريم عن بعد',
+    description: 'تعلم القرآن الكريم والتجويد مع أفضل المعلمين عن طريق منصة كُتّاب التعليمية',
+    images: [{ url: '/images/og-image.jpg' }],
+  },
+};
 export default function Home() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   

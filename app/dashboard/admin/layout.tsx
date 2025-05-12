@@ -78,7 +78,7 @@ export default function AdminDashboardLayout({
           <nav className="space-y-1">
             {navLinks.map((link, index) => {
               const isActive = pathname === link.path || 
-                               (link.path !== '/dashboard/admin' && pathname.startsWith(link.path));
+                               (link.path !== '/dashboard/admin' && pathname && pathname.startsWith(link.path));
 
               return (
                 <Link

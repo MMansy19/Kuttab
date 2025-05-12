@@ -32,7 +32,8 @@ export default function TeacherProfilePage() {
   const [showContactInfo, setShowContactInfo] = useState<boolean>(false);
 
   // Find teacher by id param
-  const teacher = teachersData.find((t) => t.id === params.id);
+  const teacherId = params?.id as string;
+  const teacher = teachersData.find((t) => t.id === teacherId);
   if (!teacher) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[40vh] p-8">
