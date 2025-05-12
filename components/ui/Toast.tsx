@@ -40,11 +40,9 @@ const ToastItem = ({ id, message, type, onClose }: ToastProps) => {
     warning: 'text-yellow-800 dark:text-yellow-200',
     info: 'text-blue-800 dark:text-blue-200',
   }[type];
-
   return (
     <div 
-      className={`flex items-center p-4 mb-3 border rounded-lg shadow-md ${bgColor} 
-      ${isExiting ? 'animate-fade-out' : 'animate-fade-in'} transform transition-all duration-300`}
+      className={`flex items-center p-4 mb-3 border rounded-lg shadow-md ${bgColor}`}
       role="alert"
     >
       <div className="ml-3">{icon}</div>

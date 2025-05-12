@@ -4,7 +4,11 @@ import SessionProvider from '../components/SessionProvider';
 import ToastContainer from '../components/ui/Toast';
 import { ThemeProvider } from '../context/ThemeContext';
 import ClientLayout from '../components/ClientLayout';
-import { AnimatePresence } from '../utils/framer-motion';
+import { Metadata } from 'next';
+import { defaultMetadata } from '@/lib/metadata';
+
+// Use the improved metadata configuration from our centralized file
+export const metadata: Metadata = defaultMetadata;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -17,10 +21,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="bg-emerald-50 text-emerald-900 dark:bg-gray-900 dark:text-white font-[Cairo] min-h-screen flex flex-col transition-colors duration-300">
         <SessionProvider>
           <ThemeProvider>
-            <AnimatePresence mode="wait">
-              <ClientLayout key="client-layout">{children}</ClientLayout>
-              <ToastContainer key="toast-container" />
-            </AnimatePresence>
+            <ClientLayout>{children}</ClientLayout>
+            <ToastContainer />
           </ThemeProvider>
         </SessionProvider>
       </body>

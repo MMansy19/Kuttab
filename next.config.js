@@ -47,12 +47,18 @@ const nextConfig = {
     defaultLocale: 'ar',
     localeDetection: true,
   },
-  
-  // Image optimization
+    // Image optimization
   images: {
     domains: ['via.placeholder.com', 'placehold.co'],
-    formats: isProd ? ['image/avif', 'image/webp'] : undefined,
+    formats: ['image/avif', 'image/webp'], // Always use modern formats
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840], // Responsive image sizes
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Additional image sizes
+    minimumCacheTTL: 60 * 60 * 24 * 7, // Cache images for 7 days
   },
+  
+  // Performance optimizations
+  poweredByHeader: false, // Remove X-Powered-By header for security
+  compress: true, // Enable compression
   
   // Simplified webpack configuration
   webpack: (config, { isServer }) => {
