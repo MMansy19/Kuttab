@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import { 
   FaUserGraduate, 
   FaStar, 
@@ -23,7 +22,6 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import teachersData from "@/data/teachers";
-import type { Teacher } from "@/types";
 
 export default function TeacherProfilePage() {
   const router = useRouter();
