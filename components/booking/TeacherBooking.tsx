@@ -253,7 +253,7 @@ export default function TeacherBooking({ teacher, availabilitySlots }: TeacherBo
                       className="mt-4"
                       onClick={() => setCurrentStep('date')}
                     >
-                      <FaArrowRight className="ml-2 rtl:rotate-180" />
+                      <FaArrowLeft className="ml-2 rtl:rotate-180" />
                       اختر تاريخ آخر
                     </Button>
                   </div>
@@ -269,7 +269,7 @@ export default function TeacherBooking({ teacher, availabilitySlots }: TeacherBo
                         variant="outline"
                         onClick={goToPreviousStep}
                       >
-                        <FaArrowRight className="ml-2 rtl:rotate-180" />
+                        <FaArrowLeft className="ml-2 rtl:rotate-180" />
                         العودة للتاريخ
                       </Button>
                     </div>

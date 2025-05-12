@@ -42,7 +42,7 @@ export default function TeacherCard({ teacher, onBook }: TeacherCardProps) {
     <div
       className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl shadow-lg p-6 flex flex-col gap-3 items-start w-full max-w-sm mx-auto transition-colors duration-300 border border-gray-200 dark:border-gray-700 relative hover:shadow-xl"
     >
-      <div className="flex items-center gap-4 w-full relative">
+      <div className="flex items-center gap-4 w-full relative mt-2">
         {teacher.avatarUrl ? (
           <div className="w-16 h-16 rounded-full border-2 border-emerald-300 dark:border-emerald-700 overflow-hidden">
             <Image

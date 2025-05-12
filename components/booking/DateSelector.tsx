@@ -66,7 +66,7 @@ export default function DateSelector({ onSelectDate, selectedDate, availableDate
           onClick={goToPreviousMonth}
           className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
-          <FaChevronRight className="rtl:rotate-180" />
+          <FaChevronRight  />
         </button>
         
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -78,7 +78,7 @@ export default function DateSelector({ onSelectDate, selectedDate, availableDate
           onClick={goToNextMonth}
           className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
-          <FaChevronLeft className="rtl:rotate-180" />
+          <FaChevronLeft  />
         </button>
       </div>
       

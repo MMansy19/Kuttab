@@ -52,7 +52,7 @@ export function TeacherProfileCard({
               {variant === 'featured' && (
                 <div className="absolute -top-1 -left-1 z-10">
                   <Badge variant="warning" className="flex gap-1 items-center px-2 py-1 rounded-md">
-                    <FaStar size={12} />
+                     <FaStar size={12} />
                     <span>Featured</span>
                   </Badge>
                 </div>
@@ -168,7 +168,7 @@ export function TeacherProfileCard({
           >
             <Link href={`/book/${teacher.id}`}>
               حجز جلسة
-              <FaArrowLeft className="ml-2 rtl:rotate-180" />
+              <FaArrowRight className="ml-2 rtl:rotate-180" />
             </Link>
           </Button>
         )}
@@ -180,9 +180,10 @@ export function TeacherProfileCard({
             className="flex-1"
             asChild
           >
-            <Link href={`/teachers/${teacher.id}`}>
+            <Link href={`/teachers/${teacher.id}`}
+              className="flex justify-center items-center gap-2 flex-row-reverse">
               الملف الشخصي
-              <FaArrowRight className="ml-2 rtl:rotate-180" />
+                <FaArrowLeft className="mr-2 rtl:rotate-180" />
             </Link>
           </Button>
         )}

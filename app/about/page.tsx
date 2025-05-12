@@ -55,32 +55,32 @@ const services = [
 const values = [
   {
     icon: <FaLightbulb size={24} />,
-    title: "الأصالة (Authenticity)",
+    title: "الأصالة",
     description: "نحافظ على المعرفة والمنهجيات التقليدية في التعليم الإسلامي مع تكييفها للعصر الرقمي"
   },
   {
     icon: <FaGlobe size={24} />,
-    title: "سهولة الوصول (Accessibility)",
+    title: "سهولة الوصول",
     description: "نجعل التعليم متاحًا للجميع بغض النظر عن الموقع أو الظروف المالية أو الاجتماعية"
   },
   {
     icon: <FaChalkboardTeacher size={24} />,
-    title: "الإتقان (Excellence)",
+    title: "الإتقان",
     description: "نحافظ على أعلى معايير الجودة في التعليم والتكنولوجيا لضمان تجربة تعليمية مثالية"
   },
   {
     icon: <FaHandsHelping size={24} />,
-    title: "الأمة (Community)",
+    title: "الأمة",
     description: "نبني روابط هادفة تتجاوز الحواجز الرقمية وتعزز شعور الانتماء والمشاركة"
   },
   {
     icon: <FaUniversity size={24} />,
-    title: "الخدمة (Service)",
+    title: "الخدمة",
     description: "نضع التأثير التعليمي والمنفعة المجتمعية فوق الربح المادي كمؤسسة غير ربحية"
   },
   {
     icon: <FaLightbulb size={24} />,
-    title: "الإبداع (Innovation)",
+    title: "الإبداع",
     description: "نبتكر حلولاً إبداعية للتحديات التعليمية مع الحفاظ على احترام التقاليد الأصيلة"
   }
 ];
@@ -116,8 +116,7 @@ const GoalItem = ({ children }: { children: React.ReactNode }) => (
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900">
-      {/* Hero Section */}
+    <main className="min-h-screen bg-white dark:bg-gray-900">      {/* Hero Section */}
       <Section
         background="gradient"
         spacing="large"
@@ -138,35 +137,31 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-      </Section>
-
-      {/* Vision Section */}
+      </Section>      {/* Vision Section */}
       <Section background="light" spacing="large">
         <div className="max-w-4xl mx-auto text-center">
           <SectionHeader
-            title="رؤيتنا (Our Vision)"
+            title="رؤيتنا"
             description="أن نصبح الرائد العالمي في التعليم الإسلامي الأصيل عبر الإنترنت، حيث يتم الحفاظ على المعرفة التقليدية ونقلها من خلال علاقات هادفة بين المعلم والطالب معززة بالتكنولوجيا، مما يجعل التعليم الإسلامي عالي الجودة متاحًا لكل مسلم بغض النظر عن الموقع أو الظروف."
             centered
           />
           <div className="mt-6 p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border border-emerald-200 dark:border-emerald-900">
             <p className="text-emerald-800 dark:text-emerald-300 font-medium italic">
-              "To become the global leader in authentic online Islamic education, where traditional knowledge is preserved and transmitted through meaningful teacher-student relationships empowered by technology"
+              "أن نكون بإذن الله المنصة الرائدة عالميًا في التعليم الإسلامي الأصيل، حيث تُحفظ المعرفة التقليدية وتُنقل من خلال علاقات هادفة بين المعلم والطالب"
             </p>
           </div>
         </div>
-      </Section>
-
-      {/* Our Mission */}
+      </Section>      {/* Our Mission */}
       <Section spacing="large">
         <div className="max-w-4xl mx-auto text-center">
           <SectionHeader
-            title="رسالتنا (Our Mission)"
-            description="منصة آي كُتّاب تربط معلمي العلوم الإسلامية المؤهلين بالطلاب في جميع أنحاء العالم من خلال منصة رقمية بديهية تحترم منهجيات التعليم التقليدية. نحن نيسر رحلات تعليمية مخصصة تحافظ على أصالة نقل المعرفة الإسلامية مع إزالة الحواجز الجغرافية والمالية والاجتماعية أمام التعليم."
+            title="رسالتنا"
+            description="منصة كُتّاب تربط معلمي العلوم الإسلامية المؤهلين بالطلاب في جميع أنحاء العالم من خلال منصة رقمية بديهية تحترم منهجيات التعليم التقليدية. نحن نيسر رحلات تعليمية مخصصة تحافظ على أصالة نقل المعرفة الإسلامية مع إزالة الحواجز الجغرافية والمالية والاجتماعية أمام التعليم."
             centered
           />
           <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-900">
             <p className="text-blue-800 dark:text-blue-300 font-medium italic">
-              "iKuttab connects qualified teachers of Islamic sciences with students worldwide through an intuitive digital platform that honors traditional educational methodologies"
+              "تصل منصة كُتّاب بين معلمي العلوم الإسلامية المؤهلين والطلاب في جميع أنحاء العالم من خلال منصة رقمية سهلة الاستخدام تحترم طرق التعليم التقليدية"
             </p>
           </div>
         </div>
@@ -192,13 +187,11 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-      </Section>
-
-      {/* Our Goals */}
+      </Section>      {/* Our Goals */}
       <Section spacing="large">
         <div className="max-w-5xl mx-auto">
           <SectionHeader
-            title="أهدافنا (Our Goals)"
+            title="أهدافنا"
             centered
           />
 
@@ -240,13 +233,11 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-      </Section>
-
-      {/* Our Values */}
+      </Section>      {/* Our Values */}
       <Section background="light" spacing="large">
         <div className="max-w-5xl mx-auto">
           <SectionHeader
-            title="قيمنا (Our Values)"
+            title="قيمنا"
             centered
           />
 
@@ -257,7 +248,7 @@ export default function AboutPage() {
                 className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300"
               >
                 <div className="flex items-center mb-4">
-                  <div className="mr-3 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-400 w-10 h-10 rounded-full flex items-center justify-center">
+                  <div className="ml-3 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-400 w-10 h-10 rounded-full flex items-center justify-center">
                     {value.icon}
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white">{value.title}</h3>
@@ -269,9 +260,7 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-      </Section>
-
-      {/* Our Story */}
+      </Section>      {/* Our Story */}
       <Section spacing="large">
         <div className="max-w-4xl mx-auto">
           <SectionHeader
@@ -287,9 +276,7 @@ export default function AboutPage() {
             </blockquote>
           </div>
         </div>
-      </Section>
-
-      {/* Call to Action */}
+      </Section>      {/* Call to Action */}
       <Section background="primary" spacing="medium">
         <div className="text-center">
           <h2 className="text-3xl font-bold mb-6">انضم إلى رحلة تعلم القرآن الكريم</h2>
