@@ -39,15 +39,14 @@ const nextConfig = {
   serverExternalPackages: ['@prisma/client', 'mongoose'],
   poweredByHeader: false,
   reactStrictMode: true,
-  swcMinify: isProd,
   
-  // Locale configuration
-  i18n: {
-    locales: ['ar'],
-    defaultLocale: 'ar',
-    localeDetection: true,
-  },
-    // Image optimization
+  // Note: swcMinify is now enabled by default in Next.js 13+
+  // and has been removed from the configuration options
+  
+  // Locale configuration - removed as it's not supported in App Router
+  // Use the app/[locale] directory structure instead
+  // See: https://nextjs.org/docs/app/building-your-application/routing/internationalization
+  // Image optimization
   images: {
     domains: ['via.placeholder.com', 'placehold.co'],
     formats: ['image/avif', 'image/webp'], // Always use modern formats
@@ -57,7 +56,7 @@ const nextConfig = {
   },
   
   // Performance optimizations
-  poweredByHeader: false, // Remove X-Powered-By header for security
+  // Note: poweredByHeader is already set above
   compress: true, // Enable compression
   
   // Simplified webpack configuration
@@ -78,11 +77,10 @@ const nextConfig = {
     
     return config;
   },
-
   // Environment variables
   env: {
     NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV || 'development',
-    FRONTEND_ONLY: isFrontendOnly,
+    FRONTEND_ONLY: isFrontendOnly ? 'true' : 'false', // Convert boolean to string
   },
   
   // Experimental features

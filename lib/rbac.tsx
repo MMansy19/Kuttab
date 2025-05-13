@@ -47,13 +47,17 @@ const permissionsByRole: Record<UserRole, string[]> = {
 // Helper function to check if a user has a specific permission
 export const hasPermission = (userRole: UserRole | undefined, permission: string): boolean => {
   if (!userRole) return false;
-  return permissionsByRole[userRole]?.includes(permission) || false;
+  
+  // Convert role to lowercase for case-insensitive matching
+  const normalizedRole = userRole.toLowerCase() as UserRole;
+  return permissionsByRole[normalizedRole]?.includes(permission) || false;
 };
 
 // Hook for checking if the current user has a specific permission
 export function usePermission(permission: string): boolean {
   const { data: session } = useSession();
-  const userRole = session?.user?.role as UserRole | undefined;
+  // Handle case-insensitivity by converting role to lowercase
+  const userRole = session?.user?.role?.toLowerCase() as UserRole | undefined;
   
   return hasPermission(userRole, permission);
 }
@@ -75,7 +79,7 @@ export function PermissionGate({ permission, fallback = null, children }: Permis
 export function useRoleProtection(allowedRoles: UserRole[]) {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const userRole = session?.user?.role as UserRole | undefined;
+  const userRole = session?.user?.role?.toLowerCase() as UserRole | undefined;
   
   useEffect(() => {
     // Check if the authentication status is known
@@ -90,7 +94,8 @@ export function useRoleProtection(allowedRoles: UserRole[]) {
     }
     
     // If authenticated but role not allowed, redirect to appropriate dashboard
-    if (userRole && !allowedRoles.includes(userRole as UserRole)) {
+    // Use case-insensitive comparison for roles
+    if (userRole && !allowedRoles.some(role => role.toLowerCase() === userRole.toLowerCase())) {
       // More specific dashboard paths for better UX
       switch(userRole) {
         case 'user':
@@ -107,15 +112,16 @@ export function useRoleProtection(allowedRoles: UserRole[]) {
           router.push('/auth/login');
           console.error('User has invalid role:', userRole);
       }
-    }
-  }, [session, status, router, allowedRoles, userRole]);
+    }  }, [session, status, router, allowedRoles, userRole]);
   
   // Return loading status to help with rendering logic
   return { 
     isLoading: status === 'loading',
     isAuthenticated: !!session,
     userRole,
-    hasRequiredRole: userRole ? allowedRoles.includes(userRole as UserRole) : false
+    hasRequiredRole: userRole ? 
+      allowedRoles.some(role => role.toLowerCase() === userRole.toLowerCase()) : 
+      false
   };
 }
 

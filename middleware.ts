@@ -106,8 +106,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
   // If logged in and trying to access a protected route without proper role
-  if (isProtectedPath && token && typeof token !== 'string') {
-    const userRole = token.role as string;
+  if (isProtectedPath && token && typeof token !== 'string') {    const userRole = token.role as string;
     if (process.env.NODE_ENV !== "production") {
       console.log("User role:", userRole, "for protected path:", pathname);
     }
@@ -116,7 +115,8 @@ export async function middleware(req: NextRequest) {
       pathname.startsWith(path)
     )?.[1];
 
-    if (allowedRoles && !allowedRoles.includes(userRole)) {
+    // Make role checking case-insensitive by converting both to uppercase
+    if (allowedRoles && !allowedRoles.some(role => role.toUpperCase() === userRole.toUpperCase())) {
       if (isApiRequest) {
         return NextResponse.json(
           { error: "غير مصرح بالوصول لهذه الخدمة" },
@@ -125,7 +125,14 @@ export async function middleware(req: NextRequest) {
       }
       
       // Redirect to appropriate dashboard based on role
-      const redirectUrl = new URL(roleRedirections[userRole as keyof typeof roleRedirections] || "/", req.url);
+      // Handle case-insensitive role matching for redirection
+      const normalizedRole = Object.keys(roleRedirections).find(
+        role => role.toUpperCase() === userRole.toUpperCase()
+      );
+      const redirectUrl = new URL(
+        normalizedRole ? roleRedirections[normalizedRole as keyof typeof roleRedirections] : "/", 
+        req.url
+      );
       // Add a notification param that can be picked up by the dashboard to show a toast
       redirectUrl.searchParams.set("notification", "unauthorized_access");
       return NextResponse.redirect(redirectUrl);
@@ -188,7 +195,13 @@ export async function middleware(req: NextRequest) {
       }
     }
       // Default to role-based redirections - this is the most reliable approach
-    const redirectUrl = roleRedirections[userRole as keyof typeof roleRedirections] || "/dashboard";
+    // Handle case-insensitive role matching for redirection
+    const normalizedRole = Object.keys(roleRedirections).find(
+      role => role.toUpperCase() === userRole.toUpperCase()
+    );
+    const redirectUrl = normalizedRole 
+      ? roleRedirections[normalizedRole as keyof typeof roleRedirections] 
+      : "/dashboard";
     if (process.env.NODE_ENV !== "production") {
       console.log("Using role-based redirect to:", redirectUrl);
     }
