@@ -1,12 +1,15 @@
+// filepath: d:\WORK\Projects\kottab\components\ErrorBoundary.tsx
 // Global Error Boundary Component for React
 "use client";
 
 import React from 'react';
 import { Button } from '@/components/ui/Button';
 
+type FallbackRender = (props: { error: Error; resetErrorBoundary: () => void }) => React.ReactNode;
+
 interface ErrorBoundaryProps {
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
+  children: React.ReactNode;        
+  fallback?: React.ReactNode | FallbackRender;
 }
 
 interface ErrorBoundaryState {
@@ -40,9 +43,20 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   };
 
   render() {
-    if (this.state.hasError) {
+    if (this.state.hasError && this.state.error) {
       // You can render any custom fallback UI
-      return this.props.fallback || (
+      const { fallback } = this.props;
+      
+      // If fallback is a function, call it with error and reset function
+      if (typeof fallback === 'function') {
+        return fallback({
+          error: this.state.error,
+          resetErrorBoundary: this.resetErrorBoundary
+        });
+      }
+
+      // Otherwise, render the provided fallback UI or the default one
+      return fallback || (
         <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center">
           <div className="text-red-500 text-5xl mb-4">😓</div>
           <h2 className="text-2xl font-bold text-red-500 mb-2">حدث خطأ ما</h2>

@@ -46,12 +46,11 @@ export async function middleware(req: NextRequest) {
   };
   
   const token = await getToken(tokenOptions);
-
   // Enhanced debugging in development mode
   if (process.env.NODE_ENV !== "production") {
     console.log(`Middleware executing for path: ${req.nextUrl.pathname}`);
     console.log(`Token status: ${token ? "Present" : "Missing"}`);
-    if (token) {
+    if (token && typeof token !== 'string') {
       console.log(`Token data: id=${token.id}, role=${token.role}, email=${token.email}`);
     }
     
@@ -72,11 +71,10 @@ export async function middleware(req: NextRequest) {
   
   // Check if this is an API request
   const isApiRequest = pathname.startsWith("/api");
-  
-  // Additional protection for sensitive API endpoints
+    // Additional protection for sensitive API endpoints
   if (isApiRequest && sensitiveApiPaths.some(path => pathname.startsWith(path))) {
     // For sensitive API routes, strictly enforce admin role
-    if (!token || token.role !== "ADMIN") {
+    if (!token || typeof token === 'string' || token.role !== "ADMIN") {
       return NextResponse.json(
         { error: "غير مصرح بالوصول" },
         { status: 403 }
@@ -107,9 +105,8 @@ export async function middleware(req: NextRequest) {
     url.searchParams.set("callbackUrl", encodeURIComponent(pathname));
     return NextResponse.redirect(url);
   }
-
   // If logged in and trying to access a protected route without proper role
-  if (isProtectedPath && token) {
+  if (isProtectedPath && token && typeof token !== 'string') {
     const userRole = token.role as string;
     if (process.env.NODE_ENV !== "production") {
       console.log("User role:", userRole, "for protected path:", pathname);
@@ -133,9 +130,8 @@ export async function middleware(req: NextRequest) {
       redirectUrl.searchParams.set("notification", "unauthorized_access");
       return NextResponse.redirect(redirectUrl);
     }
-  }
-  // If trying to access auth pages while logged in
-  if (token && (pathname === "/auth/login" || pathname === "/auth/signup")) {
+  }  // If trying to access auth pages while logged in
+  if (token && typeof token !== 'string' && (pathname === "/auth/login" || pathname === "/auth/signup")) {
     const userRole = token.role as string;
     
     if (process.env.NODE_ENV !== "production") {
@@ -191,15 +187,13 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL(callbackPath, req.url));
       }
     }
-    
-    // Default to role-based redirections - this is the most reliable approach
+      // Default to role-based redirections - this is the most reliable approach
     const redirectUrl = roleRedirections[userRole as keyof typeof roleRedirections] || "/dashboard";
     if (process.env.NODE_ENV !== "production") {
       console.log("Using role-based redirect to:", redirectUrl);
     }
     return NextResponse.redirect(new URL(redirectUrl, req.url));
   }
-
   // If accessing the root path while logged in
   if (token && pathname === "/") {
     // Redirect to main dashboard instead of role-specific dashboard

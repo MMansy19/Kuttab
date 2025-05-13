@@ -90,11 +90,15 @@ export default function GlobalErrorBoundary({ children }: GlobalErrorBoundaryPro
  */
 export function withErrorBoundary<P extends object>(
   Component: React.ComponentType<P>,
-  FallbackComponent?: React.ReactNode
+  FallbackComponent?: React.ComponentType<{error: Error; resetErrorBoundary: () => void}>
 ): React.FC<P> {
   const WithErrorBoundary: React.FC<P> = (props) => {
     return (
-      <ErrorBoundary fallback={FallbackComponent}>
+      <ErrorBoundary 
+        fallback={({ error, resetErrorBoundary }) => 
+          FallbackComponent ? <FallbackComponent error={error} resetErrorBoundary={resetErrorBoundary} /> : null
+        }
+      >
         <Component {...props} />
       </ErrorBoundary>
     );
