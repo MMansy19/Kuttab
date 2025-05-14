@@ -1,0 +1,19 @@
+/* TEAM */
+Name: فريق كُتّاب
+Role: Developers and Maintainers
+Site: https://kottab.com
+Twitter: @kottab
+Location: Middle East
+
+/* THANKS */
+Name: معلمي القرآن
+Role: Teachers
+From: All over the world
+
+/* SITE */
+Last update: 2023-05-14
+Language: Arabic
+Doctype: HTML5
+Standards: HTML5, CSS3, ECMAScript 6
+Components: Next.js, React, Tailwind CSS
+IDE: Visual Studio Code

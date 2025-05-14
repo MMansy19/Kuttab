@@ -8,7 +8,13 @@ import { FaUser } from 'react-icons/fa';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: session } = useSession();
+  
+  // Safe access to session with fallback for SSG/SSR
+  const session_result = useSession();
+  const { data: session, status } = session_result || { 
+    data: null, 
+    status: 'loading' 
+  };
 
   return (
     <nav dir="rtl" className="w-full bg-white dark:bg-gray-900 text-emerald-900 dark:text-white py-4 px-2 sm:px-6 flex flex-col sm:flex-row items-center justify-between shadow-md transition-colors duration-300 border-b border-accent">

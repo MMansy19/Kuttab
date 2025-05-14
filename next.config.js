@@ -34,6 +34,23 @@ function fixRouteTypes() {
   }
 }
 
+// Function to fix auth build issues
+function fixAuthBuild() {
+  try {
+    console.log('🔧 Applying auth build fixes...');
+    
+    // Check if our auth fix script exists
+    if (fs.existsSync(path.join(process.cwd(), 'scripts', 'build', 'fix-auth-build.js'))) {
+      console.log('Running auth fix script...');
+      execSync('node scripts/build/fix-auth-build.js --build', { stdio: 'inherit' });
+    } else {
+      console.log('Auth fix script not found, skipping');
+    }
+  } catch (error) {
+    console.warn('⚠️ Error fixing auth build:', error.message);
+  }
+}
+
 const nextConfig = {
   // Core configurations
   serverExternalPackages: ['@prisma/client', 'mongoose'],
@@ -42,6 +59,46 @@ const nextConfig = {
   
   // Note: swcMinify is now enabled by default in Next.js 13+
   // and has been removed from the configuration options
+  
+  // Security headers for SEO and protection
+  async headers() {
+    return [
+      {
+        // Apply these headers to all routes
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload'
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN'
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(self)'
+          },
+        ],
+      },
+    ];
+  },
   
   // Locale configuration - removed as it's not supported in App Router
   // Use the app/[locale] directory structure instead
@@ -64,13 +121,14 @@ const nextConfig = {
     config.watchOptions = {
       ignored: ['**/node_modules/**', '**/.next/**'],
       poll: false,
-    };
-
-    // Run after webpack build completes
+    };    // Run after webpack build completes
     if (isServer) {
       config.plugins.push({
         apply: (compiler) => {
-          compiler.hooks.afterEmit.tap('FixRouteTypes', fixRouteTypes);
+          compiler.hooks.afterEmit.tap('FixAuthAndRouteTypes', () => {
+            fixAuthBuild();
+            fixRouteTypes();
+          });
         },
       });
     }

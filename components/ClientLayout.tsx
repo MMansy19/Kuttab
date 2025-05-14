@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import SchemaOrgData from './seo/SchemaOrgData';
 
 export default function ClientLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -16,6 +17,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
 
   return (
     <>
+      <SchemaOrgData />
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
       <Footer />
