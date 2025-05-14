@@ -18,13 +18,13 @@ export interface Teacher {
   tags?: string[]; // e.g. ['islamic studies', 'quran', 'tajweed'],
   isPaid: boolean; // true if the teacher charges for lessons
   price?: number | null; // price per lesson in currency units, can be null for free teachers
-  videoUrl?: string; // URL to a video introduction
-  gender: 'male' | 'female';
-  specialization?: string;
+  videoUrl?: string; // URL to a video introduction  gender: 'ذكر' | 'أنثى';
+  specialization?: string[];
   joinedDate?: string;
   education?: string;
   certifications?: string[];
   teachingApproach?: string;
+  sessionsCompleted?: number;
   contactInfo?: {
     email?: string;
     phone?: string;
@@ -33,6 +33,7 @@ export interface Teacher {
   };
   languages?: string[];
   achievements?: string[];
+  gender: string;
 }
 
 export interface Booking {

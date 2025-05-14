@@ -44,16 +44,15 @@ export async function GET() {
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid>${baseUrl}/teachers</guid>
       <description>تصفح قائمة معلمي القرآن الكريم المؤهلين في منصة كُتّاب.</description>
-    </item>
-    
+    </item>    
     <!-- Teacher Profiles -->
-    ${teachers.map(teacher => `
+    ${teachersData.map((teacher: any) => `
     <item>
-      <title>${teacher.name} - معلم ${teacher.specialization || 'القرآن الكريم'}</title>
+      <title>${teacher.name} - معلم ${teacher.subjects?.[0] || 'القرآن الكريم'}</title>
       <link>${baseUrl}/teachers/${teacher.id}</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
       <guid>${baseUrl}/teachers/${teacher.id}</guid>
-      <description>تعرف على ${teacher.name}، معلم ${teacher.specialization || 'القرآن الكريم'} واحجز دروسك معه الآن.</description>
+      <description>تعرف على ${teacher.name}، معلم ${teacher.subjects?.[0] || 'القرآن الكريم'} واحجز دروسك معه الآن.</description>
     </item>
     `).join('')}
     

@@ -4,7 +4,7 @@ import type { Teacher } from '../../types';
 import TeacherCard from '../../components/TeacherCard';
 import React, { useState, useMemo, useEffect } from 'react';
 import teachersData from '../../data/teachers';
-import { FaFilter, FaSearch, FaSortAmountDown, FaBook, FaStar, FaUserGraduate, FaQuran, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaFilter, FaSearch, FaSortAmountDown, FaStar, FaUserGraduate, FaQuran, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -234,7 +234,10 @@ export default function TeachersPage() {
 
   // Get all unique specializations
   const specializations = useMemo(() => {
-    const specs = teachers.map(t => t.specialization).filter(Boolean);
+    const specs = teachers
+      .map(t => t.specialization)
+      .filter(Boolean)
+      .flatMap(spec => typeof spec === 'string' ? [spec] : spec) as string[];
     return Array.from(new Set(specs));
   }, [teachers]);
 
@@ -267,7 +270,12 @@ export default function TeachersPage() {
     }
 
     if (filter.specialization !== 'all') {
-      result = result.filter(t => t.specialization === filter.specialization);
+      result = result.filter(t => {
+        if (!t.specialization) return false;
+        return Array.isArray(t.specialization) 
+          ? t.specialization.includes(filter.specialization)
+          : t.specialization === filter.specialization;
+      });
     }
 
     if (filter.experience > 0) {
@@ -278,16 +286,21 @@ export default function TeachersPage() {
       result = result.filter(t => t.gender === filter.gender);
     }
 
-    if (search.trim()) {
+        if (search.trim()) {
       const searchLower = search.toLowerCase().trim();
       result = result.filter(t =>
         t.name.toLowerCase().includes(searchLower) ||
         t.subjects.some(subject => subject.toLowerCase().includes(searchLower)) ||
-        (t.specialization && t.specialization.toLowerCase().includes(searchLower)) ||
-        t.bio.toLowerCase().includes(searchLower)
-      );
+        (t.specialization && (
+          Array.isArray(t.specialization) 
+            ? t.specialization.some(spec => spec.includes(searchLower))
+            : typeof t.specialization === 'string' ? t.specialization : false
+        )) ||
+        (t.education && t.education.includes(searchLower)) ||
+        (t.certifications && t.certifications.some(cert => cert.includes(searchLower))) ||
+        (t.teachingApproach && t.teachingApproach.includes(searchLower)) 
+      ); 
     }
-
     // Apply sorting
     if (sortOption) {
       switch (sortOption) {

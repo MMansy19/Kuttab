@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { teachers } from '@/data/teachers'; // Import mock data for now
+import teachersData from '@/data/teachers'; // Import mock data for now
 
 /**
  * Generate the sitemap dynamically
@@ -57,10 +57,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
   ];
-  
-  // Generate teacher profile routes (using mock data for now)
+    // Generate teacher profile routes (using mock data for now)
   // In production, you would fetch this from your database
-  const teacherRoutes = teachers.map(teacher => ({
+  const teacherRoutes = teachersData.map((teacher: any) => ({
     url: `${baseUrl}/teachers/${teacher.id}`,
     lastModified: currentDate,
     changeFrequency: 'weekly' as const,

@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { teachers } from '@/data/teachers';
+import teachersData from '@/data/teachers';
 
 /**
  * Generate a sitemap focused on teacher profiles
@@ -10,12 +10,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   
   // Get the current date for lastModified
   const currentDate = new Date();
-  
-  // Generate teacher profile routes
-  const teacherRoutes = teachers.map(teacher => ({
+    // Generate teacher profile routes
+  const teacherRoutes = teachersData.map((teacher: any) => ({
     url: `${baseUrl}/teachers/${teacher.id}`,
     lastModified: currentDate,
-    changeFrequency: 'weekly',
+    changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
   

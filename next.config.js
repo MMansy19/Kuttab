@@ -60,6 +60,12 @@ const nextConfig = {
   // Note: swcMinify is now enabled by default in Next.js 13+
   // and has been removed from the configuration options
   
+  // Prerendering settings for better SEO performance
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['react-icons', 'lodash', 'date-fns'],
+  },
+  
   // Security headers for SEO and protection
   async headers() {
     return [

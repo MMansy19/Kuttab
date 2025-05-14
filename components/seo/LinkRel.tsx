@@ -26,9 +26,8 @@ const LinkRel: React.FC<LinkRelProps> = ({ type, href, hrefLang, title }) => {
     
     // Set the URL
     link.href = href;
-    
-    // Add optional attributes if provided
-    if (hrefLang) link.hrefLang = hrefLang;
+      // Add optional attributes if provided
+    if (hrefLang) link.hreflang = hrefLang;
     if (title) link.title = title;
     
     // Add to head

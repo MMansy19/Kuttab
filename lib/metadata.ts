@@ -110,12 +110,13 @@ export const defaultMetadata: Metadata = {
     types: {
       'application/rss+xml': `${siteUrl}/rss.xml`,
     }
-  },
-  verification: {
+  },  verification: {
     google: 'google-site-verification-token',
     yandex: 'yandex-verification-token',
-    bing: 'bing-verification-token',
-    yahoo: 'yahoo-verification-token',
+    other: {
+      'msvalidate.01': 'bing-verification-token',
+      'yahoo-verification': 'yahoo-verification-token'
+    },
   },
   // Additional meta tags for better indexing
   other: {
