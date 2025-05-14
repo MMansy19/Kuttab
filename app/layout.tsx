@@ -1,6 +1,6 @@
 import '../styles/globals.css';
 import type { ReactNode } from 'react';
-import SessionProvider from '../components/SessionProvider';
+import { AuthProvider, AuthSyncProvider } from '@/features/auth';
 import ToastContainer from '../components/ui/Toast';
 import ClientLayout from '../components/ClientLayout';
 import { Metadata } from 'next';
@@ -16,12 +16,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-      </head>
-      <body className="bg-gray-900 text-white font-[Cairo] min-h-screen flex flex-col transition-colors duration-300">
-        <SessionProvider>
+      </head>      <body className="bg-gray-900 text-white font-[Cairo] min-h-screen flex flex-col transition-colors duration-300">
+        <AuthProvider>
+          <AuthSyncProvider>
             <ClientLayout>{children}</ClientLayout>
             <ToastContainer />
-        </SessionProvider>
+          </AuthSyncProvider>
+        </AuthProvider>
       </body>
     </html>
   );

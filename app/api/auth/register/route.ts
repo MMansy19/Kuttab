@@ -1,17 +1,17 @@
 import { type NextRequest } from 'next/dist/server/web/spec-extension/request';
 import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import bcrypt from 'bcryptjs';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
-import { isFrontendOnlyMode } from '@/lib/config';
+import { Role, Gender } from '@/features/auth/types';
 
 // Define validation schema for registration
 const registerSchema = z.object({
   name: z.string().min(2, "يجب أن يكون الاسم على الأقل حرفين"),
   email: z.string().email("بريد إلكتروني غير صالح"),
   password: z.string().min(8, "يجب أن تكون كلمة المرور 8 أحرف على الأقل"),
-  role: z.enum(["USER", "TEACHER"]),
-  gender: z.enum(["MALE", "FEMALE"]),
+  role: z.nativeEnum(Role),
+  gender: z.nativeEnum(Gender),
 });
 
 export async function POST(req: NextRequest) {
@@ -26,76 +26,52 @@ export async function POST(req: NextRequest) {
     }
 
     const { name, email, password, role, gender } = body;
-    
-    try {
       // Check if user already exists
-      const existingUser = await prisma.user.findUnique({
-        where: { email },
-      });
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
 
-      if (existingUser) {
-        return NextResponse.json(
-          { error: "البريد الإلكتروني مستخدم بالفعل" },
-          { status: 409 }
-        );
-      }
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "البريد الإلكتروني مستخدم بالفعل" },
+        { status: 409 }
+      );
+    }
 
-      // Hash password
-      const hashedPassword = await bcrypt.hash(password, 12);
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-      // Create new user
-      const user = await prisma.user.create({
+    // Create new user
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        passwordHash: hashedPassword, // Updated to match the field in the auth options
+        role,
+        gender,
+      },
+    });
+
+    // If registering as TEACHER, create a teacher profile
+    if (role === Role.TEACHER) {
+      await prisma.teacherProfile.create({
         data: {
-          name,
-          email,
-          password: hashedPassword,
-          role,
-          gender,
+          userId: user.id,
+          bio: "",
+          hourlyRate: 0,
+          yearsOfExperience: 0,
         },
       });
-
-      // If registering as TEACHER, create a teacher profile
-      if (role === "TEACHER") {
-        await prisma.teacherProfile.create({
-          data: {
-            userId: user.id,
-          },
-        });
-      }
-
-      // Return success response without password
-      const { password: _, ...userWithoutPassword } = user;
-      
-      return NextResponse.json({
-        message: "تم إنشاء المستخدم بنجاح",
-        user: userWithoutPassword,
-      }, { status: 201 });
-    } catch (error) {
-      // If in frontend-only mode and there was a database error,
-      // create a mock successful response instead of failing
-      if (isFrontendOnlyMode) {
-        console.log("[Frontend-Only] Simulating successful registration for:", email);
-        
-        // Generate a mock user response
-        const mockUser = {
-          id: `mock-${Date.now()}`,
-          name,
-          email,
-          role,
-          gender,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-        
-        return NextResponse.json({
-          message: "تم إنشاء المستخدم بنجاح (وضع المظهرة)",
-          user: mockUser,
-        }, { status: 201 });
-      }
-      
-      // Re-throw for the main error handler if not in frontend-only mode
-      throw error;
     }
+
+    // Return success response without password
+    const { passwordHash: _, ...userWithoutPassword } = user;
+    
+    return NextResponse.json({
+      success: true,
+      message: "تم إنشاء المستخدم بنجاح",
+      user: userWithoutPassword,
+    }, { status: 201 });
     
   } catch (error: any) {
     console.error("Registration error:", error);
