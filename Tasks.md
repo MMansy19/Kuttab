@@ -145,3 +145,19 @@ For testing without a database connection, set `NEXT_PUBLIC_FRONTEND_ONLY=true` 
 - Regular User: Email: `demo@example.com`, Password: `password123`
 - Teacher: Email: `teacher@example.com`, Password: `password123`
 - Admin: Email: `admin@example.com`, Password: `password123`
+
+<!-- Steps to Start the Backend Server and Docker for Kottab Project  -->
+1. DATABASE_URL="postgresql://postgres:Mahmoud_132003@localhost:5432/kottab_db?schema=public"
+NEXTAUTH_SECRET="Hha0zIBh1E1BLgtBNk7axqglfl4AR5bdw+U5JjA0OoI="
+NEXTAUTH_URL="http://localhost:3000"
+NODE_ENV="development"
+
+2. Start PostgreSQL Docker container: `docker-compose up -d`
+3. Verify the container is running: `docker ps`
+4. Run Prisma migrations to set up the database schema: `npx prisma migrate dev --name init`
+5. Generate the Prisma client: `npx prisma generate`
+6. `npm install`
+7. `npm run dev`
+00. stop docker server: `docker-compose down`
+
+

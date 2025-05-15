@@ -1,13 +1,11 @@
-import React from "react";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/features/auth/services/auth-options";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-
-// Force dynamic rendering for authentication pages
-export const dynamic = 'force-dynamic';
 
 interface DashboardStats {
   totalUsers: number;
@@ -18,60 +16,64 @@ interface DashboardStats {
   completedBookings: number;
 }
 
-export default async function AdminDashboard() {
-  // Get session data server-side for security
-  const session = await getServerSession(authOptions);
-  
-  // Secure the admin dashboard - redirect if not an admin
-  if (!session?.user || session.user.role?.toUpperCase() !== 'ADMIN') {
-    console.error("Unauthorized access attempt to admin dashboard");
-    redirect('/dashboard');
-  }
-  
-  // In a real implementation, you would fetch these stats server-side
-  // This is just a placeholder for demonstration
-  let stats: DashboardStats;
-  let error = null;
-  
-  try {
-    // Server-side data fetching for security and performance
-        
-        // For a real implementation, this would be a dedicated API endpoint
-        // that aggregates these stats server-side
-        
+export default function AdminDashboard() {
+  const router = useRouter();
+  const { data: session } = useSession({
+    required: true,
+    onUnauthenticated() {
+      router.push('/auth/login?callbackUrl=/dashboard');
+    },
+  });
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Verify the user is an admin
+    if (session?.user?.role?.toUpperCase() !== 'ADMIN') {
+      console.error("Unauthorized access attempt to admin dashboard");
+      router.push('/dashboard');
+      return;
+    }
+
+    const fetchStats = async () => {
+      try {
+        setIsLoading(true);
+
         // Fetch users count
         const usersResponse = await fetch("/api/users");
         const usersData = await usersResponse.json();
-        
+
         // Fetch teachers count
         const teachersResponse = await fetch("/api/teachers");
         const teachersData = await teachersResponse.json();
-        
+
         // Fetch pending teachers count
         const pendingTeachersResponse = await fetch("/api/teachers?approvalStatus=PENDING");
         const pendingTeachersData = await pendingTeachersResponse.json();
-        
+
         // Fetch bookings stats
         const bookingsResponse = await fetch("/api/bookings");
         const bookingsData = await bookingsResponse.json();
-        
+
         // Count upcoming and completed bookings
         const today = new Date().toISOString().split("T")[0];
         let upcomingCount = 0;
         let completedCount = 0;
-        
+
         bookingsData.data.forEach((booking: any) => {
           if (booking.status === "COMPLETED") {
             completedCount++;
           }
-          
-          if ((booking.date > today || 
-              (booking.date === today && booking.status !== "COMPLETED" && booking.status !== "CANCELLED")) &&
-              (booking.status === "SCHEDULED" || booking.status === "CONFIRMED")) {
+
+          if ((booking.date > today ||
+            (booking.date === today && booking.status !== "COMPLETED" && booking.status !== "CANCELLED")) &&
+            (booking.status === "SCHEDULED" || booking.status === "CONFIRMED")) {
             upcomingCount++;
           }
         });
-        
+
         // Set all stats
         setStats({
           totalUsers: usersData.metadata.total,
@@ -88,8 +90,10 @@ export default async function AdminDashboard() {
       }
     };
 
-    fetchStats();
-  }, []);
+    if (session?.user) {
+      fetchStats();
+    }
+  }, [session, router]);
 
   if (isLoading) {
     return (
@@ -147,15 +151,15 @@ export default async function AdminDashboard() {
                 </span>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                {stats?.pendingTeachers 
-                  ? `${stats?.pendingTeachers} معلم في انتظار الموافقة` 
+                {stats?.pendingTeachers
+                  ? `${stats?.pendingTeachers} معلم في انتظار الموافقة`
                   : "لا توجد معلمين معلقين"}
               </p>
             </div>
             <div className="mt-auto">
               <Link href="/dashboard/admin/teachers?approvalStatus=PENDING">
-                <Button 
-                  variant={stats?.pendingTeachers ? "default" : "outline"} 
+                <Button
+                  variant={stats?.pendingTeachers ? "default" : "outline"}
                   className="w-full"
                 >
                   مراجعة المعلمين

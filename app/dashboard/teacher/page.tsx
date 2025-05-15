@@ -1,4 +1,6 @@
-import React from "react";
+"use client"
+
+import React, { useEffect, useState, Suspense } from "react";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/features/auth/services/auth-options";
@@ -6,6 +8,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { showSuccess, showWarning } from "@/utils/toast";
 
 // Force dynamic rendering for authentication pages
 export const dynamic = 'force-dynamic';
@@ -49,6 +52,18 @@ export default async function TeacherDashboard() {
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loginSuccess, setLoginSuccess] = useState<string | null>(null);
+  const [notification, setNotification] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Get URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const loginSuccessParam = urlParams.get('loginSuccess');
+    const notificationParam = urlParams.get('notification');
+    
+    setLoginSuccess(loginSuccessParam);
+    setNotification(notificationParam);
+  }, []);
 
   useEffect(() => {
     // Show welcome notification on login success
