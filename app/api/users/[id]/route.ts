@@ -32,29 +32,25 @@ export async function GET(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
       const user = await prisma.user.findUnique({
-      where: { id: params.id },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,        teacherProfile: session.user.role === "ADMIN" || session.user.id === params.id
-          ? {              select: {
-                id: true,
-                specializations: true,
-                // Removed yearsOfExperience as it doesn't exist in TeacherProfileSelect
-                // Added hourlyRate which exists in our schema
-                hourlyRate: true,
-                // Removed videoUrl as it doesn't exist in TeacherProfileSelect
-                isActive: true,  // This is the correct field name in the schema
-                // Removed averageRating and reviewCount as they don't exist in TeacherProfileSelect
-              },
-            }
-          : false,
-      },
-    });
+        where: { id: params.id },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+          teacherProfile: session.user.role === "ADMIN" || session.user.id === params.id ? {
+            select: {
+              id: true,
+              specializations: true, // This is correct if specializations is a field in TeacherProfile
+              hourlyRate: true,
+              isActive: true,
+            },
+          } : false,
+        },
+      });
     
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
