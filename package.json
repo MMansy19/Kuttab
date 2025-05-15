@@ -14,13 +14,12 @@
     "auth:fix": "node ./scripts/build/fix-auth-build.js --build",
     "prepare:vercel": "node ./scripts/prepare-vercel.js",
     "build": "cross-env PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1 npm run clean:build && npm run prisma:fix && npm run auth:fix && node scripts/pre-build-fix.js && next build && node scripts/fix-route-types.js && node scripts/build/vercel-build.js",
-    "build:vercel": "cross-env PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1 node scripts/prisma-vercel.js && npm run prepare:vercel && npm run prisma:fix && npm run auth:fix && node scripts/pre-build-fix.js && next build && node scripts/fix-route-types.js && node scripts/build/vercel-build.js",
+    "build:vercel": "cross-env PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1 node scripts/build-info.js && npx prisma generate && node scripts/prisma-vercel.js && npm run prepare:vercel && npm run prisma:fix && npm run auth:fix && node scripts/pre-build-fix.js && next build && node scripts/fix-route-types.js && node scripts/build/vercel-build.js",
     "start": "next start",
     "test": "echo \"Error: no test specified\" && exit 1",    "db:seed": "prisma db seed",
-    "vercel:validate": "node ./scripts/validate-vercel-config.js",
-    "predeploy": "npm run vercel:validate",
+    "vercel:validate": "node ./scripts/validate-vercel-config.js",    "predeploy": "npm run vercel:validate",
     "fix:types": "node scripts/fix-route-types.js",
-    "postbuild": "node scripts/fix-route-types.js",
+    "postbuild": "node scripts/fix-route-types.js && node scripts/vercel-postbuild.js",
     "postinstall": "node ./scripts/postinstall.js"
   },
   "prisma": {

@@ -2,7 +2,10 @@
   "version": 2,
   "buildCommand": "npx prisma generate && npm run build:vercel",
   "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "installCommand": "npm install && npx prisma generate",
   "framework": "nextjs",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "env": {
+    "PRISMA_GENERATE_DATAPROXY": "false"
+  }
 }
