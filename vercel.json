@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "buildCommand": "npm install --save-dev @types/node cross-env && npx prisma generate && npm run build:vercel",
   "devCommand": "npm run dev",
   "installCommand": "npm install && npx prisma generate",
   "framework": "nextjs",
