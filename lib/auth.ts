@@ -3,12 +3,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "./prisma";
-
+import { DefaultSession } from "next-auth";
 
 if (!process.env.NEXTAUTH_SECRET) {
   throw new Error("NEXTAUTH_SECRET is not set in environment variables");
 }
-
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -28,8 +27,12 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials.email.toLowerCase() },
         });
 
-        if (!user || !user.password) {
+        if (!user) {
           throw new Error("المستخدم غير موجود");
+        }
+
+        if (!user.password) {
+          throw new Error("هذا الحساب مسجل بواسطة مزود خارجي");
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -39,13 +42,15 @@ export const authOptions: NextAuthOptions = {
 
         if (!isPasswordValid) {
           throw new Error("كلمة المرور غير صحيحة");
-        }        // Ensure all required properties match the User interface definition
+        }
+
+        // Ensure we return a proper User object that matches NextAuth's expectations
         return {
           id: user.id,
           name: user.name || "",
-          email: user.email, // Email is required in your schema
-          role: user.role,
-          image: user.image,
+          email: user.email || "", // Ensure email is never null
+          role: user.role || "USER", // Default role if not specified
+          image: user.image || null,
         };
       },
     }),
@@ -78,3 +83,33 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
 };
+
+// Extend the User type to match our returned user object
+declare module "next-auth" {
+  interface User {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+    image?: string | null;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    role: string;
+  }
+}
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      role: string;
+      image?: string | null;
+    } & DefaultSession["user"];
+  }
+}
