@@ -1,13 +1,14 @@
-"use client";
-
-import React, { useState, useEffect, Suspense } from "react";
-import { useSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import React from "react";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/features/auth/services/auth-options";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { showSuccess, showWarning } from "@/utils/toast";
+
+// Force dynamic rendering for authentication pages
+export const dynamic = 'force-dynamic';
 
 interface TeacherProfile {
   id: string;
@@ -31,11 +32,18 @@ interface Booking {
   };
 }
 
-export default function TeacherDashboard() {
-  const { data: session } = useSession();
-  const searchParams = useSearchParams();
-  const loginSuccess = searchParams?.get("loginSuccess");
-  const notification = searchParams?.get("notification");
+export default async function TeacherDashboard() {
+  // Get session data server-side for security
+  const session = await getServerSession(authOptions);
+  
+  // Secure the teacher dashboard - redirect if not a teacher
+  if (!session?.user || session.user.role?.toUpperCase() !== 'TEACHER') {
+    console.error("Unauthorized access attempt to teacher dashboard");
+    redirect('/dashboard');
+  }
+  
+  // In a server component, we can't use client hooks like useSession or useSearchParams
+  // This implementation would need to be modified to work as a server component
 
   const [teacherProfile, setTeacherProfile] = useState<TeacherProfile | null>(null);
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);

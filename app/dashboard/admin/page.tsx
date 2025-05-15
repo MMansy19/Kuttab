@@ -1,10 +1,13 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import React from "react";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/features/auth/services/auth-options";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+
+// Force dynamic rendering for authentication pages
+export const dynamic = 'force-dynamic';
 
 interface DashboardStats {
   totalUsers: number;
@@ -15,16 +18,23 @@ interface DashboardStats {
   completedBookings: number;
 }
 
-export default function AdminDashboard() {
-  const { data: session } = useSession();
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setIsLoading(true);
+export default async function AdminDashboard() {
+  // Get session data server-side for security
+  const session = await getServerSession(authOptions);
+  
+  // Secure the admin dashboard - redirect if not an admin
+  if (!session?.user || session.user.role?.toUpperCase() !== 'ADMIN') {
+    console.error("Unauthorized access attempt to admin dashboard");
+    redirect('/dashboard');
+  }
+  
+  // In a real implementation, you would fetch these stats server-side
+  // This is just a placeholder for demonstration
+  let stats: DashboardStats;
+  let error = null;
+  
+  try {
+    // Server-side data fetching for security and performance
         
         // For a real implementation, this would be a dedicated API endpoint
         // that aggregates these stats server-side
