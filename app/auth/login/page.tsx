@@ -1,5 +1,9 @@
 "use client"
 
+// Force dynamic rendering for authentication pages
+export const dynamic = 'force-dynamic';
+
+
 import { AuthCard } from "@/features/auth/components/AuthCard";
 import { LoginForm } from "@/features/auth/components/LoginForm";
 import { useSearchParams } from "next/navigation";

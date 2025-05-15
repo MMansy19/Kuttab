@@ -66,10 +66,9 @@ class AuthService {
 
   /**
    * Register a new user
-   */
-  async register(data: RegisterData): Promise<AuthResult> {
+   */  async register(data: RegisterData): Promise<AuthResult> {
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

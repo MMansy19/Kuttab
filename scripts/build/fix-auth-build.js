@@ -30,7 +30,13 @@ if (isBuildEnv) {
   // Set environment variable to indicate we're in a build process
   process.env.NEXT_PUBLIC_BUILD_MODE = 'true';
   process.env.NEXT_PUBLIC_SKIP_AUTH_CHECK = 'true';
-  
+    // Define constants for code injection
+  const clientDirective = '"use client"';
+  const exportLines = `
+// Force dynamic rendering for authentication pages
+export const dynamic = 'force-dynamic';
+`;
+
   // Add dynamic exports to auth pages
   authPaths.forEach(pagePath => {
     const fullPath = path.join(process.cwd(), pagePath);
@@ -45,7 +51,6 @@ if (isBuildEnv) {
       
       if (!hasExports) {
         console.log(`Adding dynamic exports to ${pagePath}`);
-        
         
         // Insert after the "use client" directive
         if (content.includes(clientDirective)) {

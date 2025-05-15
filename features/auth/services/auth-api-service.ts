@@ -26,10 +26,9 @@ class AuthApiService {
   
   /**
    * Register a new user
-   */
-  async register(data: RegisterData): Promise<{ success: boolean; user?: AuthUser; error?: string }> {
+   */  async register(data: RegisterData): Promise<{ success: boolean; user?: AuthUser; error?: string }> {
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,5 +1,4 @@
 import { getSession, signOut } from "next-auth/react";
-import { jwtVerify, createRemoteJWKSet } from 'jose';
 
 /**
  * Cache for session requests to prevent multiple redundant API calls

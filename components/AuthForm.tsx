@@ -319,13 +319,11 @@ const AuthForm = ({ type }: AuthFormProps) => {
         }, 800);
       } else {
         // Validate signup data
-        registerSchema.parse(formData);
-
-        // Show registration in progress toast
+        registerSchema.parse(formData);        // Show registration in progress toast
         const loadingToastId = addToast("جاري إنشاء الحساب...", 'info');
         
         // Register new user
-        const response = await fetch("/api/auth/register", {
+        const response = await fetch("/api/auth/signup", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

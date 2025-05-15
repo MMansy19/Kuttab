@@ -1,5 +1,9 @@
 "use client"
 
+// Force dynamic rendering for authentication pages
+export const dynamic = 'force-dynamic';
+
+
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCard, RegisterForm } from "@/features/auth";

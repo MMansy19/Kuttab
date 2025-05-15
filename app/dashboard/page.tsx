@@ -1,5 +1,9 @@
 "use client"
 
+// Force dynamic rendering for authentication pages
+export const dynamic = 'force-dynamic';
+
+
 
 import { useSession } from "next-auth/react";
 
