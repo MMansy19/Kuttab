@@ -153,9 +153,22 @@ NEXTAUTH_URL="http://localhost:3000"
 NODE_ENV="development"
 
 2. Start PostgreSQL Docker container: `docker-compose up -d`
+- `docker --version`
+- `Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"`
+- `docker info`
+- `docker ps -a`
+- `docker start kottab_postgres`
+
 3. Verify the container is running: `docker ps`
-4. Run Prisma migrations to set up the database schema: `npx prisma migrate dev --name init`
-5. Generate the Prisma client: `npx prisma generate`
+
+6. Generate the Prisma client: `npx prisma generate`
+- `node prisma-fix.js`
+- `powershell -ExecutionPolicy Bypass -File .\scripts\setup-docker-db.ps1`
+
+5. Run Prisma migrations to set up the database schema: `npx prisma migrate dev --name init`
+- `docker exec kottab_postgres psql -U postgres -c "SELECT 1;"`
+- `npm install -g prisma`
+
 6. `npm install`
 7. `npm run dev`
 00. stop docker server: `docker-compose down`
