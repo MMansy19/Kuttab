@@ -7,7 +7,7 @@
 html {
   direction: rtl;
   font-family: 'Cairo', 'Tajawal', 'Noto Kufi Arabic', Arial, sans-serif;
-  min-width: 100vw;
+  /* min-width: 100vw; */
   min-height: 100vh;
 }
 
