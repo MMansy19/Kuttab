@@ -1,11 +1,5 @@
 ﻿"use client"
 
-// These settings prevent static generation issues with session data
-export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
-export const revalidate = 0;
-;
-
 import React from "react";
 import { AuthCard, AuthErrorHandler } from "@/features/auth";
 import { useSearchParams } from "next/navigation";

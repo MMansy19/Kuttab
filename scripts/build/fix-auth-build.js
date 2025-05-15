@@ -46,13 +46,6 @@ if (isBuildEnv) {
       if (!hasExports) {
         console.log(`Adding dynamic exports to ${pagePath}`);
         
-        const clientDirective = '"use client"';
-        const exportLines = `
-// These settings prevent static generation issues with session data
-export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
-export const revalidate = 0;
-`;
         
         // Insert after the "use client" directive
         if (content.includes(clientDirective)) {

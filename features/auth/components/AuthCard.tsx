@@ -1,36 +1,13 @@
-"use client";
+"use client"
 
 import React, { ReactNode, Suspense } from "react";
 
 interface AuthCardProps {
-  /**
-   * Page title to display
-   */
   title: string;
-  
-  /**
-   * Optional error message to display
-   */
   error?: string | null;
-  
-  /**
-   * Optional success message to display
-   */
   success?: string | null;
-  
-  /**
-   * Children to render inside the card
-   */
   children: ReactNode;
-  
-  /**
-   * Optional footer content
-   */
   footer?: ReactNode;
-  
-  /**
-   * Additional classes for the container
-   */
   className?: string;
 }
 
@@ -46,7 +23,7 @@ export function AuthCard({
     <div dir="rtl" className="min-h-screen py-12 flex flex-col items-center justify-center">
       <div className={`w-full max-w-md ${className}`}>
         <h1 className="text-3xl font-bold text-center mb-8">{title}</h1>
-        
+
         {error && (
           <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded-md mb-6 flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -55,7 +32,7 @@ export function AuthCard({
             <span>{error}</span>
           </div>
         )}
-        
+
         {success && (
           <div className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-4 rounded-md mb-6 flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -64,18 +41,17 @@ export function AuthCard({
             <span>{success}</span>
           </div>
         )}
-        
+
         <Suspense fallback={<AuthFormLoading />}>
           {children}
         </Suspense>
-        
+
         {footer && <div className="mt-6">{footer}</div>}
       </div>
     </div>
   );
 }
 
-// Loading component to show while the form is loading
 function AuthFormLoading() {
   return (
     <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">

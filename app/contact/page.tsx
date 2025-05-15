@@ -7,11 +7,6 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import IconWrapper from "@/components/ui/IconWrapper";
 
-// These settings prevent static generation issues with session data
-export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
-export const revalidate = 0;
-
 const faqsData = [
   { id: "1", question: "كيف يمكنني البدء في تعلم القرآن الكريم", answer: "يمكنك البدء من خلال إنشاء حساب في منصتنا ثم اختيار المعلم المناسب لك وحجز موعد للبدء في الدروس الخاصة بك." },
   { id: "2", question: "هل يمكنني تجربة المنصة قبل الدفع", answer: "نعم نقدم درسا تجريبيا مجانيا مع أي معلم تختاره لتجربة المنصة والتأكد من أنها تناسب احتياجاتك التعليمية." },

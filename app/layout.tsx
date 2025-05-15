@@ -6,9 +6,7 @@ import ClientLayout from '../components/ClientLayout';
 import { Metadata, Viewport } from 'next';
 import { defaultMetadata, defaultViewport } from '@/lib/metadata';
 
-// Use the improved metadata configuration from our centralized file
 export const metadata: Metadata = defaultMetadata;
-// Export viewport separately according to Next.js 15 requirements
 export const viewport: Viewport = defaultViewport;
 
 export default function RootLayout({ children }: { children: ReactNode }) {

@@ -1,15 +1,14 @@
-// Configure server-side data fetching for auth routes
-export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
-export const revalidate = 0;
+import { Metadata } from "next";
 
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+
+export const metadata: Metadata = {
+  title: "تسجيل الدخول - كُتّاب",
+  description: "قم بتسجيل الدخول إلى حسابك في منصة كُتّاب لتعلم القرآن والعلوم الإسلامية",
+};
+
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 py-12">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-gray-900 dark:to-gray-800">
       {children}
     </div>
   );

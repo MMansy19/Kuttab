@@ -8,10 +8,7 @@ import { Input } from "@/components/ui/Input";
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiUserPlus, FiBook, FiAward, FiAlertCircle } from "react-icons/fi";
 import { FaGoogle, FaFacebook, FaMale, FaFemale } from "react-icons/fa";
 import { useAuth } from "../hooks/useAuth";
-// Import types from auth types file instead of Prisma
-import { RegisterData } from "../types";
-
-// Import the enums
+import { Loader2 } from "lucide-react";
 import { Role, Gender } from "../types";
 
 // Form validation schema
@@ -183,10 +180,7 @@ export const RegisterForm = ({ callbackUrl = "/dashboard" }: RegisterFormProps) 
 
   return (
     <div dir="rtl" className="w-full max-w-md mx-auto p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">
-        إنشاء حساب جديد
-      </h2>
-      
+            
       {error && (
         <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-3 rounded-md mb-4 flex items-center animate-fadeIn">
           <FiAlertCircle className="h-5 w-5 mr-2 flex-shrink-0" />

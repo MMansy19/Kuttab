@@ -1,21 +1,17 @@
 "use client"
 
-// These settings prevent static generation issues with session data
-export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
-export const revalidate = 0;
-;
-
-import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { AuthCard, LoginForm } from "@/features/auth";
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import { AuthCard } from "@/features/auth/components/AuthCard";
+import { LoginForm } from "@/features/auth/components/LoginForm";
+import { useSearchParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/features/auth";
 
 export default function LoginPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const [urlError, setUrlError] = useState<string | null>(null);
   const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
+  const success = searchParams?.get("success");
+  const [urlError, setUrlError] = useState<string | null>(null);
   
   // Safe access to session data
   const { session, status, isAuthenticated } = useAuth();
@@ -26,27 +22,24 @@ export default function LoginPage() {
     if (errorParam) {
       setUrlError(decodeURIComponent(errorParam));
     }
-    
     // Redirect authenticated users
-    if (status === 'authenticated' && isAuthenticated) {
-      router.replace('/dashboard');
-    }
-  }, [searchParams, status, isAuthenticated, router]);
+  }, [searchParams, status, isAuthenticated]);
   // Show minimal loading state until hydration completes
   if (status === 'loading') {
     return (
       <AuthCard title="مرحبًا بعودتك">
         <div className="flex justify-center py-8">
-          <div className="animate-pulse">جاري التحميل...</div>
+          <Loader2 className="animate-spin" />
         </div>
       </AuthCard>
     );
   }
 
   return (
-    <AuthCard 
-      title="مرحبًا بعودتك" 
+    <AuthCard
+      title="مرحبًا بعودتك"
       error={urlError}
+      success={success ? decodeURIComponent(success) : undefined}
     >
       <LoginForm callbackUrl={callbackUrl} />
     </AuthCard>

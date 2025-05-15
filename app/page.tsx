@@ -54,7 +54,6 @@ export default function Home() {
   ];  // Memoized CounterStat component to prevent unnecessary re-renders
   const CounterStat = memo(({ endValue, label }: { endValue: number; label: string }) => {
     const [count, setCount] = useState(0);
-    const counterRef = useRef(0);
     const animationRef = useRef<number | null>(null);
     const [isVisible, setIsVisible] = useState(false);
     const observerRef = useRef<HTMLDivElement>(null);

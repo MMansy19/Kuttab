@@ -1,15 +1,10 @@
 "use client"
 
-// These settings prevent static generation issues with session data
-export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
-export const revalidate = 0;
-;
-
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCard, RegisterForm } from "@/features/auth";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { Loader2 } from "lucide-react";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -36,7 +31,7 @@ export default function SignupPage() {
     return (
       <AuthCard title="إنشاء حساب جديد">
         <div className="flex justify-center py-8">
-          <div className="animate-pulse">جاري التحميل...</div>
+          <Loader2 className="animate-spin" />
         </div>
       </AuthCard>
     );
