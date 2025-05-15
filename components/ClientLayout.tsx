@@ -9,7 +9,6 @@ import SchemaOrgData from './seo/SchemaOrgData';
 export default function ClientLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isDashboard = pathname?.startsWith('/dashboard') || pathname?.startsWith('/auth') || false;
-  
 
   if (isDashboard) {
     return <main className="flex-1">{children}</main>;

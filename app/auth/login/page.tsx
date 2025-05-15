@@ -1,14 +1,15 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { AuthCard, LoginForm } from "@/features/auth";
-import { useAuth } from "@/features/auth/hooks/useAuth";
+"use client"
 
 // These settings prevent static generation issues with session data
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 export const revalidate = 0;
+;
+
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AuthCard, LoginForm } from "@/features/auth";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export default function LoginPage() {
   const router = useRouter();

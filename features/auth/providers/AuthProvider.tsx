@@ -20,18 +20,16 @@ export function AuthProvider({
   refetchInterval = 300,
   refetchOnWindowFocus = true,
   enableSync = true
-}: AuthProviderProps) {  const content = (
+}: AuthProviderProps) {
+  // First wrap with NextAuthSessionProvider
+  const content = (
     <NextAuthSessionProvider
       refetchInterval={refetchInterval}
       refetchOnWindowFocus={refetchOnWindowFocus}
     >
-      {children}
+      {enableSync ? <AuthSyncProvider>{children}</AuthSyncProvider> : children}
     </NextAuthSessionProvider>
   );
   
-  // Wrap with AuthSyncProvider if sync is enabled
-  if (enableSync) {
-    return <AuthSyncProvider>{content}</AuthSyncProvider>;
-  }
-    return content;
+  return content;
 }

@@ -8,7 +8,8 @@ export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {  // Get the session with debug logging in non-production environments
+}) {
+  // Get the session with debug logging in non-production environments
   const session = await getServerSession(authOptions);
   
   if (process.env.NODE_ENV !== "production") {

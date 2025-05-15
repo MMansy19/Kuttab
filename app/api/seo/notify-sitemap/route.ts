@@ -1,23 +1,16 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from 'next/dist/server/web/spec-extension/response';
+import { NextRequest } from 'next/dist/server/web/spec-extension/request';
 
 /**
  * Google Search Console and analytics tools integration API
  * This endpoint pings search engines when the sitemap is updated
  */
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  // Only allow POST requests from authenticated sources
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
-  }
-
+export async function POST(request: NextRequest) {
   // Verify this is an authenticated request (use a secure method in production)
-  const apiKey = req.headers['x-api-key'];
+  const apiKey = request.headers.get('x-api-key');
   if (apiKey !== process.env.SITEMAP_NOTIFICATION_KEY) {
-    return res.status(401).json({ message: 'Unauthorized' });
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
   try {
@@ -36,14 +29,14 @@ export default async function handler(
       { method: 'GET' }
     );
 
-    return res.status(200).json({
+    return NextResponse.json({
       message: 'Sitemap notification successful',
       google: googleRes.status,
       bing: bingRes.status,
       timestamp: new Date().toISOString()
-    });
+    }, { status: 200 });
   } catch (error: any) {
     console.error('Sitemap notification error:', error);
-    return res.status(500).json({ message: 'Internal server error', error: error.message });
+    return NextResponse.json({ message: 'Internal server error', error: error.message }, { status: 500 });
   }
 }

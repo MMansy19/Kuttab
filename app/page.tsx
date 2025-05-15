@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState, useRef, memo } from "react";
 import { FaBook, FaUserGraduate, FaCalendarAlt, FaGlobe, FaAward, FaMedal, FaLaptop, FaComment, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaUserCircle } from "react-icons/fa";
 
 
@@ -51,8 +51,95 @@ export default function Home() {
       title: "مناهج متنوعة",
       description: "تخصصات متعددة في علوم القرآن والتجويد والتفسير واللغة العربية"
     }
-  ];
+  ];  // Memoized CounterStat component to prevent unnecessary re-renders
+  const CounterStat = memo(({ endValue, label }: { endValue: number; label: string }) => {
+    const [count, setCount] = useState(0);
+    const counterRef = useRef(0);
+    const animationRef = useRef<number | null>(null);
+    const [isVisible, setIsVisible] = useState(false);
+    const observerRef = useRef<HTMLDivElement>(null);
+    const startTimeRef = useRef<number | null>(null);
+    
+    // Easing function for more natural animation
+    const easeOutQuad = (t: number): number => t * (2 - t);
+    
+    // Trigger animation directly when component becomes visible
+    useEffect(() => {
+      if (isVisible && endValue > 0) {
+        const animate = (timestamp: number) => {
+          if (startTimeRef.current === null) {
+            startTimeRef.current = timestamp;
+          }
+          
+          const elapsed = timestamp - startTimeRef.current;
+          const duration = 2000; // 2 seconds duration
+          
+          // Calculate progress and apply easing
+          const rawProgress = Math.min(elapsed / duration, 1);
+          const progress = easeOutQuad(rawProgress);
+          
+          // Calculate current value
+          const currentValue = Math.floor(progress * endValue);
+          setCount(currentValue);
+          
+          // Continue animation if not complete
+          if (rawProgress < 1) {
+            animationRef.current = requestAnimationFrame(animate);
+          } else {
+            // Ensure we end exactly at the target value
+            setCount(endValue);
+          }
+        };
+        
+        // Start animation
+        startTimeRef.current = null;
+        animationRef.current = requestAnimationFrame(animate);
+        
+        // Clean up on unmount or when dependencies change
+        return () => {
+          if (animationRef.current !== null) {
+            cancelAnimationFrame(animationRef.current);
+          }
+        };
+      }
+    }, [isVisible, endValue]);
+    
+    // Set up intersection observer to detect when counter is visible
+    useEffect(() => {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+          }
+        },
+        {
+          threshold: 0.1,
+          rootMargin: '50px',
+        }
+      );
+      
+      if (observerRef.current) {
+        observer.observe(observerRef.current);
+      }
+      
+      return () => {
+        if (observerRef.current) {
+          observer.unobserve(observerRef.current);
+        }
+      };
+    }, []);
+    
+    return (
+      <div 
+        ref={observerRef} 
+        className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center"
+      >
+        <div className="text-3xl font-bold text-white">{count}+</div>
+        <div className="text-xs text-gray-300">{label}</div>      </div>
+    );
+  });
 
+  
   return (
     <main className="overflow-hidden">
       {/* Hero Section with Islamic Pattern Overlay */}
@@ -64,52 +151,43 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
             <div className="text-center lg:text-right lg:max-w-2xl">
               <div className="inline-block animate-float">
-                <div className="bg-white dark:bg-gray-800 px-4 py-1 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-6 mx-auto lg:mx-0 inline-flex items-center">
-                  <span className="animate-pulse inline-block w-2 h-2 rounded-full bg-emerald-500 ml-2"></span>
-                  منصة تعليمية متميزة
-                </div>
+              <div className="bg-white dark:bg-gray-800 px-4 py-1 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-6 mx-auto lg:mx-0 inline-flex items-center">
+                <span className="animate-pulse inline-block w-2 h-2 rounded-full bg-emerald-500 ml-2"></span>
+                منصة تعليمية متميزة
+              </div>
               </div>
               
-                  <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight" dir="rtl">
-                  تعلم 
-                  <span className="text-gradient bg-gradient-to-r from-emerald-400 to-blue-500"> القرآن الكريم </span>
-                  مع أفضل المعلمين
-                  </h1>
+                <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight" dir="rtl">
+                تعلم 
+                <span className="text-gradient bg-gradient-to-r from-emerald-400 to-blue-500"> القرآن الكريم </span>
+                مع أفضل المعلمين
+                </h1>
               
               <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto lg:mx-0" dir="rtl">
-                منصة كُـــتَّـــاب تجمع بين الطلاب والمعلمين المتميزين لجلسات تعليمية عالية الجودة عبر الإنترنت. ابدأ رحلتك التعليمية الآن.
+              منصة كُـــتَّـــاب تجمع بين الطلاب والمعلمين المتميزين لجلسات تعليمية عالية الجودة عبر الإنترنت. ابدأ رحلتك التعليمية الآن.
               </p>
               
               <div className="flex flex-wrap gap-4 justify-center lg:justify-end">
-                <Link 
-                  href="/teachers" 
-                  className="px-8 py-3 rounded-full bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-medium text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
-                >
-                  <FaUserGraduate />
-                  <span>ابدأ الآن</span>
-                </Link>
-                
-                <Link 
-                  href="/about" 
-                  className="px-8 py-3 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-medium text-lg transition-all duration-300 border border-white/20 transform hover:scale-105"
-                >
-                  اكتشف المزيد
-                </Link>
+              <Link 
+                href="/teachers" 
+                className="px-8 py-3 rounded-full bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-medium text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
+              >
+                <FaUserGraduate />
+                <span>ابدأ الآن</span>
+              </Link>
+              
+              <Link 
+                href="/about" 
+                className="px-8 py-3 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-medium text-lg transition-all duration-300 border border-white/20 transform hover:scale-105"
+              >
+                اكتشف المزيد
+              </Link>
               </div>
               
               <div className="mt-10 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
-                  <div className="text-3xl font-bold text-white">500+</div>
-                  <div className="text-xs text-gray-300">طالب مسجل</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
-                  <div className="text-3xl font-bold text-white">50+</div>
-                  <div className="text-xs text-gray-300">معلم متميز</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center">
-                  <div className="text-3xl font-bold text-white">1000+</div>
-                  <div className="text-xs text-gray-300">جلسة ناجحة</div>
-                </div>
+              <CounterStat endValue={500} label="طالب مسجل" />
+              <CounterStat endValue={50} label="معلم متميز" />
+              <CounterStat endValue={1000} label="جلسة ناجحة" />
               </div>
             </div>
             
