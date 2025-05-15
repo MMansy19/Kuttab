@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async  authorize(credentials) {
+      async authorize(credentials): Promise<any> {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("البريد الإلكتروني وكلمة المرور مطلوبان");
         }
@@ -39,12 +39,11 @@ export const authOptions: NextAuthOptions = {
 
         if (!isPasswordValid) {
           throw new Error("كلمة المرور غير صحيحة");
-        }
-
+        }        // Ensure all required properties match the User interface definition
         return {
           id: user.id,
           name: user.name || "",
-          email: user.email,
+          email: user.email, // Email is required in your schema
           role: user.role,
           image: user.image,
         };
