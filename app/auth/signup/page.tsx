@@ -4,13 +4,13 @@
 export const dynamic = 'force-dynamic';
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCard, RegisterForm } from "@/features/auth";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 
-export default function SignupPage() {
+function SignupPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [urlError, setUrlError] = useState<string | null>(null);
@@ -48,5 +48,19 @@ export default function SignupPage() {
     >
       <RegisterForm callbackUrl={callbackUrl} />
     </AuthCard>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <AuthCard title="إنشاء حساب جديد">
+        <div className="flex justify-center py-8">
+          <Loader2 className="animate-spin" />
+        </div>
+      </AuthCard>
+    }>
+      <SignupPageContent />
+    </Suspense>
   );
 }
