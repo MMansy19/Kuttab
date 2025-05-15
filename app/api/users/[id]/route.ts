@@ -44,7 +44,6 @@ export async function GET(
           teacherProfile: session.user.role === "ADMIN" || session.user.id === params.id ? {
             select: {
               id: true,
-              hourlyRate: true,
               isActive: true,
             },
           } : false,
