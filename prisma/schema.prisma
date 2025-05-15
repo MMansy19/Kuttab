@@ -1,6 +1,7 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"] // Enable driver adapters for connection pooling
+  output          = "./node_modules/.prisma/client"
 }
 
 datasource db {
