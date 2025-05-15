@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "npm install --save-dev cross-env && npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install && npx prisma generate",
   "framework": "nextjs",
