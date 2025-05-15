@@ -14,9 +14,14 @@ declare global {
   var prisma: CustomPrismaClient | undefined;
 }
 
-// Create the base Prisma client instance
+// Create the optimized Prisma client for serverless environment
 const basePrisma = new PrismaClient({
   log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL,
+    },
+  },
 });
 
 // Add the missing models as proxy objects
