@@ -22,27 +22,31 @@ export async function POST(request: Request) {
         { error: "البريد الإلكتروني مسجل بالفعل" },
         { status: 400 }
       );
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 12);    const user = await prisma.user.create({
+    }    const hashedPassword = await bcrypt.hash(password, 12);
+      // Note: gender field is not included in the database schema, so we don't save it
+    const user = await prisma.user.create({
       data: {
         email: email.toLowerCase(),
         name,
         password: hashedPassword,
         role: role || "USER", // Use provided role or default to USER
+        // gender is not saved as it's not in the schema
       },
-    });    return NextResponse.json({
+    });
+    
+    return NextResponse.json({
       user: {
         id: user.id,
         email: user.email,
         name: user.name,
         role: user.role,
       },
-    });
-  } catch (error) {
+    });  } catch (error) {
     console.error("Signup error:", error);
+    // Return more detailed error information for debugging
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "حدث خطأ أثناء التسجيل" },
+      { error: "حدث خطأ أثناء التسجيل", details: errorMessage },
       { status: 500 }
     );
   }
