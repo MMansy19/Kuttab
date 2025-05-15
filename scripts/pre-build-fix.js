@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * Add export directive to sitemap route handlers
+ * Check sitemap files to ensure they use the metadata approach
  */
 function fixSitemapExports() {
   const sitemapFiles = [
@@ -16,7 +16,7 @@ function fixSitemapExports() {
     'app/sitemap-courses.xml/route.ts'
   ];
   
-  console.log('🔧 Fixing sitemap exports for Vercel compatibility...');
+  console.log('🔧 Checking sitemap exports for Vercel compatibility...');
   
   sitemapFiles.forEach(filePath => {
     try {
@@ -24,11 +24,11 @@ function fixSitemapExports() {
       if (fs.existsSync(fullPath)) {
         let content = fs.readFileSync(fullPath, 'utf8');
         
-        // Add export type declaration if it doesn't exist
-        if (!content.includes('export type')) {
-          content = content + `\n\n// Type declaration to fix Vercel build issues\nexport type SitemapRoute = {};\n`;
+        // Remove any type exports if they exist as they're not needed with the metadata approach
+        if (content.includes('export type SitemapRoute')) {
+          content = content.replace(/\n\n\/\/ Type declaration to fix Vercel build issues\nexport type SitemapRoute = \{\};?\n?/g, '');
           fs.writeFileSync(fullPath, content);
-          console.log(`✅ Added type export to ${filePath}`);
+          console.log(`✅ Removed unnecessary type export from ${filePath}`);
         }
       }
     } catch (error) {

@@ -1,32 +1,10 @@
-import { NextResponse } from 'next/server';
+import { MetadataRoute } from 'next';
 
 /**
  * Generate a sitemap for course-related pages
- * @returns {NextResponse} A response containing the sitemap XML
+ * This function uses the built-in Next.js sitemap support
  */
-export async function GET() {
-  const sitemap = generateSitemap();
-  return new NextResponse(
-    '<?xml version="1.0" encoding="UTF-8"?>\n' +
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-    sitemap.map(entry => 
-      `  <url>\n` +
-      `    <loc>${entry.url}</loc>\n` +
-      `    <lastmod>${entry.lastModified.toISOString()}</lastmod>\n` +
-      `    <changefreq>${entry.changeFrequency}</changefreq>\n` +
-      `    <priority>${entry.priority}</priority>\n` +
-      `  </url>`
-    ).join('\n') +
-    '\n</urlset>',
-    {
-      headers: {
-        'Content-Type': 'application/xml',
-      },
-    }
-  );
-}
-
-function generateSitemap() {
+export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   
   // Get the current date for lastModified
@@ -55,6 +33,3 @@ function generateSitemap() {
     }
   ];
 }
-
-// Type declaration to fix Vercel build issues
-export type SitemapRoute = {};

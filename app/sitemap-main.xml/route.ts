@@ -1,22 +1,10 @@
-import { MetadataRoute } from 'next';
-import { sitemapResponse } from '@/utils/sitemap-utils';
+// app/sitemap.ts
+import { MetadataRoute } from 'next'
 
-/**
- * Generate the main sitemap containing primary pages
- * @returns {Response} A response containing the sitemap XML
- */
-export async function GET() {
-  const sitemap = generateSitemap();
-  return sitemapResponse(sitemap);
-}
+export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const currentDate = new Date()
 
-function generateSitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
-  
-  // Get the current date for lastModified
-  const currentDate = new Date();
-  
-  // Define main site pages
   return [
     {
       url: baseUrl,
@@ -36,8 +24,5 @@ function generateSitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.7,
     }
-  ];
+  ]
 }
-
-// Type declaration to fix Vercel build issues
-export type SitemapRoute = {};
