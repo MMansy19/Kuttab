@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npx prisma generate && node -e \"process.env.PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING='1'; require('./scripts/build-info.js')\" && node scripts/prisma-vercel.js && node scripts/prepare-vercel.js && node scripts/build/prisma-fix.js && node scripts/build/fix-auth-build.js --build && node scripts/pre-build-fix.js && next build && node scripts/fix-route-types.js && node scripts/build/vercel-build.js",
+  "buildCommand": "npm run build:vercel",
   "devCommand": "npm run dev",
   "installCommand": "npm install && npm install --save-dev @types/node && npx prisma generate",
   "framework": "nextjs",
