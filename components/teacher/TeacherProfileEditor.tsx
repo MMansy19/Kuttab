@@ -16,7 +16,7 @@ const teacherSchema = z.object({
   name: z.string().min(3, { message: "الاسم يجب أن يكون 3 أحرف على الأقل" }),
   bio: z.string().min(20, { message: "النبذة التعريفية يجب أن تكون 20 حرف على الأقل" }),
   subjects: z.array(z.string()).min(1, { message: "يجب إضافة تخصص واحد على الأقل" }),
-  specialization: z.string().min(2, { message: "يجب إضافة التخصص الرئيسي" }),
+  specialization: z.array(z.string()).min(1, { message: "يجب إضافة التخصص الرئيسي" }), // Changed to array of strings
   experience: z.number().min(0, { message: "يجب إدخال سنوات الخبرة" }),
   education: z.string().optional(),
   certifications: z.array(z.string()).optional(),
@@ -42,7 +42,7 @@ export default function TeacherProfileEditor({ teacher, onSave }: TeacherProfile
       name: "",
       bio: "",
       subjects: [],
-      specialization: "",
+      specialization: [], // Changed from string to array to match Teacher interface
       experience: 0,
       rating: 0,
       avatarUrl: "",
@@ -482,21 +482,49 @@ export default function TeacherProfileEditor({ teacher, onSave }: TeacherProfile
                 
                 <div>
                   <label className="block mb-1 text-right text-gray-700 dark:text-gray-300">التخصص الرئيسي</label>
-                  <input
-                    type="text"
-                    name="specialization"
-                    className={cn(
-                      "w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white border transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500",
-                      errors.specialization ? "border-red-500 focus:border-red-500" : "border-gray-300 dark:border-gray-700"
-                    )}
-                    value={formData.specialization || ''}
-                    onChange={handleInputChange}
-                    placeholder="مثال: القراءات العشر، حفص عن عاصم، تحفيظ الأطفال"
-                    dir="rtl"
-                  />
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      id="specializationInput"
+                      className="flex-1 px-4 py-3 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      placeholder="مثال: القراءات العشر، حفص عن عاصم، تحفيظ الأطفال"
+                      dir="rtl"
+                      value={newSubject}
+                      onChange={(e) => setNewSubject(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddItem('specialization', newSubject, setNewSubject);
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleAddItem('specialization', newSubject, setNewSubject)}
+                      className="px-4 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                    >
+                      <FaPlus />
+                    </button>
+                  </div>
+                  
                   {errors.specialization && (
                     <p className="mt-1 text-red-500 text-sm text-right">{errors.specialization}</p>
                   )}
+                  
+                  <div className="flex flex-wrap gap-2 mt-3 justify-end">
+                    {formData.specialization && Array.isArray(formData.specialization) && formData.specialization.map((spec, index) => (
+                      <Badge key={index} variant="outline" className="flex items-center gap-1 py-1.5">
+                        {spec}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveItem('specialization', index)}
+                          className="hover:text-red-500 transition-colors"
+                        >
+                          <FaTimes size={12} />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
                 
                 <div>
@@ -1061,7 +1089,7 @@ export default function TeacherProfileEditor({ teacher, onSave }: TeacherProfile
                       name: "",
                       bio: "",
                       subjects: [],
-                      specialization: "",
+                      specialization: [], // Changed from string to string[] to match Teacher interface
                       experience: 0,
                       rating: 0,
                       avatarUrl: "",

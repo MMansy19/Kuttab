@@ -1,17 +1,9 @@
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from 'next'
 
-/**
- * Generate a sitemap for course-related pages
- * This function uses the built-in Next.js sitemap support
- */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const currentDate = new Date()
   
-  // Get the current date for lastModified
-  const currentDate = new Date();
-  
-  // Placeholder for future course pages
-  // When you add actual courses, generate their URLs here
   return [
     {
       url: `${baseUrl}/courses`,
@@ -31,5 +23,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.7,
     }
-  ];
+  ]
 }

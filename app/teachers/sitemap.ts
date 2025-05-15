@@ -1,4 +1,3 @@
-// app/teachers/sitemap.ts
 import { MetadataRoute } from 'next'
 import teachersData from '@/data/teachers'
 

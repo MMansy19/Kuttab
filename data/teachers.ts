@@ -13,7 +13,7 @@ const teachersData: Teacher[] = [
     "isPaid": false,
     "videoUrl": "",
     "gender": "male",
-    "specialization": "حفص عن عاصم",
+    "specialization": ["حفص عن عاصم"],
     "joinedDate": "2023-05-10",
     "education": "إجازة في القراءات من الأزهر الشريف",
     "certifications": ["إجازة برواية حفص عن عاصم", "دبلوم في التجويد"],
@@ -40,7 +40,7 @@ const teachersData: Teacher[] = [
     "price": 50,
     "videoUrl": "",
     "gender": "female",
-    "specialization": "القراءات العشر",
+    "specialization": ["القراءات العشر"],
     "joinedDate": "2023-07-15",
     "education": "ماجستير في علوم القرآن",
     "certifications": ["إجازة بالقراءات العشر", "دبلوم في تعليم القرآن للأطفال"],
@@ -67,7 +67,7 @@ const teachersData: Teacher[] = [
     "price": 45,
     "videoUrl": "",
     "gender": "male",
-    "specialization": "ورش عن نافع",
+    "specialization": ["ورش عن نافع"],
     "joinedDate": "2023-10-05",
     "education": "بكالوريوس في الدراسات الإسلامية",
     "certifications": ["إجازة في رواية ورش عن نافع", "شهادة في تعليم التجويد"],
@@ -93,7 +93,7 @@ const teachersData: Teacher[] = [
     "isPaid": false,
     "videoUrl": "",
     "gender": "female",
-    "specialization": "تحفيظ الأطفال",
+    "specialization": ["تحفيظ الأطفال"],
     "joinedDate": "2024-01-20",
     "education": "دبلوم عالي في أصول التربية الإسلامية",
     "certifications": ["شهادة تخصص في تحفيظ الأطفال", "دبلوم في علم النفس التربوي"],
@@ -119,7 +119,7 @@ const teachersData: Teacher[] = [
     "price": 60,
     "videoUrl": "",
     "gender": "male",
-    "specialization": "التفسير",
+    "specialization": ["التفسير"],
     "joinedDate": "2022-11-15",
     "education": "دكتوراه في التفسير وعلوم القرآن",
     "certifications": ["إجازة في علوم القرآن", "شهادة تخصص في التفسير المقارن"],
@@ -146,7 +146,7 @@ const teachersData: Teacher[] = [
     "price": 55,
     "videoUrl": "",
     "gender": "female",
-    "specialization": "تعليم الأجانب",
+    "specialization": ["تعليم الأجانب"],
     "joinedDate": "2023-09-10"
   },
   {
@@ -162,7 +162,7 @@ const teachersData: Teacher[] = [
     "price": 70,
     "videoUrl": "",
     "gender": "male",
-    "specialization": "القراءات السبع",
+    "specialization": ["القراءات السبع"],
     "joinedDate": "2022-08-05"
   },
   {
@@ -178,7 +178,7 @@ const teachersData: Teacher[] = [
     "price": 50,
     "videoUrl": "",
     "gender": "female",
-    "specialization": "المقامات الصوتية",
+    "specialization": ["المقامات الصوتية"],
     "joinedDate": "2023-04-20"
   },
   {
@@ -194,7 +194,7 @@ const teachersData: Teacher[] = [
     "price": 45,
     "videoUrl": "",
     "gender": "male",
-    "specialization": "الحفظ والمراجعة",
+    "specialization": ["الحفظ والمراجعة"],
     "joinedDate": "2024-01-15"
   },
   {
@@ -209,7 +209,7 @@ const teachersData: Teacher[] = [
     "isPaid": false,
     "videoUrl": "",
     "gender": "female",
-    "specialization": "أحكام التجويد",
+    "specialization": ["أحكام التجويد"],
     "joinedDate": "2023-06-10"
   },
   {
@@ -225,7 +225,7 @@ const teachersData: Teacher[] = [
     "price": 55,
     "videoUrl": "",
     "gender": "male",
-    "specialization": "مخارج الحروف",
+    "specialization": ["مخارج الحروف"],
     "joinedDate": "2022-09-15"
   },
   {
@@ -241,7 +241,7 @@ const teachersData: Teacher[] = [
     "price": 40,
     "videoUrl": "",
     "gender": "female",
-    "specialization": "الوقف والابتداء",
+    "specialization": ["الوقف والابتداء"],
     "joinedDate": "2023-11-10"
   },
   {
@@ -257,7 +257,7 @@ const teachersData: Teacher[] = [
     "price": 60,
     "videoUrl": "",
     "gender": "male",
-    "specialization": "شعبة عن عاصم",
+    "specialization": ["شعبة عن عاصم"],
     "joinedDate": "2023-02-20"
   },
   {
@@ -273,7 +273,7 @@ const teachersData: Teacher[] = [
     "price": 45,
     "videoUrl": "",
     "gender": "female",
-    "specialization": "تحفيظ الأطفال",
+    "specialization": ["تحفيظ الأطفال"],
     "joinedDate": "2024-02-10"
   },
   {
@@ -289,7 +289,7 @@ const teachersData: Teacher[] = [
     "price": 65,
     "videoUrl": "",
     "gender": "male",
-    "specialization": "قالون عن نافع",
+    "specialization": ["قالون عن نافع"],
     "joinedDate": "2022-06-15",
     "education": "ماجستير في القراءات القرآنية",
     "certifications": ["إجازة متصلة السند في قراءة قالون عن نافع", "دبلوم في القراءات السبع"],

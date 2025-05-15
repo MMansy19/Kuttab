@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async  authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("البريد الإلكتروني وكلمة المرور مطلوبان");
         }
@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
 
         return {
           id: user.id,
-          name: user.name,
+          name: user.name || "",
           email: user.email,
           role: user.role,
           image: user.image,

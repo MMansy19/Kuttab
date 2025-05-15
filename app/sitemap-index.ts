@@ -10,19 +10,19 @@ export default function sitemapIndex(): Array<{url: string, lastModified?: Date 
   
   return [
     {
-      url: `${baseUrl}/sitemap-main.xml`,
+      url: `${baseUrl}/sitemap.xml`,
       lastModified: new Date(),
     },
     {
-      url: `${baseUrl}/sitemap-teachers.xml`,
+      url: `${baseUrl}/teachers/sitemap.xml`,
       lastModified: new Date(),
     },
     {
-      url: `${baseUrl}/sitemap-courses.xml`,
+      url: `${baseUrl}/courses/sitemap.xml`,
       lastModified: new Date(),
     },
     {
-      url: `${baseUrl}/sitemap-auth.xml`,
+      url: `${baseUrl}/auth/sitemap.xml`,
       lastModified: new Date(),
     },
   ];
