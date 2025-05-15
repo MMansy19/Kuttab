@@ -41,12 +41,6 @@ export async function GET(
           role: true,
           createdAt: true,
           updatedAt: true,
-          teacherProfile: session.user.role === "ADMIN" || session.user.id === params.id ? {
-            select: {
-              id: true,
-              isActive: true,
-            },
-          } : false,
         },
       });
     
