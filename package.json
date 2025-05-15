@@ -2,8 +2,7 @@
   "name": "kottab",
   "version": "1.0.0",
   "description": "- تمكين المعلمين المستقلين من الوصول لطلاب محتاجين لتعلم القرآن.",
-  "main": "index.js",
-  "scripts": {
+  "main": "index.js",  "scripts": {
     "dev": "next dev",
     "clean": "node ./scripts/build/cleanup.js",
     "clean:build": "node ./scripts/build/cleanup.js build",
@@ -12,15 +11,17 @@
     "prisma:generate": "prisma generate",
     "db:setup": "node ./scripts/setup-production-db.js",
     "prisma:fix": "node ./scripts/build/prisma-fix.js",
-    "auth:fix": "node ./scripts/build/fix-auth-build.js --build",    "build": "cross-env PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1 npm run clean:build && npm run prisma:fix && npm run auth:fix && node scripts/pre-build-fix.js && next build && node scripts/fix-route-types.js && node scripts/build/vercel-build.js",
-    "build:vercel": "cross-env PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1 npm run prisma:fix && npm run auth:fix && node scripts/pre-build-fix.js && next build && node scripts/fix-route-types.js && node scripts/build/vercel-build.js",
+    "auth:fix": "node ./scripts/build/fix-auth-build.js --build",
+    "prepare:vercel": "node ./scripts/prepare-vercel.js",
+    "build": "cross-env PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1 npm run clean:build && npm run prisma:fix && npm run auth:fix && node scripts/pre-build-fix.js && next build && node scripts/fix-route-types.js && node scripts/build/vercel-build.js",
+    "build:vercel": "cross-env PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING=1 node scripts/prisma-vercel.js && npm run prepare:vercel && npm run prisma:fix && npm run auth:fix && node scripts/pre-build-fix.js && next build && node scripts/fix-route-types.js && node scripts/build/vercel-build.js",
     "start": "next start",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "db:seed": "prisma db seed",
+    "test": "echo \"Error: no test specified\" && exit 1",    "db:seed": "prisma db seed",
     "vercel:validate": "node ./scripts/validate-vercel-config.js",
     "predeploy": "npm run vercel:validate",
     "fix:types": "node scripts/fix-route-types.js",
-    "postbuild": "node scripts/fix-route-types.js"
+    "postbuild": "node scripts/fix-route-types.js",
+    "postinstall": "node ./scripts/postinstall.js"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

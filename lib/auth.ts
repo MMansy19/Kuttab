@@ -5,9 +5,20 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "./prisma";
 import { DefaultSession } from "next-auth";
 
-if (!process.env.NEXTAUTH_SECRET) {
+// Use a default secret for build time, but require real secret at runtime
+const getAuthSecret = () => {
+  if (process.env.NEXTAUTH_SECRET) {
+    return process.env.NEXTAUTH_SECRET;
+  }
+  
+  // During build time, use a placeholder
+  if (process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_BUILD_MODE === 'true') {
+    console.warn('Using placeholder NEXTAUTH_SECRET for build process');
+    return 'build-time-placeholder-secret-not-used-in-runtime';
+  }
+  
   throw new Error("NEXTAUTH_SECRET is not set in environment variables");
-}
+};
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -75,12 +86,11 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/login",
     error: "/auth/error",
     newUser: "/dashboard",
-  },
-  session: {
+  },  session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: getAuthSecret(),
   debug: process.env.NODE_ENV === "development",
 };
 
