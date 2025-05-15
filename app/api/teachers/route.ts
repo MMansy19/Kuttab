@@ -131,12 +131,9 @@ export async function GET(request: NextRequest) {
         include: {
           user: {
             select: {
-              id: true,
-              name: true,
+              id: true,              name: true,
               email: true,
               image: true,
-              bio: true,
-              gender: true,
             },
           },
         },

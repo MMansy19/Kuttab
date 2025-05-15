@@ -211,14 +211,14 @@ export async function POST(
       });
 
       // Determine which records to create, update, or delete
-      const existingIds = new Set(existingAvailability.map(slot => slot.id));
+      const existingIds = new Set(existingAvailability.map((slot: any) => slot.id));
       const newIds = new Set(processedAvailability
-        .filter(slot => slot.id)
-        .map(slot => slot.id));
+        .filter((slot: any) => slot.id)
+        .map((slot: any) => slot.id));
 
       // Records to delete (exist in DB but not in the new data)
       // Converting Set to Array to avoid iteration issues
-      const idsToDelete = Array.from(existingIds).filter(id => !newIds.has(id));
+      const idsToDelete = Array.from(existingIds).filter((id: any) => !newIds.has(id));
 
       // Batch operations
       const operations = [];

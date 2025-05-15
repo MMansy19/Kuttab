@@ -82,13 +82,9 @@ export async function GET(request: NextRequest) {
           id: true,
           name: true,
           email: true,
-          role: true,
-          isActive: true,
-          image: true,
+          role: true,          image: true,
           createdAt: true,
           updatedAt: true,
-          gender: true,
-          bio: true,
           // Don't include password
         },
         skip,
@@ -163,16 +159,13 @@ export async function PATCH(request: NextRequest) {
     // Update user
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: validatedData,
-      select: {
+      data: validatedData,      select: {
         id: true,
         name: true,
         email: true,
         role: true,
-        isActive: true,
         image: true,
-        bio: true,
-        gender: true,
+        // Removed bio as it doesn't exist in UserSelect type
         createdAt: true,
         updatedAt: true,
       },

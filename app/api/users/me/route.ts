@@ -15,13 +15,7 @@ export async function GET() {
     const user = await prisma.user.findUnique({
       where: {
         email: session.user.email
-      },
-      include: {
-        // Only include teacherProfile if user is a teacher
-        ...(session.user.role === 'TEACHER' ? { 
-          teacherProfile: true 
-        } : {})
-      }
+      },      // Removed include teacherProfile as it's not in the schema
     });
 
     if (!user) {

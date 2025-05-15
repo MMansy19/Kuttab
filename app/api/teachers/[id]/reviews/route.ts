@@ -208,10 +208,8 @@ export async function POST(
       const teacherReviews = await prisma.review.findMany({
         where: { teacherId: teacherProfile.userId },
         select: { rating: true },
-      });
-
-      const totalRating = teacherReviews.reduce(
-        (sum, review) => sum + review.rating,
+      });      const totalRating = teacherReviews.reduce(
+        (sum: number, review: any) => sum + review.rating,
         0
       );
       const averageRating = totalRating / teacherReviews.length;

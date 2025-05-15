@@ -25,12 +25,9 @@ export async function GET(
       where: { id: params.id },
       include: {
         user: {
-          select: {
-            id: true,
+          select: {            id: true,
             name: true,
             image: true,
-            bio: true,
-            gender: true,
             role: true,
           },
         },
@@ -215,11 +212,9 @@ export async function PUT(
     // Update user data first if it exists
     if (name || bio || gender || email || image) {
       await prisma.user.update({
-        where: { id: teacherProfile.userId },
-        data: {
+        where: { id: teacherProfile.userId },        data: {
           name: name || undefined,
-          bio: bio || undefined,
-          gender: gender || undefined,
+          // bio field removed as it doesn't exist in UserUpdateInput
           email: email || undefined,
           image: image || avatarUrl || undefined,
         },
@@ -242,9 +237,7 @@ export async function PUT(
           select: {
             id: true,
             name: true,
-            image: true,
-            bio: true,
-            gender: true,
+            image: true,            bio: true,
           },
         },
       },

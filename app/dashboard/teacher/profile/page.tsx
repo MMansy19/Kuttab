@@ -11,30 +11,53 @@ export default function TeacherProfilePage() {
   const [teacher, setTeacher] = useState<Teacher | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   useEffect(() => {
     const fetchTeacherProfile = async () => {
-      if (!session?.user.id) return;
+      // Don't try to fetch if we don't have a session yet
+      if (!session?.user?.id) {
+        setIsLoading(false);
+        return;
+      }
       
       try {
         setIsLoading(true);
         setError(null);
         
-        // Fetch the teacher profile
-        const response = await fetch(`/api/users/${session.user.id}`);
+        // Add a timeout to prevent rapid requests during development
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        // Fetch the teacher profile with fetch options
+        const response = await fetch(`/api/users/${session.user.id}`, {
+          signal: controller.signal,
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        
+        clearTimeout(timeoutId);
+        
         if (!response.ok) {
-          throw new Error("Failed to fetch teacher profile");
+          throw new Error(`Failed to fetch teacher profile: ${response.status}`);
         }
         
         const data = await response.json();
+        console.log("Teacher profile data:", data);
+        
         if (data.teacherProfile) {
           setTeacher(data.teacherProfile);
         } else {
+          // If no teacher profile, set to null
           setTeacher(null);
         }
       } catch (err: any) {
-        setError(err.message || "An error occurred");
-        console.error("Error fetching teacher profile:", err);
+        if (err.name === 'AbortError') {
+          setError("Request timed out. Please try again.");
+        } else {
+          setError(err.message || "An error occurred while fetching your profile");
+          console.error("Error fetching teacher profile:", err);
+        }
       } finally {
         setIsLoading(false);
       }

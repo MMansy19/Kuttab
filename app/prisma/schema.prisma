@@ -8,15 +8,23 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  password      String?
-  role          String    @default("USER")
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  accounts      Account[]
+  id                String              @id @default(cuid())
+  name              String?
+  email             String              @unique
+  emailVerified     DateTime?
+  password          String?
+  role              String              @default("USER")
+  image             String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  sessions          Session[]
+  accounts          Account[]
+  // Added relations for the missing models
+  teacherProfile    TeacherProfile?
+  receivedNotifications Notification[]  @relation("ReceivedNotifications")
+  sentNotifications Notification[]      @relation("SentNotifications")
+  bookings          Booking[]           @relation("UserBookings")
+  teacherBookings   Booking[]           @relation("TeacherBookings")
+  reviews           Review[]            @relation("UserReviews")
+  reviewsReceived   Review[]            @relation("ReceivedReviews")
 }

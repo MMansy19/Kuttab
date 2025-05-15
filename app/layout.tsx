@@ -1,10 +1,12 @@
 import '../styles/globals.css';
 import type { ReactNode } from 'react';
-import { AuthProvider, AuthSyncProvider } from '@/features/auth';
+import { AuthProvider } from '@/features/auth';
 import ToastContainer from '../components/ui/Toast';
-import ClientLayout from '../components/ClientLayout';
 import { Metadata, Viewport } from 'next';
 import { defaultMetadata, defaultViewport } from '@/lib/metadata';
+
+// Import the client component wrapper
+import ClientLayoutWrapper from '../components/ClientLayoutWrapper';
 
 export const metadata: Metadata = defaultMetadata;
 export const viewport: Viewport = defaultViewport;
@@ -17,9 +19,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
-      <body className="bg-gray-900 text-white font-[Cairo] min-h-screen flex flex-col transition-colors duration-300">
+      <body suppressHydrationWarning className="bg-gray-900 text-white font-[Cairo] min-h-screen flex flex-col transition-colors duration-300">
         <AuthProvider>
-          <ClientLayout>{children}</ClientLayout>
+          <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
           <ToastContainer />
         </AuthProvider>
       </body>
