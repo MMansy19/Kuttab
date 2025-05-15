@@ -1,9 +1,8 @@
-"use client"
+"use client";
 
 import React, { useEffect, useState, Suspense } from "react";
-import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
-import { authOptions } from "@/features/auth/services/auth-options";
+import { useSession } from "next-auth/react";
+import { redirect, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -15,12 +14,15 @@ export const dynamic = 'force-dynamic';
 
 interface TeacherProfile {
   id: string;
-  specialization: string | null;
-  yearsOfExperience: number | null;
-  isAvailable: boolean;
-  approvalStatus: string;
-  averageRating: number | null;
-  reviewCount: number;
+  specializations: string[];
+  hourlyRate: number | null;
+  isActive: boolean;
+  // Using a normal property instead of a getter for compatibility
+  isAvailable?: boolean;
+  // These fields might be derived or calculated
+  approvalStatus?: string;
+  averageRating?: number | null;
+  reviewCount?: number;
 }
 
 interface Booking {
@@ -35,19 +37,20 @@ interface Booking {
   };
 }
 
-export default async function TeacherDashboard() {
-  // Get session data server-side for security
-  const session = await getServerSession(authOptions);
+export default function TeacherDashboard() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   
   // Secure the teacher dashboard - redirect if not a teacher
-  if (!session?.user || session.user.role?.toUpperCase() !== 'TEACHER') {
-    console.error("Unauthorized access attempt to teacher dashboard");
-    redirect('/dashboard');
-  }
-  
-  // In a server component, we can't use client hooks like useSession or useSearchParams
-  // This implementation would need to be modified to work as a server component
-
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/login?callbackUrl=/dashboard/teacher');
+    } else if (status === 'authenticated' && session?.user?.role?.toUpperCase() !== 'TEACHER') {
+      console.error("Unauthorized access attempt to teacher dashboard");
+      router.push('/dashboard');
+    }
+  }, [status, session, router]);
+    // Client component with state and hooks
   const [teacherProfile, setTeacherProfile] = useState<TeacherProfile | null>(null);
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,16 +58,19 @@ export default async function TeacherDashboard() {
   const [loginSuccess, setLoginSuccess] = useState<string | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
 
+  // Check URL parameters for success/notification flags
   useEffect(() => {
-    // Get URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const loginSuccessParam = urlParams.get('loginSuccess');
-    const notificationParam = urlParams.get('notification');
-    
-    setLoginSuccess(loginSuccessParam);
-    setNotification(notificationParam);
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const loginSuccessParam = urlParams.get('loginSuccess');
+      const notificationParam = urlParams.get('notification');
+      
+      setLoginSuccess(loginSuccessParam);
+      setNotification(notificationParam);
+    }
   }, []);
 
+  // Show notifications
   useEffect(() => {
     // Show welcome notification on login success
     if (loginSuccess === "true" && session?.user?.name) {
@@ -77,48 +83,66 @@ export default async function TeacherDashboard() {
     }
   }, [loginSuccess, notification, session]);
 
+  // Fetch dashboard data
   useEffect(() => {
     const fetchDashboardData = async () => {
+      // Don't fetch if user isn't authenticated yet
+      if (status !== 'authenticated' || !session?.user?.id) {
+        return;
+      }
+      
       try {
         setIsLoading(true);
-
-        // Fetch the teacher profile data
-        const profileResponse = await fetch(`/api/users/${session?.user.id}`);
+        setError(null);        // Fetch the teacher profile data with credentials
+        const profileResponse = await fetch(`/api/users/${session.user.id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include'
+        });
+        
         if (!profileResponse.ok) {
-          throw new Error("فشل في جلب ملف المعلم");
+          const errorText = await profileResponse.text();
+          throw new Error(`فشل في جلب ملف المعلم (${profileResponse.status}): ${errorText}`);
         }
-        const profileData = await profileResponse.json();
-        setTeacherProfile(profileData.teacherProfile);
-
-        // Fetch bookings
-        const bookingsResponse = await fetch("/api/bookings");
+          const profileData = await profileResponse.json();
+        // Add isAvailable property for backward compatibility
+        if (profileData.teacherProfile) {
+          profileData.teacherProfile.isAvailable = profileData.teacherProfile.isActive;
+        }
+        setTeacherProfile(profileData.teacherProfile);// Fetch bookings with credentials
+        const bookingsResponse = await fetch("/api/bookings", {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include'
+        });
+        
         if (!bookingsResponse.ok) {
           throw new Error("فشل في جلب الحجوزات");
         }
 
         const bookingsData = await bookingsResponse.json();
-
         const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
         // Filter upcoming bookings
-        const upcoming = bookingsData.data.filter((booking: Booking) =>
+        const upcoming = bookingsData.data ? bookingsData.data.filter((booking: Booking) =>
           (booking.date > today ||
             (booking.date === today && booking.status !== "COMPLETED" && booking.status !== "CANCELLED")) &&
           (booking.status === "SCHEDULED" || booking.status === "CONFIRMED")
-        );
+        ) : [];
 
         setUpcomingBookings(upcoming);
       } catch (err: any) {
+        console.error("Error fetching dashboard data:", err);
         setError(err.message || "حدث خطأ ما");
       } finally {
         setIsLoading(false);
       }
     };
 
-    if (session?.user.id) {
-      fetchDashboardData();
-    }
-  }, [session]);
+    fetchDashboardData();
+  }, [session, status]);
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
@@ -148,29 +172,34 @@ export default async function TeacherDashboard() {
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
     }
-  };
-
-  const handleToggleAvailability = async () => {
+  };  const handleToggleAvailability = async () => {
     try {
-      if (!teacherProfile) return;
+      if (!teacherProfile || !session) return;
 
       const response = await fetch(`/api/teachers/${teacherProfile.id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          isAvailable: !teacherProfile.isAvailable,
+        credentials: 'include',
+        body: JSON.stringify({              isActive: !teacherProfile.isActive,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update availability");
+        const errorText = await response.text();
+        throw new Error(`Failed to update availability: ${errorText}`);
+      }      const updatedProfile = await response.json();
+      const profile = updatedProfile.profile || updatedProfile.data;
+      
+      // Ensure isAvailable is set for backward compatibility
+      if (profile) {
+        profile.isAvailable = profile.isActive;
       }
-
-      const updatedProfile = await response.json();
-      setTeacherProfile(updatedProfile.profile);
+      
+      setTeacherProfile(profile);
     } catch (err: any) {
+      console.error("Error updating availability:", err);
       setError(err.message || "An error occurred");
     }
   };
@@ -214,11 +243,10 @@ export default async function TeacherDashboard() {
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-xl font-semibold text-gray-800 dark:text-white" dir="rtl">حالة الملف الشخصي</h2>
-            <div className="mt-2 flex items-center">
-              <Badge className={getApprovalStatusBadgeColor(teacherProfile.approvalStatus)}>
+            <div className="mt-2 flex items-center">              <Badge className={getApprovalStatusBadgeColor(teacherProfile.approvalStatus || '')}>
                 {teacherProfile.approvalStatus === "PENDING" ? "قيد المراجعة" : 
                  teacherProfile.approvalStatus === "APPROVED" ? "تمت الموافقة" : 
-                 teacherProfile.approvalStatus === "REJECTED" ? "مرفوض" : teacherProfile.approvalStatus}
+                 teacherProfile.approvalStatus === "REJECTED" ? "مرفوض" : teacherProfile.approvalStatus || 'غير معروف'}
               </Badge>
               {teacherProfile.approvalStatus === "PENDING" && (
                 <p className="ml-3 text-sm text-gray-600 dark:text-gray-400" dir="rtl">
@@ -230,18 +258,19 @@ export default async function TeacherDashboard() {
                   تم رفض ملفك الشخصي. يرجى تحديث معلوماتك وإعادة التقديم.
                 </p>
               )}
-            </div>
-            <div className="mt-4">
-              <h3 className="font-medium text-gray-700 dark:text-gray-300" dir="rtl">التخصص</h3>
+            </div>            <div className="mt-4">
+              <h3 className="font-medium text-gray-700 dark:text-gray-300" dir="rtl">التخصصات</h3>
               <p className="mt-1 text-gray-600 dark:text-gray-400" dir="rtl">
-                {teacherProfile.specialization || "غير محدد"}
+                {teacherProfile.specializations && teacherProfile.specializations.length > 0 
+                  ? teacherProfile.specializations.join(', ')
+                  : "غير محدد"}
               </p>
             </div>
             <div className="mt-2">
-              <h3 className="font-medium text-gray-700 dark:text-gray-300" dir="rtl">الخبرة</h3>
+              <h3 className="font-medium text-gray-700 dark:text-gray-300" dir="rtl">سعر الساعة</h3>
               <p className="mt-1 text-gray-600 dark:text-gray-400" dir="rtl">
-                {teacherProfile.yearsOfExperience
-                  ? `${teacherProfile.yearsOfExperience} سنوات`
+                {teacherProfile.hourlyRate
+                  ? `${teacherProfile.hourlyRate} ريال / ساعة`
                   : "غير محدد"}
               </p>
             </div>
@@ -255,19 +284,18 @@ export default async function TeacherDashboard() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 items-start">
-            <div className="flex items-center">
-              <div className={`w-3 h-3 rounded-full ml-2 ${teacherProfile.isAvailable ? 'bg-green-500' : 'bg-red-500'}`}></div>
+          <div className="flex flex-col gap-4 items-start">            <div className="flex items-center">
+              <div className={`w-3 h-3 rounded-full ml-2 ${teacherProfile.isActive ? 'bg-green-500' : 'bg-red-500'}`}></div>
               <span className="text-sm font-medium" dir="rtl">
-                {teacherProfile.isAvailable ? 'متاح للحجز' : 'غير متاح للحجز'}
+                {teacherProfile.isActive ? 'متاح للحجز' : 'غير متاح للحجز'}
               </span>
             </div>
             <Button
               onClick={handleToggleAvailability}
-              variant={teacherProfile.isAvailable ? "danger" : "default"}
+              variant={teacherProfile.isActive ? "danger" : "default"}
               dir="rtl"
             >
-              {teacherProfile.isAvailable
+              {teacherProfile.isActive
                 ? "إيقاف الحجوزات"
                 : "قبول الحجوزات"}
             </Button>
@@ -299,8 +327,7 @@ export default async function TeacherDashboard() {
               <p className="text-yellow-600 dark:text-yellow-400 text-center mt-2" dir="rtl">
                 يجب الموافقة على ملفك الشخصي قبل أن تتمكن من استقبال الحجوزات.
               </p>
-            )}
-            {!teacherProfile.isAvailable && teacherProfile.approvalStatus === "APPROVED" && (
+            )}            {!teacherProfile.isActive && teacherProfile.approvalStatus === "APPROVED" && (
               <p className="text-yellow-600 dark:text-yellow-400 text-center mt-2" dir="rtl">
                 أنت حالياً غير متاح لاستقبال الحجوزات. قم بتغيير حالة التوفر للبدء في استقبال الحجوزات.
               </p>

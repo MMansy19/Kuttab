@@ -5,15 +5,42 @@ import { http } from '@/utils/fetcher';
  * API Service for auth-related server requests
  * Handles operations that need direct API access beyond NextAuth.js functionality
  */
-class AuthApiService {
-  /**
+class AuthApiService {  /**
    * Get the current user's profile data with additional details
    */  async getCurrentUserProfile(): Promise<AuthUser | null> {
     try {
-      const response = await http.get('/api/users/me', { requireAuth: true });
+      // Try to use the http utility with auth required
+      const response = await http.get('/api/users/me', { 
+        requireAuth: true,
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        },
+        credentials: 'include'
+      });
       
       if (!response.ok) {
         console.error('Failed to fetch user profile:', response.error);
+        
+        // Try a fallback with fetch directly with credentials
+        try {
+          const fetchResponse = await fetch('/api/users/me', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache'
+            },
+            credentials: 'include'
+          });
+          
+          if (fetchResponse.ok) {
+            const data = await fetchResponse.json();
+            return data?.user || null;
+          }
+        } catch (fallbackError) {
+          console.error('Fallback fetch also failed:', fallbackError);
+        }
+        
         return null;
       }
       

@@ -1,10 +1,16 @@
 import { MetadataRoute } from 'next';
+import { sitemapResponse } from '@/utils/sitemap-utils';
 
 /**
  * Generate the main sitemap containing primary pages
- * @returns {MetadataRoute.Sitemap} A sitemap object for Next.js
+ * @returns {Response} A response containing the sitemap XML
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export async function GET() {
+  const sitemap = generateSitemap();
+  return sitemapResponse(sitemap);
+}
+
+function generateSitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   
   // Get the current date for lastModified
@@ -22,25 +28,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/about`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
-      priority: 0.8,
+      priority: 0.7,
     },
     {
       url: `${baseUrl}/contact`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/donate`,
-      lastModified: currentDate,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/teachers`,
-      lastModified: currentDate,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
+    }
   ];
 }
+
+// Type declaration to fix Vercel build issues
+export type SitemapRoute = {};

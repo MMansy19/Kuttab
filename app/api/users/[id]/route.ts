@@ -1,9 +1,9 @@
 import { type NextRequest } from 'next/dist/server/web/spec-extension/request';
 import { NextResponse } from 'next/dist/server/web/spec-extension/response';
-import { getServerSession } from "next-auth/next";
+import { getServerSession } from "next-auth";
 import { z } from "zod";
-import prisma from "@/lib/prisma";
-import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/features/auth/services/auth-options";
 
 // Validation schema for user data
 const userUpdateSchema = z.object({

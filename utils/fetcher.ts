@@ -154,22 +154,25 @@ export async function fetcher<T = any>(url: string, options: FetcherOptions = {}
 
   // Add request ID for tracing in logs
   (headers as Record<string, string>)['X-Request-ID'] = requestId;
-
   if (requireAuth) {
     const token = getAuthToken();
     if (token) {
       (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
     } else {
+      // If no token in storage but we're requiring auth, set credentials to include
+      // This will send cookies which might contain the session
+      fetchOptions.credentials = 'include';
+      
       if (!skipErrorHandling) {
-        return {
-          data: null,
-          error: 'Authentication required',
-          status: 401,
-          ok: false,
-          requestId
-        };
+        console.warn('Auth required but no token found in storage. Attempting with cookies.');
+        // We'll try to continue with cookies instead of failing immediately
       }
     }
+  }
+  
+  // Always include credentials for auth-related requests
+  if (requireAuth || url.includes('/api/auth') || url.includes('/api/users')) {
+    fetchOptions.credentials = 'include';
   }
 
   try {

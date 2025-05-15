@@ -1,11 +1,17 @@
 import { MetadataRoute } from 'next';
 import teachersData from '@/data/teachers';
+import { sitemapResponse } from '@/utils/sitemap-utils';
 
 /**
  * Generate a sitemap focused on teacher profiles
- * @returns {MetadataRoute.Sitemap} A sitemap object for Next.js
+ * @returns {Response} A response containing the sitemap XML
  */
-export default function sitemap(): MetadataRoute.Sitemap {
+export async function GET() {
+  const sitemap = generateSitemap();
+  return sitemapResponse(sitemap);
+}
+
+function generateSitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   
   // Get the current date for lastModified
@@ -20,3 +26,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   
   return teacherRoutes;
 }
+
+// Type declaration to fix Vercel build issues
+export type SitemapRoute = {};

@@ -1,4 +1,8 @@
-'use client';
+"use client"
+
+// Force dynamic rendering for authentication pages
+export const dynamic = 'force-dynamic';
+;
 import React from "react";
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaWhatsapp, FaUserGraduate, FaQuestion, FaChevronDown } from "react-icons/fa";
 import { Section, SectionHeader } from "@/components/ui/Section";

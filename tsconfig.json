@@ -31,7 +31,8 @@
     "typeRoots": [
       "./node_modules/@types",
       "./types"
-    ]
+    ],
+    "strictNullChecks": true
   },
   "include": [
     "**/*.ts",
