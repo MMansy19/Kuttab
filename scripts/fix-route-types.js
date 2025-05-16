@@ -116,5 +116,12 @@ async function main() {
   }
 }
 
-// Run the script
-main();
+// Run the script if called directly
+if (require.main === module) {
+  main();
+}
+
+// Export the function for use in other files
+module.exports = {
+  fixRouteTypes
+};

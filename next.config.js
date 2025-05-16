@@ -80,12 +80,17 @@ const nextConfig = {
     config.watchOptions = {
       ignored: ['**/node_modules/**', '**/.next/**'],
       poll: false,
-    };   
-    if (isServer) {
+    };     if (isServer) {
       config.plugins.push({
         apply: (compiler) => {
-          compiler.hooks.afterEmit.tap('FixAuthAndRouteTypes', () => {
-            fixAuthBuild();
+          compiler.hooks.afterEmit.tap('FixRouteTypes', () => {
+            // fixAuthBuild function is not defined, commented out to fix build issue
+            // fixAuthBuild();
+            
+            // Import the fixRouteTypes function if needed
+            const { fixRouteTypes } = require('./scripts/fix-route-types');
+            
+            // Run the route type fixes
             fixRouteTypes();
           });
         },
