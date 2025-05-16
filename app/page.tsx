@@ -417,7 +417,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-blue-500 blur-2xl opacity-10 -z-10 transform rotate-3"></div>
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 md:p-10 relative z-10">
               <div className="mb-10">
-                <div className="text-gray-800 dark:text-gray-200 text-lg md:text-xl italic">
+                <div className="text-gray-800 dark:text-gray-200 text-lg md:text-xl italic line-clamp-1">
                   "{testimonials[activeTestimonial].text}"
                 </div>
               </div>
@@ -467,17 +467,13 @@ export default function Home() {
                     variant="ghost"
                   />
                 </div>
-              </div>
-              
-              <div className="flex justify-center mt-8 gap-2">
+              </div> 
+              <div className="flex justify-center mt-8">
                 {testimonials.map((_, index) => (
-                  <AccessibleButton
+                  <button
                     key={index}
-                    text=""
-                    ariaLabel={`عرض شهادة ${testimonials[index].name}`}
+                    className={`w-2 h-2 mx-1 rounded-full ${activeTestimonial === index ? 'bg-emerald-600 w-6' : 'bg-gray-300 dark:bg-gray-600'} transition-all`}
                     onClick={() => setActiveTestimonial(index)}
-                    className={`min-w-[48px] h-6 mx-1 rounded-full ${activeTestimonial === index ? 'bg-emerald-700 w-12' : 'bg-gray-300 dark:bg-gray-600 w-6'} transition-all`}
-                    variant="ghost"
                   />
                 ))}
               </div>

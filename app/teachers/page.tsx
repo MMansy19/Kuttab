@@ -631,13 +631,14 @@ export default function TeachersPage() {
           {/* Search and sort area */}
           <div className="flex flex-col md:flex-row gap-4 mb-6 items-center bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
             {/* Search by name */}
-            <div className="relative w-full md:flex-1">
-              <input
-                className="rounded-full border border-gray-300 dark:border-gray-600 px-4 py-3 w-full text-right pr-10 bg-white dark:bg-gray-800 text-gray-800 dark:text-white shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
+            <div className="relative w-full md:flex-1">              <input
+                className="rounded-full border border-gray-300 dark:border-gray-600 px-4 py-3 w-full text-right pr-10 bg-white dark:bg-gray-800 text-gray-800 dark:text-white shadow-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 min-h-[48px]"
                 placeholder="ابحث باسم المعلم أو المادة..."
                 value={search}
                 onChange={handleSearchChange}
                 dir="rtl"
+                aria-label="البحث عن معلم بالاسم أو المادة"
+                role="searchbox"
               />
               <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <FaSearch />
@@ -664,31 +665,34 @@ export default function TeachersPage() {
                 {showSortDropdown ? <FaChevronUp aria-hidden="true" /> : <FaChevronDown aria-hidden="true" />}
               </button>
 
-              {showSortDropdown && (
-                <div
+              {showSortDropdown && (                <div
                   id="sort-dropdown"
                   className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg py-1"
-                >
-                  {sortOptions.map((option) => (
+                  role="listbox"
+                  aria-labelledby="sort-button"
+                >{sortOptions.map((option) => (
                     <button
                       key={option.id}
                       className={`w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 ${sortOption === option.id ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' : 'text-gray-700 dark:text-white'
-                        }`}
+                        } min-h-[48px]`}
                       onClick={() => {
                         setSortOption(option.id);
                         setShowSortDropdown(false);
                       }}
+                      role="option"
+                      aria-selected={sortOption === option.id}
                     >
                       {option.label}
                     </button>
                   ))}
-                  <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
-                  <button
-                    className="w-full text-left px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                  <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>                  <button
+                    className="w-full text-left px-4 py-2 text-gray-700 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 min-h-[48px]"
                     onClick={() => {
                       setSortOption('');
                       setShowSortDropdown(false);
                     }}
+                    role="option"
+                    aria-label="إلغاء خيار الترتيب"
                   >
                     إعادة ضبط
                   </button>
@@ -703,12 +707,12 @@ export default function TeachersPage() {
                 {filteredTeachers.length}
               </span> معلم
             </p>
-            {(sortOption || Object.values(filter).some(val => val !== 'all' && val !== 0)) && (
-              <button
+            {(sortOption || Object.values(filter).some(val => val !== 'all' && val !== 0)) && (              <button
                 onClick={resetFilters}
-                className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 flex items-center gap-1"
+                className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 flex items-center gap-1 min-h-[44px] min-w-[44px] p-2"
+                aria-label="إعادة ضبط جميع عوامل التصفية"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
                 مسح التصفية
@@ -716,10 +720,9 @@ export default function TeachersPage() {
             )}
           </div>
 
-          {filteredTeachers.length === 0 ? (
-            <div className="col-span-full text-center p-10 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow">
+          {filteredTeachers.length === 0 ? (            <div className="col-span-full text-center p-10 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow" role="alert" aria-live="polite">
               <div className="mx-auto w-24 h-24 mb-6 flex items-center justify-center rounded-full bg-red-50 dark:bg-red-900/20">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -727,7 +730,8 @@ export default function TeachersPage() {
               <p className="text-gray-600 dark:text-gray-400 mb-6">يرجى تعديل معايير البحث أو التصفية للعثور على المعلمين</p>
               <button
                 onClick={resetFilters}
-                className="inline-flex items-center justify-center gap-2 py-2 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-full transition-colors duration-200 shadow-md"
+                className="inline-flex items-center justify-center gap-2 py-2 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-full transition-colors duration-200 shadow-md min-h-[48px] min-w-[48px]"
+                aria-label="إعادة ضبط جميع معايير البحث"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
