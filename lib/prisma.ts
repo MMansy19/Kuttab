@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+import { PrismaClient, Prisma } from '../prisma/node_modules/.prisma/client';
 
 // Helper function to safely convert objects to SQL
 const convertToSQL = (obj: any): string => {

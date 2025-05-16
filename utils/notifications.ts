@@ -69,8 +69,7 @@ export function formatReviewMessage(reviewerName: string, rating: number): strin
  * Sends a notification to an admin
  */
 export async function notifyAdmins(title: string, message: string, type: string, relatedId?: string) {
-  try {
-    // Find all admin users
+  try {    // Find all admin users
     const admins = await prisma.user.findMany({
       where: {
         role: "ADMIN",
@@ -78,7 +77,7 @@ export async function notifyAdmins(title: string, message: string, type: string,
     });
 
     // Send notification to each admin
-    const notificationPromises = admins.map((admin) =>
+    const notificationPromises = admins.map((admin: { id: string }) =>
       sendNotification({
         userId: admin.id,
         title,
