@@ -121,13 +121,13 @@ export default function AvailabilityPage() {
       try {
         setIsLoading(true);
         setError(null);
-        
-        // Fetch the teacher profile
+          // Fetch the teacher profile
         const profileResponse = await fetch(`/api/users/${session.user.id}`);
         if (!profileResponse.ok) {
           throw new Error("Failed to fetch teacher profile");
         }
         const profileData = await profileResponse.json();
+        console.log("Teacher profile response:", profileData);
         
         if (!profileData.teacherProfile) {
           throw new Error("Teacher profile not found");

@@ -104,13 +104,17 @@ export default function TeacherDashboard() {
         if (!profileResponse.ok) {
           const errorText = await profileResponse.text();
           throw new Error(`فشل في جلب ملف المعلم (${profileResponse.status}): ${errorText}`);
-        }
-          const profileData = await profileResponse.json();
+        }        const profileData = await profileResponse.json();
+        console.log("Profile data:", profileData);
+        
         // Add isAvailable property for backward compatibility
         if (profileData.teacherProfile) {
           profileData.teacherProfile.isAvailable = profileData.teacherProfile.isActive;
-        }
-        setTeacherProfile(profileData.teacherProfile);// Fetch bookings with credentials
+          setTeacherProfile(profileData.teacherProfile);
+        } else {
+          console.error("No teacher profile found in the response");
+          setError("لم يتم العثور على ملف المعلم");
+        }// Fetch bookings with credentials
         const bookingsResponse = await fetch("/api/bookings", {
           headers: {
             'Content-Type': 'application/json',

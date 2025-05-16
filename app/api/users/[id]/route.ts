@@ -31,7 +31,7 @@ export async function GET(
     if (session.user.id !== params.id && session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-      const user = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
         where: { id: params.id },
         select: {
           id: true,
@@ -41,6 +41,7 @@ export async function GET(
           role: true,
           createdAt: true,
           updatedAt: true,
+          teacherProfile: true,
         },
       });
     

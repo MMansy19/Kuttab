@@ -41,14 +41,14 @@ export default function TeacherProfilePage() {
         if (!response.ok) {
           throw new Error(`Failed to fetch teacher profile: ${response.status}`);
         }
-        
-        const data = await response.json();
+          const data = await response.json();
         console.log("Teacher profile data:", data);
         
         if (data.teacherProfile) {
           setTeacher(data.teacherProfile);
         } else {
-          // If no teacher profile, set to null
+          // If user doesn't have a teacher profile yet, create a new one
+          console.warn("No teacher profile found, you may need to create one");
           setTeacher(null);
         }
       } catch (err: any) {

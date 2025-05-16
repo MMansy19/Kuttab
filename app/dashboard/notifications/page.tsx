@@ -51,9 +51,7 @@ export default function NotificationsPage() {
   const fetchNotifications = async (page: number, unreadOnly: boolean) => {
     try {
       setIsLoading(true);
-      setError(null);
-
-      const response = await fetch(
+      setError(null);      const response = await fetch(
         `/api/notifications?page=${page}&limit=10${unreadOnly ? "&unread=true" : ""}`
       );
 
@@ -62,8 +60,15 @@ export default function NotificationsPage() {
       }
 
       const data = await response.json();
-      setNotifications(data.data);
-      setMetadata(data.metadata);
+      console.log("Notifications response:", data);
+      
+      if (data.data && Array.isArray(data.data)) {
+        setNotifications(data.data);
+        setMetadata(data.metadata);
+      } else {
+        console.error("Unexpected notifications response format:", data);
+        throw new Error("خطأ: تنسيق الإشعارات غير متوقع");
+      }
     } catch (err: any) {
       setError(err.message || "An error occurred");
     } finally {
