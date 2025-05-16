@@ -175,7 +175,6 @@ const nextConfig = {
   },
   // Experimental features
   experimental: {
-    modern: true,
     optimizePackageImports: ['react-icons'],
     optimizeCss: true,
     serverActions: {
@@ -192,20 +191,9 @@ const nextConfig = {
       exclude: ['error', 'warn'],
     },
   } : {},
-
-  // Configure Browserslist to target modern browsers only
-  browserslist: [
-    // Target browsers that support ES6 modules natively
-    'last 2 Chrome versions',
-    'last 2 Firefox versions',
-    'last 2 Safari versions',
-    'last 2 Edge versions',
-    'not IE 11',
-    'not op_mini all'
-  ],
   
   // Webpack optimizations
-  webpack: (config, { isServer }) => {
+  webpack: (config) => {
     // Split react-icons into separate chunks
     config.optimization.splitChunks = {
       ...config.optimization.splitChunks,
