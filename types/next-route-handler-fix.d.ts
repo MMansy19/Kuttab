@@ -89,23 +89,19 @@ declare module 'next/server' {
 
 // Also fix the types for route handler in bookings specifically
 declare module 'app/api/bookings/[id]/route' {
-  interface BookingParams {
-    id: string;
-  }
-
   export function GET(
     request: NextRequest, 
-    context: { params: BookingParams }
+    { params }: { params: { id: string } }
   ): Response | Promise<Response>;
   
   export function PUT(
     request: NextRequest, 
-    context: { params: BookingParams }
+    { params }: { params: { id: string } }
   ): Response | Promise<Response>;
   
   export function DELETE(
     request: NextRequest, 
-    context: { params: BookingParams }
+    { params }: { params: { id: string } }
   ): Response | Promise<Response>;
 }
 

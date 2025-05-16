@@ -19,6 +19,32 @@ if (fs.existsSync(typesDir)) {
   rimraf(typesDir);
 }
 
+// 3. Check and fix the type definition file
+const typeFixFile = path.join(process.cwd(), 'types', 'next-route-handler-fix.d.ts');
+if (fs.existsSync(typeFixFile)) {
+  console.log(`Checking type definition file: ${typeFixFile}`);
+  
+  const typeContent = fs.readFileSync(typeFixFile, 'utf8');
+  let newTypeContent = typeContent;
+  
+  // Remove custom param interfaces
+  newTypeContent = newTypeContent.replace(
+    /interface\s+(\w+Params)\s+{\s+\w+:\s+string[^}]*}\s*/g,
+    ''
+  );
+  
+  // Fix route handler signatures in type definition
+  newTypeContent = newTypeContent.replace(
+    /context:\s*{\s*params:\s*\w+Params\s*}/g,
+    '{ params }: { params: { id: string } }'
+  );
+  
+  if (newTypeContent !== typeContent) {
+    fs.writeFileSync(typeFixFile, newTypeContent);
+    console.log(`✓ Fixed type definitions in ${typeFixFile}`);
+  }
+}
+
 // 3. Apply specific fixes to problematic files
 const bookingsIdRoutePath = path.join(process.cwd(), 'app', 'api', 'bookings', '[id]', 'route.ts');
 if (fs.existsSync(bookingsIdRoutePath)) {

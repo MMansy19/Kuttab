@@ -22,6 +22,36 @@ async function main() {
     
     let fixedCount = 0;
     
+    // Also check and fix types/next-route-handler-fix.d.ts if it exists
+    const typeFixFile = path.join(process.cwd(), 'types', 'next-route-handler-fix.d.ts');
+    if (fs.existsSync(typeFixFile)) {
+      console.log(`Found type definitions file: ${typeFixFile}`);
+      
+      const typeContent = fs.readFileSync(typeFixFile, 'utf8');
+      let newTypeContent = typeContent;
+      
+      // Update custom param type references in the type definition file
+      newTypeContent = newTypeContent.replace(
+        /interface\s+(\w+Params)\s+{\s+\w+:\s+string[^}]*}/g,
+        (match, typeName) => {
+          console.log(`Removing interface ${typeName} from type definitions`);
+          return '';
+        }
+      );
+      
+      // Update route handler signatures in type definition
+      newTypeContent = newTypeContent.replace(
+        /context:\s*{\s*params:\s*\w+Params\s*}/g,
+        '{ params }: { params: { id: string } }'
+      );
+      
+      if (newTypeContent !== typeContent) {
+        fs.writeFileSync(typeFixFile, newTypeContent);
+        console.log(`✓ Fixed type definitions in ${typeFixFile}`);
+        fixedCount++;
+      }
+    }
+    
     for (const filePath of routeFiles) {
       console.log(`Processing ${filePath}...`);
       
