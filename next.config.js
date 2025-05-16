@@ -127,14 +127,16 @@ const nextConfig = {
   
   // Locale configuration - removed as it's not supported in App Router
   // Use the app/[locale] directory structure instead
-  // See: https://nextjs.org/docs/app/building-your-application/routing/internationalization
-  // Image optimization
+  // See: https://nextjs.org/docs/app/building-your-application/routing/internationalization  // Image optimization
   images: {
     domains: ['via.placeholder.com', 'placehold.co'],
     formats: ['image/avif', 'image/webp'], // Always use modern formats
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840], // Responsive image sizes
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Additional image sizes
     minimumCacheTTL: 60 * 60 * 24 * 7, // Cache images for 7 days
+    dangerouslyAllowSVG: true, // Allow SVG files (for logos, icons)
+    contentDispositionType: 'attachment', // For better caching
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;", // Add CSP for images
   },
   
   // Performance optimizations

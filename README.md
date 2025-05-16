@@ -29,6 +29,18 @@
 - 📅 **Availability calendar** for easy session booking
 - 🔒 **Role-based authentication** for users, teachers, and administrators
 - 📱 **Responsive design** that works on mobile and desktop
+- ⚡ **Performance optimized** with fast loading times and modern image formats
+
+## 🚀 Performance Optimization
+
+The platform is built with performance in mind:
+
+- **Image Optimization**: All images are converted to WebP/AVIF formats and properly sized
+- **Responsive Images**: Multiple image sizes are generated for different devices
+- **Lazy Loading**: Images are loaded only when they enter the viewport
+- **Core Web Vitals**: Optimized for excellent Lighthouse scores
+
+See our [Image Optimization Guide](docs/IMAGE-OPTIMIZATION.md) for details.
 - ⚡ **Optimized performance** with code splitting and image optimization
 - 🌓 **Dark/light mode toggle** for comfortable viewing
 - 📊 **Admin dashboard** for platform management

@@ -17,6 +17,14 @@ function runOptimizationScripts() {
     console.log('📷 Optimizing images...');
     execSync('node scripts/convert-to-webp.js', { stdio: 'inherit' });
     
+    // Generate responsive image versions
+    console.log('🖼️ Generating responsive images...');
+    execSync('node scripts/generate-responsive-images.js', { stdio: 'inherit' });
+    
+    // Check for image optimization issues
+    console.log('🔍 Checking image optimization status...');
+    execSync('node scripts/check-images.js', { stdio: 'inherit' });
+    
     console.log('✅ Optimization scripts completed successfully!');
   } catch (error) {
     console.warn('⚠️ Error running optimization scripts:', error.message);

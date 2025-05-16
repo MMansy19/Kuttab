@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FaAward, FaMedal, FaUserGraduate } from "react-icons/fa";
 import { AccessibleButton } from '@/components/ui/AccessibleButton';
 import OptimizedPatternBackground from '@/components/performance/OptimizedPatternBackground';
+import OptimizedImage from '@/components/ui/OptimizedImage';
 import CounterStat from './CounterStat';
 
 const HeroSection = () => {
@@ -60,19 +61,13 @@ const HeroSection = () => {
           
           <div className="sm:block hidden relative w-full max-w-md lg:max-w-lg xl:max-w-xl">
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-            <div className="relative bg-gradient-to-br from-emerald-900 to-blue-900 rounded-xl p-2 shadow-2xl z-10">
-              <div className="rounded-lg overflow-hidden border-2 border-white/20 shadow-inner">
-                <Image 
+            <div className="relative bg-gradient-to-br from-emerald-900 to-blue-900 rounded-xl p-2 shadow-2xl z-10">              <div className="rounded-lg overflow-hidden border-2 border-white/20 shadow-inner">                <OptimizedImage 
                   src="/images/learn-quran2.avif"
                   alt="تعليم القرآن" 
-                  width={600} 
-                  height={600} 
+                  width={480} 
+                  height={480} 
                   className="w-full h-auto"
-                  quality={75}
                   priority={true}
-                  loading="eager" // Explicit eager loading
-                  placeholder="blur" // Add if you can provide a blurDataURL
-                  blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAAKAAoDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+AiiiigAooooA/9k="
                 />
               </div>
               

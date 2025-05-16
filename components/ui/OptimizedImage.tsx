@@ -32,8 +32,7 @@ export default function OptimizedImage({
   const safeSrc = (!src || (typeof src === 'string' && !src.startsWith('http') && !src.startsWith('/')))
     ? '/images/placeholder.webp'
     : src;
-    
-  // If using fill mode, handle differently
+      // If using fill mode, handle differently
   if (fill) {
     return (
       <div className={`relative ${className || ''}`} style={{ aspectRatio: `${width}/${height}` }}>

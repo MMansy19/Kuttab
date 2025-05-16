@@ -9,9 +9,12 @@
     "start": "next start",
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
-    "optimize:images": "node scripts/convert-to-webp.js",
+    "optimize:images": "node scripts/convert-to-webp.js && node scripts/generate-responsive-images.js",
     "optimize:links": "node scripts/secure-links.js",
-    "analyze": "ANALYZE=true next build"
+    "analyze": "ANALYZE=true next build",
+    "check:images": "node scripts/check-images.js",
+    "detect:oversized": "node scripts/detect-oversized-images.js",
+    "optimize": "npm run optimize:images && npm run optimize:links"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -52,7 +55,9 @@
     "@types/bcryptjs": "^3.0.0",
     "@types/node": "^22.15.3",
     "cross-env": "^7.0.3",
+    "image-size": "^2.0.2",
     "rimraf": "^6.0.1",
+    "sharp": "^0.34.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }

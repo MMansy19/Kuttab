@@ -16,6 +16,39 @@ export function generateSizes(defaultSize: number = 100, isCritical: boolean = f
 }
 
 /**
+ * Generates a responsive srcSet attribute for images
+ * Uses the naming pattern: image-320w.webp, image-480w.webp, etc.
+ * 
+ * @param src Original image source URL
+ * @param format Desired format (webp or avif)
+ * @returns A string representing the srcSet attribute
+ */
+export function generateSrcSet(src: string, format: 'webp' | 'avif' = 'webp'): string {
+  // Skip external URLs
+  if (src.startsWith('http') && !src.includes(window.location.hostname)) {
+    return '';
+  }
+  
+  // Skip if already a generated responsive image
+  if (src.includes('-') && (src.includes('w.webp') || src.includes('w.avif'))) {
+    return '';
+  }
+  
+  // Get the base path and extension
+  const lastDotIndex = src.lastIndexOf('.');
+  if (lastDotIndex === -1) return '';
+  
+  const basePath = src.substring(0, lastDotIndex);
+  
+  // Generate srcSet for standard breakpoints
+  const breakpoints = [320, 480, 640, 750, 828, 1080, 1200, 1920];
+  
+  return breakpoints
+    .map(bp => `${basePath}-${bp}w.${format} ${bp}w`)
+    .join(', ');
+}
+
+/**
  * Convert an image URL to WebP format if it's a local image
  * @param src Original image source URL
  * @param quality WebP quality (0-100)
@@ -64,7 +97,10 @@ export function getOptimizedImageProps(
     ? '/images/placeholder.webp'
     : src;
   
-  return {
+  // Generate a responsive srcSet if this isn't already a responsive image
+  const srcSet = generateSrcSet(safeSrc);
+  
+  const props = {
     src: safeSrc,
     alt: alt || 'Image', // Ensure alt text for accessibility
     width,
@@ -75,4 +111,14 @@ export function getOptimizedImageProps(
     quality, // Good balance between quality and file size
     // Next.js Image automatically uses WebP or AVIF when supported
   };
+  
+  // Only add srcSet if we generated a valid one
+  if (srcSet) {
+    return {
+      ...props,
+      srcSet,
+    };
+  }
+  
+  return props;
 }

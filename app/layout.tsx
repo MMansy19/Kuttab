@@ -1,14 +1,18 @@
-// app/layout.tsx
 import '../styles/globals.css';
 import type { ReactNode } from 'react';
 import ToastContainer from '../components/ui/Toast';
 import { Metadata, Viewport } from 'next';
 import { defaultMetadata, defaultViewport } from '@/lib/metadata';
-import OptimizedScripts from '../components/performance/OptimizedScripts';
+import dynamic from 'next/dynamic';
 import LoadingScreen from '@/components/LoadingScreen';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { AuthProvider } from '@/features/auth/providers/AuthProvider';
+
+// Dynamically load heavy components
+const OptimizedScripts = dynamic(() => import('../components/performance/OptimizedScripts'), {
+  ssr: false
+});
 
 export const metadata: Metadata = defaultMetadata;
 export const viewport: Viewport = defaultViewport;
@@ -17,11 +21,45 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ar" dir="rtl" className="scroll-smooth">
       <head>
+        {/* Local font preloading */}
         <link
           rel="preload"
-          href="/images/icon-192x192.png"
+          href="/fonts/Cairo-Regular.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/Cairo-Bold.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <style dangerouslySetInnerHTML={{
+          __html: `
+          @font-face {
+            font-family: 'Cairo';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url('/fonts/Cairo-Regular.woff2') format('woff2');
+          }
+          @font-face {
+            font-family: 'Cairo';
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: url('/fonts/Cairo-Bold.woff2') format('woff2');
+          }
+        `}} />
+
+        {/* Critical image preloads */}
+        <link
+          rel="preload"
+          href="/images/hero-image.avif"
           as="image"
-          type="image/png"
+          type="image/avif"
           fetchPriority="high"
         />
         <link
@@ -29,21 +67,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           href="/images/islamic-pattern.webp"
           as="image"
           type="image/webp"
-          fetchPriority="high"
         />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" as="style" />
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
-      <body suppressHydrationWarning className="bg-gray-900 text-white font-[Cairo] min-h-screen flex flex-col transition-colors duration-300">
+      <body suppressHydrationWarning className="bg-gray-900 text-white font-[Cairo] min-h-screen flex flex-col">
         <AuthProvider>
-        <LoadingScreen />
-        <Navbar />
-        <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
-        <Footer />
-        <ToastContainer />
-        <OptimizedScripts />
+          <LoadingScreen />
+          <Navbar />
+          <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
+          <Footer />
+          <ToastContainer />
+          <OptimizedScripts />
         </AuthProvider>
       </body>
     </html>
