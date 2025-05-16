@@ -40,9 +40,7 @@ class MyDocument extends Document {
         </Head>
         <body className="bg-emerald-50 text-emerald-900 dark:bg-gray-900 dark:text-white font-[Cairo] min-h-screen">
           <Main />
-          <NextScript
-            strategy="beforeInteractive"
-          />
+          <NextScript/>
         </body>
       </Html>
     );

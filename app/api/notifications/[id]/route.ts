@@ -99,7 +99,7 @@ export async function PATCH(
 // DELETE a notification
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: IdParams }
 ) {
   try {
     const session = await getServerSession(authOptions);

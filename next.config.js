@@ -53,6 +53,7 @@ function fixAuthBuild() {
 
 const nextConfig = {
   // Core optimizations
+  serverExternalPackages: ['@prisma/client', 'mongoose'],
   reactStrictMode: true,
   compress: true,
   poweredByHeader: false,
