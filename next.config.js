@@ -75,11 +75,28 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840], 
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], 
   },
-
   webpack: (config, { isServer }) => {
+    // Configure webpack with case-sensitive resolution
+    config.resolve = config.resolve || {};
+    config.resolve.symlinks = false;
+    
+    // Set watchOptions
     config.watchOptions = {
       ignored: ['**/node_modules/**', '**/.next/**'],
-      poll: false,    };     if (isServer) {
+      poll: false,
+    };
+    
+    // Fix the import issues when building on Vercel
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@/components': `${__dirname}/components`,
+      '@/features': `${__dirname}/features`,
+      '@/lib': `${__dirname}/lib`,
+      '@/utils': `${__dirname}/utils`,
+      '@/hooks': `${__dirname}/hooks`,
+      '@/styles': `${__dirname}/styles`,
+      '@/types': `${__dirname}/types`,
+    };if (isServer) {
       config.plugins.push({
         apply: (compiler) => {
           compiler.hooks.afterEmit.tap('FixRouteTypes', () => {

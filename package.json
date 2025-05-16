@@ -2,11 +2,10 @@
   "name": "kottab",
   "version": "1.0.0",
   "description": "Enable independent teachers to reach students needing Quran education",
-  "main": "index.js",
-  "scripts": {
+  "main": "index.js",  "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "build:vercel": "node scripts/pre-build-vercel.js && prisma generate && next build",
+    "build:vercel": "node scripts/create-component-stubs.js && node scripts/fix-component-exports.js && node scripts/pre-build-vercel.js && prisma generate && next build",
     "start": "next start",
     "postinstall": "prisma generate",
     "lint": "next lint",
