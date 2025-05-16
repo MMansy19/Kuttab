@@ -1,4 +1,3 @@
-// components/LoadingScreen.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -6,13 +5,11 @@ import Image from "next/image";
 
 export default function LoadingScreen() {
     const [isVisible, setIsVisible] = useState(true);
-    const [isExiting, setIsExiting] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            setIsExiting(true);
-            setTimeout(() => setIsVisible(false), 300);
-        }, 2000);
+            setIsVisible(false);
+        }, 1000);
 
         return () => clearTimeout(timer);
     }, []);
@@ -20,10 +17,7 @@ export default function LoadingScreen() {
     if (!isVisible) return null;
 
     return (
-        <div className={`
-      fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900 transition-opacity duration-300
-      ${isExiting ? "opacity-0 pointer-events-none" : ""}
-    `}>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900">
             <div className="flex flex-col items-center justify-center gap-6">
                 <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full bg-white/10 p-2 backdrop-blur-sm animate-pulse">
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -33,6 +27,7 @@ export default function LoadingScreen() {
                             width={80}
                             height={80}
                             priority
+                            loading="eager" // Force eager loading
                             className="w-16 h-16 md:w-20 md:h-20 object-contain"
                         />
                     </div>

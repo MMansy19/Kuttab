@@ -130,7 +130,7 @@ export default function AboutPage() {
           </p>
           <div className="flex justify-center">
             <div className="flex items-center justify-center">
-              <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full bg-white/10 p-2 backdrop-blur-sm">
+              <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full bg-white/10 p-2 backdrop-blur-sm ">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Image
                     src="/images/icon-192x192.png"
