@@ -6,8 +6,6 @@ import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { isFrontendOnlyMode } from "@/lib/config";
 
-type BookingParams = { id: string };
-
 // Validation schema for booking updates
 const bookingUpdateSchema = z.object({
   status: z.enum(["PENDING", "SCHEDULED", "CONFIRMED", "COMPLETED", "CANCELLED", "NO_SHOW"]).optional(),
@@ -21,18 +19,17 @@ const bookingUpdateSchema = z.object({
 // GET a single booking by ID
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
     
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-      // Mock data for frontend-only mode
+    }    // Mock data for frontend-only mode
     if (isFrontendOnlyMode) {
       return NextResponse.json({
-        id: context.params.id,
+        id: params.id,
         userId: "mock-user-1",
         teacherProfileId: "teacher-1",
         startTime: new Date("2025-05-10T10:00:00Z").toISOString(),
@@ -59,10 +56,9 @@ export async function GET(
         },
         reviews: []
       });
-    }
-      // Get the booking with related data
+    }    // Get the booking with related data
     const booking = await prisma.booking.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       include: {
         user: {
           select: {
@@ -115,7 +111,7 @@ export async function GET(
 // PATCH to update booking status
 export async function PATCH(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -128,16 +124,15 @@ export async function PATCH(
     if (isFrontendOnlyMode) {      return NextResponse.json({
         message: "Booking updated successfully",
         booking: {
-          id: context.params.id,
+          id: params.id,
           status: "CONFIRMED",
           notes: "Updated in frontend-only mode",
           updatedAt: new Date().toISOString()
         }
       });
-    }
-      // Get the booking
+    }    // Get the booking
     const booking = await prisma.booking.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       include: {
         teacherProfile: true,
       },
@@ -184,8 +179,7 @@ export async function PATCH(
         session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Not authorized to add teacher notes" }, { status: 403 });
     }
-    
-    // If cancelling, require a reason
+      // If cancelling, require a reason
     if (status === "CANCELLED" && !cancelReason) {
       return NextResponse.json(
         { error: "Cancellation reason is required" },
@@ -285,7 +279,7 @@ export async function PATCH(
 // DELETE to cancel a booking (soft delete)
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -298,17 +292,16 @@ export async function DELETE(
     if (isFrontendOnlyMode) {      return NextResponse.json({
         message: "Booking cancelled successfully",
         booking: {
-          id: context.params.id,
+          id: params.id,
           status: "CANCELLED",
           cancelReason: "Cancelled in frontend-only mode",
           canceledBy: session.user.id,
           updatedAt: new Date().toISOString()
         }
       });
-    }
-      // Get the booking
+    }    // Get the booking
     const booking = await prisma.booking.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       include: {
         teacherProfile: true,
       },
@@ -330,10 +323,9 @@ export async function DELETE(
     
     // Get cancellation reason from query params
     const { searchParams } = new URL(request.url);
-    const reason = searchParams.get("reason") || "Cancelled by user";
-      // Update booking to cancelled status with the correct field name
+    const reason = searchParams.get("reason") || "Cancelled by user";    // Update booking to cancelled status with the correct field name
     const cancelledBooking = await prisma.booking.update({
-      where: { id: context.params.id },
+      where: { id: params.id },
       data: {
         status: "CANCELLED",
         cancelReason: reason, // Using the correct field name as per Prisma schema

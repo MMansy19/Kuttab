@@ -5,8 +5,6 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/features/auth/services/auth-options";
 
-type UserParams = { id: string };
-
 // Validation schema for user data
 const userUpdateSchema = z.object({
   name: z.string().min(2).optional(),
@@ -20,16 +18,14 @@ const userUpdateSchema = z.object({
 // GET a single user by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: UserParams }
-) {
+  { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
     
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    
-    // Users can only view their own profile unless they're an admin
+      // Users can only view their own profile unless they're an admin
     if (session.user.id !== params.id && session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -64,16 +60,14 @@ export async function GET(
 // PATCH to update user data
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: UserParams }
-) {
+  { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
     
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    
-    // Users can only update their own profile unless they're an admin
+      // Users can only update their own profile unless they're an admin
     if (session.user.id !== params.id && session.user.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -89,8 +83,7 @@ export async function PATCH(
         { status: 400 }
       );
     }
-    
-    // Only allow email updates by admins to prevent abuse
+      // Only allow email updates by admins to prevent abuse
     if (body.email && session.user.role !== "ADMIN" && session.user.id !== params.id) {
       delete body.email;
     }
@@ -99,8 +92,7 @@ export async function PATCH(
     if (body.isActive !== undefined && session.user.role !== "ADMIN") {
       delete body.isActive;
     }
-    
-    // Update user
+      // Update user
     const updatedUser = await prisma.user.update({
       where: { id: params.id },
       data: result.data,      select: {
@@ -129,8 +121,7 @@ export async function PATCH(
 // DELETE to delete a user (admin only)
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: UserParams }
-) {
+  { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
     

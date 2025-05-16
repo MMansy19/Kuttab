@@ -1,16 +1,13 @@
 import { type NextRequest } from 'next/dist/server/web/spec-extension/request';
 import { NextResponse } from 'next/dist/server/web/spec-extension/response';
-
 import { getServerSession } from "next-auth/next";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 
-type NotificationParams = { id: string };
-
 // GET a single notification
 export async function GET(
   req: NextRequest,
-  { params }: { params: NotificationParams }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -47,7 +44,7 @@ export async function GET(
 // PATCH to update notification (mark as read/unread)
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: NotificationParams }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -99,7 +96,7 @@ export async function PATCH(
 // DELETE a notification
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: IdParams }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
