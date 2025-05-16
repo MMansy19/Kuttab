@@ -5,10 +5,12 @@ import { getServerSession } from "next-auth/next";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 
+type NotificationParams = { id: string };
+
 // GET a single notification
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: NotificationParams }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -45,7 +47,7 @@ export async function GET(
 // PATCH to update notification (mark as read/unread)
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: NotificationParams }
 ) {
   try {
     const session = await getServerSession(authOptions);

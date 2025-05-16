@@ -5,6 +5,8 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/features/auth/services/auth-options";
 
+type UserParams = { id: string };
+
 // Validation schema for user data
 const userUpdateSchema = z.object({
   name: z.string().min(2).optional(),
@@ -18,7 +20,7 @@ const userUpdateSchema = z.object({
 // GET a single user by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: UserParams }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -62,7 +64,7 @@ export async function GET(
 // PATCH to update user data
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: UserParams }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -127,7 +129,7 @@ export async function PATCH(
 // DELETE to delete a user (admin only)
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: UserParams }
 ) {
   try {
     const session = await getServerSession(authOptions);

@@ -7,6 +7,8 @@ import prisma from "@/lib/prisma";
 import { rateLimit } from "@/utils/rate-limiter";
 import { validateRequest } from "@/utils/validation";
 
+type TeacherReviewParams = { id: string };
+
 // Rate limiter for this endpoint
 const apiLimiter = rateLimit({
   limit: 20,
@@ -28,7 +30,7 @@ const createReviewSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: TeacherReviewParams }
 ) {
   // Check rate limiting
   const rateLimitResult = await apiLimiter(request);
@@ -111,7 +113,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: TeacherReviewParams }
 ) {
   // Check rate limiting
   const rateLimitResult = await apiLimiter(request);

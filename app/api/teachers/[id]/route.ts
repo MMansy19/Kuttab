@@ -5,6 +5,8 @@ import { getServerSession } from "next-auth/next";
 import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 
+type TeacherParams = { id: string };
+
 // Validation schema for teacher profile updates
 const teacherProfileSchema = z.object({
   specialization: z.string().min(3).optional(),
@@ -17,7 +19,7 @@ const teacherProfileSchema = z.object({
 // GET a single teacher profile
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: TeacherParams }
 ) {
   try {
     // Get teacher profile with user data
@@ -105,7 +107,7 @@ export async function GET(
 // PATCH to update a teacher profile
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: TeacherParams }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -172,7 +174,7 @@ export async function PATCH(
 // PUT to completely update a teacher profile
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: TeacherParams }
 ) {
   try {
     const session = await getServerSession(authOptions);
