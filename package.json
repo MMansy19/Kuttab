@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "build:vercel": "node scripts/pre-build-vercel.js && prisma generate && next build",
+    "build:vercel": "node scripts/fix-teachers-data.js && node scripts/create-component-stubs.js && node scripts/fix-component-exports.js && node scripts/pre-build-vercel.js && prisma generate && next build",
     "start": "next start",
     "postinstall": "prisma generate",
     "lint": "next lint",
@@ -51,8 +51,6 @@
     "@types/react-dom": "18.2.19",
     "cross-env": "7.0.3",
     "ts-node": "10.9.2",
-    "typescript": "5.3.3",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/lucide-react": "^0.310.0"
+    "typescript": "5.3.3"
   }
 }
