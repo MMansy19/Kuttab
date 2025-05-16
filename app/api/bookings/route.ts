@@ -1,5 +1,5 @@
-import { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { type NextRequest } from 'next/dist/server/web/spec-extension/request';
+import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { z } from "zod";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
