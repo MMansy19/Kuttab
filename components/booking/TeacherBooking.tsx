@@ -86,7 +86,6 @@ export default function TeacherBooking({ teacher, availabilitySlots }: TeacherBo
     setBookingDetails(details);
     setCurrentStep('confirm');
   };
-
   // Handle booking confirmation with try/catch error handling
   const handleConfirmBooking = async () => {
     if (!selectedSlot) return;
@@ -96,15 +95,31 @@ export default function TeacherBooking({ teacher, availabilitySlots }: TeacherBo
     
     // Use our tryCatch utility for cleaner error handling
     const [data, error] = await tryCatch(async () => {
-      // Mock API call to book the slot
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Real API call to book the slot
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          teacherProfileId: teacher.id,
+          startTime: selectedSlot.startTime,
+          endTime: selectedSlot.endTime,
+          notes: bookingDetails.message || '',
+        }),
+      });
       
-      // Generate a mock booking ID
-      return `BK-${Date.now().toString().slice(-8)}`;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create booking');
+      }
+      
+      const responseData = await response.json();
+      return responseData.data.id;
     });
     
     if (error) {
-      setBookingError("حدث خطأ أثناء تأكيد الحجز. يرجى المحاولة مرة أخرى.");
+      setBookingError(error.message || "حدث خطأ أثناء تأكيد الحجز. يرجى المحاولة مرة أخرى.");
       console.error("Booking failed:", error);
     } else {
       setBookingId(data);
@@ -333,19 +348,18 @@ export default function TeacherBooking({ teacher, availabilitySlots }: TeacherBo
             )}
             
             {/* Success */}
-            {currentStep === 'success' && bookingConfirmed && (
-              <div className="animate-fadeIn text-center py-8">
+            {currentStep === 'success' && bookingConfirmed && (              <div className="animate-fadeIn text-center py-8">
                 <div className="w-16 h-16 mx-auto bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
                   <FaCheckCircle className="text-green-600 dark:text-green-400 text-3xl" />
                 </div>
                 <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">
-                  تم تأكيد الحجز بنجاح
+                  تم إرسال طلب الحجز بنجاح
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 mb-2">
                   رقم الحجز: {bookingId}
                 </p>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  تم إرسال تفاصيل الحجز إلى بريدك الإلكتروني
+                  بانتظار موافقة المعلم على الحجز، وسيتم إشعارك عند التأكيد
                 </p>
                 
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">

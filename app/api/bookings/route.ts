@@ -185,6 +185,14 @@ export async function POST(request: NextRequest) {
       { status: 401 }
     );
   }
+  
+  // Verify that the user has the "USER" role
+  if (session.user.role !== "USER" && session.user.role !== "ADMIN") {
+    return NextResponse.json(
+      { error: "يجب أن يكون لديك صلاحيات المستخدم العادي لحجز موعد" },
+      { status: 403 }
+    );
+  }
 
   return validateRequest(createBookingSchema as any, async (req, data) => {
     try {

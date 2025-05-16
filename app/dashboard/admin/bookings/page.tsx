@@ -105,8 +105,7 @@ const groupBookingsByDate = (bookings: Booking[]) => {
 
 type SortField = 'id' | 'userName' | 'teacherName' | 'date' | 'status' | 'amount' | 'createdAt';
 
-export default function BookingsPage() {
-  const [searchTerm, setSearchTerm] = useState('');
+export default function BookingsPage() {  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [bookingsPerPage, setBookingsPerPage] = useState(10);
   const [sortField, setSortField] = useState<SortField>('date');
@@ -114,14 +113,71 @@ export default function BookingsPage() {
   const [currentView, setCurrentView] = useState<'list' | 'calendar'>('list');
   const [selectedMonth, setSelectedMonth] = useState<string>(new Date().toISOString().slice(0, 7)); // YYYY-MM
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [error, setError] = useState<string | null>(null);
   
   // Filters
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [isPaidFilter, setIsPaidFilter] = useState<string>('all');
   
+  // Fetch real bookings from API
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/bookings');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch bookings');
+        }
+        
+        const data = await response.json();
+        
+        // Transform API data to match our expected format
+        const transformedBookings: Booking[] = data.data.map((booking: any) => {
+          // Extract date and type information
+          const date = new Date(booking.startTime);
+          const formattedDate = date.toISOString().split('T')[0];
+          const timeSlot = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+          
+          // Determine session type 
+          const isGroup = booking.participantCount && booking.participantCount > 1;
+          
+          return {
+            id: booking.id,
+            userId: booking.userId,
+            userName: booking.user?.name || 'Unknown User',
+            teacherId: booking.teacherProfile?.userId || '',
+            teacherName: booking.teacherProfile?.user?.name || 'Unknown Teacher',
+            date: formattedDate,
+            timeSlot: timeSlot,
+            status: booking.status.toLowerCase(),
+            type: isGroup ? 'group' : 'private',
+            participants: booking.participantCount || 1,
+            amount: booking.price || null,
+            isPaid: !!booking.paymentStatus && booking.paymentStatus === 'PAID',
+            createdAt: new Date(booking.createdAt || Date.now()).toISOString(),
+          };
+        });
+        
+        setBookings(transformedBookings);
+      } catch (err: any) {
+        console.error('Error fetching bookings:', err);
+        setError(err.message || 'An error occurred fetching bookings');
+        // Fallback to mock data in case of error
+        setBookings(mockBookings);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchBookings();
+  }, []);
+  
   // Filter bookings based on search and filters
-  const filteredBookings = mockBookings.filter(booking => {
+  const filteredBookings = bookings.filter(booking => {
     // Search term
     const searchMatch = 
       booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -232,11 +288,39 @@ export default function BookingsPage() {
       setSortDirection('desc'); // Default to desc for new sort fields
     }
   };
-  
-  // Update booking status
-  const updateBookingStatus = (bookingId: string, newStatus: Booking['status']) => {
-    // In a real app, this would call an API to update the booking status
-    console.log(`Updating booking ${bookingId} status to ${newStatus}`);
+    // Update booking status
+  const updateBookingStatus = async (bookingId: string, newStatus: Booking['status']) => {
+    try {
+      const response = await fetch(`/api/bookings/${bookingId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: newStatus.toUpperCase(),
+          cancelReason: newStatus === 'cancelled' ? 'Cancelled by admin' : undefined
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to update booking to ${newStatus}`);
+      }
+      
+      // Refresh bookings after update
+      const updatedBookings = bookings.map(booking => {
+        if (booking.id === bookingId) {
+          return { ...booking, status: newStatus };
+        }
+        return booking;
+      });
+      
+      setBookings(updatedBookings);
+      
+    } catch (error: any) {
+      console.error('Error updating booking status:', error);
+      alert(`Error updating booking: ${error.message || 'Unknown error'}`);
+    }
   };
   
   // Format a date object to a readable string

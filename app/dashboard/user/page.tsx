@@ -45,7 +45,6 @@ export default function UserDashboard() {
       showWarning("لا يمكنك الوصول إلى الصفحة المطلوبة. تم توجيهك إلى لوحة التحكم الخاصة بك.");
     }
   }, [loginSuccess, notification, session]);
-
   useEffect(() => {
     const fetchBookings = async () => {
       try {
@@ -63,14 +62,26 @@ export default function UserDashboard() {
         const upcoming: Booking[] = [];
         const past: Booking[] = [];
 
-        data.data.forEach((booking: Booking) => {
+        data.data.forEach((booking: any) => {
+          // Transform API booking format to dashboard format
+          const transformedBooking: Booking = {
+            id: booking.id,
+            date: new Date(booking.startTime).toISOString().split('T')[0],
+            startTime: new Date(booking.startTime).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+            endTime: new Date(booking.endTime).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' }),
+            status: booking.status,
+            teacherProfile: booking.teacherProfile
+          };
+          
+          const bookingDate = transformedBooking.date;
+          
           if (
-            booking.date > today ||
-            (booking.date === today && booking.status !== "COMPLETED" && booking.status !== "CANCELLED")
+            bookingDate > today ||
+            (bookingDate === today && booking.status !== "COMPLETED" && booking.status !== "CANCELLED")
           ) {
-            upcoming.push(booking);
+            upcoming.push(transformedBooking);
           } else {
-            past.push(booking);
+            past.push(transformedBooking);
           }
         });
 
