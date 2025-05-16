@@ -25,6 +25,8 @@ yarn-error.log*
 # Local env files
 .env
 .env.local
+.env.production
+.env.neon
 .env.development.local
 .env.test.local
 .env.production.local
@@ -36,3 +38,12 @@ yarn-error.log*
 *.db
 *.db-journal
 prisma/dev.db
+package-lock.json
+
+# .md files
+NEON-DEPLOYMENT.md
+REFACTOR-GUIDE.md
+Tasks.md
+app-structure.txt
+ikuttab-linkedin-profile.md
+ikuttab-logo-prompt.md

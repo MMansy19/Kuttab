@@ -59,10 +59,10 @@ const nextConfig = {
   
   // Note: swcMinify is now enabled by default in Next.js 13+
   // and has been removed from the configuration options
-  
-  // Prerendering settings for better SEO performance
+    // Prerendering settings for better SEO performance
   experimental: {
-    optimizeCss: true,
+    // Disabling optimizeCss because it requires critters which is causing build issues
+    optimizeCss: false,
     optimizePackageImports: ['react-icons', 'lodash', 'date-fns'],
   },
   
@@ -146,13 +146,13 @@ const nextConfig = {
     NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV || 'development',
     FRONTEND_ONLY: isFrontendOnly ? 'true' : 'false', // Convert boolean to string
   },
-  
-  // Experimental features
+    // Experimental features
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',
     },
-    optimizeCss: isProd,
+    // Disabling optimizeCss because it requires critters which is causing build issues
+    optimizeCss: false,
     // Add any additional experimental features here
   },
   
