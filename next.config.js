@@ -79,19 +79,20 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     config.watchOptions = {
       ignored: ['**/node_modules/**', '**/.next/**'],
-      poll: false,
-    };     if (isServer) {
+      poll: false,    };     if (isServer) {
       config.plugins.push({
         apply: (compiler) => {
           compiler.hooks.afterEmit.tap('FixRouteTypes', () => {
             // fixAuthBuild function is not defined, commented out to fix build issue
             // fixAuthBuild();
             
-            // Import the fixRouteTypes function if needed
-            const { fixRouteTypes } = require('./scripts/fix-route-types');
-            
-            // Run the route type fixes
-            fixRouteTypes();
+            // Require and run the entire script instead of just the function
+            try {
+              require('./scripts/fix-route-types');
+              console.log('Route type fixing script executed successfully');
+            } catch (error) {
+              console.error('Error executing route type fixing script:', error);
+            }
           });
         },
       });
