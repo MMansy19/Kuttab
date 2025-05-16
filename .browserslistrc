@@ -1,0 +1,18 @@
+# Modern browsers only (reduces bundle size by avoiding unnecessary polyfills)
+# This helps with the legacy JavaScript issue identified in Lighthouse
+
+# Include last 2 versions of major browsers
+last 2 Chrome versions
+last 2 Firefox versions
+last 2 Safari versions
+last 2 Edge versions
+
+# Exclude older browsers
+not IE 11
+not op_mini all
+
+# Target browsers with native ES modules support
+supports es6-module
+
+# Target browsers with good JavaScript support
+maintained node versions

@@ -56,15 +56,8 @@ const nextConfig = {
   serverExternalPackages: ['@prisma/client', 'mongoose'],
   poweredByHeader: false,
   reactStrictMode: true,
-  
-  // Note: swcMinify is now enabled by default in Next.js 13+
+    // Note: swcMinify is now enabled by default in Next.js 13+
   // and has been removed from the configuration options
-    // Prerendering settings for better SEO performance
-  experimental: {
-    // Disabling optimizeCss because it requires critters which is causing build issues
-    optimizeCss: false,
-    optimizePackageImports: ['react-icons', 'lodash', 'date-fns'],
-  },
   
   // Security headers for SEO and protection
   async headers() {
@@ -100,6 +93,32 @@ const nextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(self)'
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*'
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, OPTIONS'
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization'
+          },
+        ],
+      },
+      {
+        // Apply specific CORS headers for manifest.json
+        source: '/manifest.json',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/manifest+json'
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*'
           },
         ],
       },
@@ -146,22 +165,33 @@ const nextConfig = {
     NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV || 'development',
     FRONTEND_ONLY: isFrontendOnly ? 'true' : 'false', // Convert boolean to string
   },
-    // Experimental features
+  // Experimental features
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',
     },
-    // Disabling optimizeCss because it requires critters which is causing build issues
-    optimizeCss: false,
+    // Enable optimizeCss with critters for critical CSS extraction
+    optimizeCss: true,
+    optimizePackageImports: ['react-icons', 'lodash', 'date-fns'],
     // Add any additional experimental features here
   },
-  
-  // Production-specific compiler options
+    // Production-specific compiler options
   compiler: isProd ? {
     removeConsole: {
       exclude: ['error', 'warn'],
     },
   } : {},
+  
+  // Configure Browserslist to target modern browsers only
+  browserslist: [
+    // Target browsers that support ES6 modules natively
+    'last 2 Chrome versions',
+    'last 2 Firefox versions',
+    'last 2 Safari versions',
+    'last 2 Edge versions',
+    'not IE 11',
+    'not op_mini all'
+  ],
 };
 
 module.exports = nextConfig;

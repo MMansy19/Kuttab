@@ -26,52 +26,68 @@ const imageDirs = [
   './public/images',
 ];
 
-// Create WebP versions of all images
+// Critical images that need priority optimization
+const criticalImages = [
+  'kid-learns-online.png',
+  'islamic-pattern.png'
+];
+
+// Quality settings
+const defaultQuality = 80;
+const criticalQuality = 75; // Slightly more aggressive compression for critical images
+const backgroundQuality = 65; // More aggressive for patterns/backgrounds
+
+// Create WebP and AVIF versions of all images
 async function convertToWebP() {
-  console.log('\n🔄 Converting images to WebP format...');
-  
-  let totalConverted = 0;
-  let totalFailed = 0;
+  console.log('\n🔄 Converting images to WebP and AVIF formats...');
+
+  let processedCount = 0;
+  let successCount = 0;
+  let errorCount = 0;
   
   for (const dir of imageDirs) {
-    const imageFiles = glob.sync(path.join(dir, '**/*.{jpg,jpeg,png}'), { cwd: process.cwd() });
+    const files = glob.sync(`${dir}/**/*.{png,jpg,jpeg,gif}`);
     
-    console.log(`\nFound ${imageFiles.length} images in ${dir}`);
-    
-    for (const file of imageFiles) {
-      const outputFile = file.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+    for (const file of files) {
+      const filename = path.basename(file);
+      const isCritical = criticalImages.includes(filename);
+      const isPattern = filename.includes('pattern');
       
-      // Skip if WebP already exists
-      if (fs.existsSync(outputFile)) {
-        console.log(`  ⏩ Skipping ${file} - WebP version already exists`);
-        continue;
-      }
+      // Determine appropriate quality based on image type
+      let quality = defaultQuality;
+      if (isCritical) quality = criticalQuality;
+      if (isPattern) quality = backgroundQuality;
+      
+      const webpOutput = file.replace(/\.(png|jpg|jpeg|gif)$/i, '.webp');
+      const avifOutput = file.replace(/\.(png|jpg|jpeg|gif)$/i, '.avif');
+      
+      processedCount++;
       
       try {
+        // Process as WebP
         await sharp(file)
-          .webp({ quality: 80 }) // 80% quality offers good balance
-          .toFile(outputFile);
+          .webp({ quality })
+          .toFile(webpOutput);
           
-        console.log(`  ✅ Converted: ${file} → ${outputFile}`);
-        totalConverted++;
+        // Process as AVIF
+        await sharp(file)
+          .avif({ quality })
+          .toFile(avifOutput);
+          
+        console.log(`✅ Converted: ${file} -> WebP and AVIF (${isCritical ? 'CRITICAL' : 'standard'} quality: ${quality})`);
+        successCount++;
       } catch (error) {
-        console.error(`  ❌ Failed to convert ${file}:`, error.message);
-        totalFailed++;
+        console.error(`❌ Error converting ${file}:`, error.message);
+        errorCount++;
       }
     }
   }
   
-  console.log(`\n📊 Conversion Summary: ${totalConverted} images converted to WebP, ${totalFailed} failed`);
+  console.log(`\n🎉 Conversion complete! ${successCount}/${processedCount} images processed successfully. ${errorCount} errors.`);
 }
 
-// Main execution
-async function main() {
-  try {
-    await convertToWebP();
-    console.log('\n✅ WebP conversion complete!');
-  } catch (error) {
-    console.error('❌ An error occurred:', error);
-  }
-}
-
-main();
+// Execute the conversion
+convertToWebP().catch(err => {
+  console.error('❌ An error occurred during conversion:', err);
+  process.exit(1);
+});

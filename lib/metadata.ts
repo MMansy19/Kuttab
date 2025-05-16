@@ -115,26 +115,22 @@ export const defaultMetadata: Metadata = {
     yandex: 'yandex-verification-token',
     other: {
       'msvalidate.01': 'bing-verification-token',
-      'yahoo-verification': 'yahoo-verification-token'
+      'yahoo-verification': 'yahoo-verification-token',
+      'google-site-verification': 'your-google-site-verification-code',
+      'norton-safeweb-site-verification': 'norton-verification-code',
+      'p:domain_verify': 'pinterest-verification-code'
     },
   },
   // Additional meta tags for better indexing
-  other: {
-    'google-site-verification': 'your-google-site-verification-code', 
-    'msvalidate.01': 'your-bing-verification-code',
-    'yandex-verification': 'your-yandex-verification-code',
-    'norton-safeweb-site-verification': 'norton-verification-code',
-    'p:domain_verify': 'pinterest-verification-code',
-  },
   category: 'education',
-  assets: [`${siteUrl}/favicon.ico`],
-  manifest: `${siteUrl}/manifest.json`,
-  archives: [`${siteUrl}/blog/archive`],
-  bookmarks: [`${siteUrl}/features`],
+  assets: ['/favicon.ico'],
+  manifest: '/manifest.json',
+  archives: ['/blog/archive'],
+  bookmarks: ['/features'],
   classification: 'Islamic Education',
   appleWebApp: {
     capable: true,
-    title: siteName,
+    title: defaultTitle,
     statusBarStyle: 'black-translucent',
   },
 };

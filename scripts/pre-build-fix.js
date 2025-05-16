@@ -4,6 +4,25 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
+
+/**
+ * Run performance optimization scripts
+ */
+function runOptimizationScripts() {
+  console.log('🚀 Running performance optimization scripts...');
+  
+  try {
+    // Convert images to WebP/AVIF
+    console.log('📷 Optimizing images...');
+    execSync('node scripts/convert-to-webp.js', { stdio: 'inherit' });
+    
+    console.log('✅ Optimization scripts completed successfully!');
+  } catch (error) {
+    console.warn('⚠️ Error running optimization scripts:', error.message);
+    console.log('Continuing with build process...');
+  }
+}
 
 /**
  * Verify sitemap files exist in the proper locations

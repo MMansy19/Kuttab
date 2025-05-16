@@ -51,6 +51,18 @@ h1, h2, h3, h4, h5, h6 {
   @apply border-emerald-600;
 }
 
+/* Accessibility improvements */
+button, 
+a[role="button"],
+input[type="submit"],
+input[type="button"],
+input[type="reset"],
+.interactive-element {
+  /* Ensure all interactive elements have adequate touch targets */
+  @apply min-w-8 min-h-8;
+  touch-action: manipulation;
+}
+
 input, textarea, select {
   @apply bg-emerald-50 dark:bg-gray-800 text-emerald-900 dark:text-white border border-emerald-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-500 rounded;
 }

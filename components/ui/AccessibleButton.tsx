@@ -27,15 +27,14 @@ export function AccessibleButton({
   size = 'default',
   onClick,
   type = 'button'
-}: AccessibleButtonProps) {
-  return (
+}: AccessibleButtonProps) {  return (
     <Button
       type={type}
       onClick={onClick}
       variant={variant}
       size={size}
       className={cn(
-        'min-w-[44px] min-h-[44px] flex items-center gap-2',
+        'min-w-[44px] min-h-[44px] flex items-center gap-2 touch-manipulation',
         className
       )}
       aria-label={ariaLabel || text} // Ensure there's always an accessible name

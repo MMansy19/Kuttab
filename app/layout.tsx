@@ -16,8 +16,7 @@ export const viewport: Viewport = defaultViewport;
 export default function RootLayout({ children }: { children: ReactNode }) {  return (
     <html lang="ar" dir="rtl" className="scroll-smooth">
       <head>
-        <link rel="preload" href="/images/learn-quran.jpg" as="image" />
-        <link rel="preload" href="/images/islamic-pattern.png" as="image" />
+      <link rel="preload" href="/images/islamic-pattern.webp" as="image" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preload" href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" as="style" />

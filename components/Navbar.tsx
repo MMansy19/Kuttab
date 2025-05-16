@@ -102,10 +102,9 @@ export default function Navbar() {
                 </Link>
               </div>
             </div>
-          </div>
-        ) : (
+          </div>        ) : (
           <>
-            <Link href="/auth/login" className="px-3 py-1 rounded bg-accent hover:bg-emerald-700 dark:hover:bg-emerald-600 transition text-white font-bold">دخول</Link>
+            <Link href="/auth/login" className="px-3 py-1 rounded bg-emerald-800 hover:bg-emerald-900 dark:hover:bg-emerald-700 transition text-white font-bold">دخول</Link>
             <Link href="/auth/signup" className="px-3 py-1 rounded bg-emerald-200 dark:bg-emerald-700 hover:bg-emerald-300 dark:hover:bg-emerald-800 transition text-emerald-900 dark:text-white font-bold">حساب جديد</Link>
           </>
         )}
