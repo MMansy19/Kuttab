@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
-    "build:vercel": "node scripts/fix-teachers-data.js && node scripts/create-component-stubs.js && node scripts/fix-component-exports.js && node scripts/pre-build-vercel.js && prisma generate && next build",
+    "build:vercel": "npm ls typescript @types/react @types/node || npm install --save-dev typescript @types/react @types/node && node scripts/pre-build-vercel.js && prisma generate && next build",
     "start": "next start",
     "postinstall": "prisma generate",
     "lint": "next lint",
@@ -46,11 +46,11 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "3.0.0",
-    "@types/node": "20.11.28",
-    "@types/react": "^18.2.56",
+    "@types/node": "22.15.18",
+    "@types/react": "19.1.4",
     "@types/react-dom": "18.2.19",
     "cross-env": "7.0.3",
     "ts-node": "10.9.2",
-    "typescript": "5.3.3"
+    "typescript": "5.8.3"
   }
 }
