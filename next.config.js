@@ -85,8 +85,7 @@ const nextConfig = {
       ignored: ['**/node_modules/**', '**/.next/**'],
       poll: false,
     };
-    
-    // Fix the import issues when building on Vercel
+      // Fix the import issues when building on Vercel
     config.resolve.alias = {
       ...config.resolve.alias,
       '@/components': `${__dirname}/components`,
@@ -96,7 +95,10 @@ const nextConfig = {
       '@/hooks': `${__dirname}/hooks`,
       '@/styles': `${__dirname}/styles`,
       '@/types': `${__dirname}/types`,
-    };if (isServer) {
+      '@/data': `${__dirname}/data`,
+    };
+    
+    if (isServer) {
       config.plugins.push({
         apply: (compiler) => {
           compiler.hooks.afterEmit.tap('FixRouteTypes', () => {

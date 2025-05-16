@@ -81,5 +81,6 @@ const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 );
 CardFooter.displayName = 'CardFooter';
 
+// Single export for all components
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter };
 export default Card;

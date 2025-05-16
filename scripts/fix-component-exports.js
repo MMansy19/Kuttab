@@ -65,34 +65,15 @@ if (fs.existsSync(cardPath)) {
   console.log('Card component exists, ensuring it exports correctly...');
   let content = fs.readFileSync(cardPath, 'utf8');
   
-  // Make sure Card is exported
-  if (!content.includes('export const Card') && 
+  // Only add CardContent export if neither export statement exists
+  if (!content.includes('export { Card, CardContent }') && 
+      !content.includes('export { Card') && 
+      !content.includes('CardContent') &&
       !content.includes('export default Card')) {
-    console.log('Adding export for Card component');
-    
-    // Add export at the end if not already exported
-    if (content.includes('const Card =') && !content.includes('export {')) {
-      content = content + '\n\nexport { Card };';
-      fs.writeFileSync(cardPath, content);
-    }
-  }
-  
-  // Check if CardContent is exported
-  if (content.includes('const CardContent =') && 
-      !content.includes('export const CardContent') &&
-      !content.includes('export { Card, CardContent }')) {
     console.log('Adding CardContent export');
     
-    // Replace any existing export with a combined export
-    if (content.includes('export { Card }')) {
-      content = content.replace(
-        'export { Card }',
-        'export { Card, CardContent }'
-      );
-    } else {
-      content = content + '\n\nexport { Card, CardContent };';
-    }
-    
+    // Add export at the end
+    content = content + '\n\nexport { Card, CardContent };';
     fs.writeFileSync(cardPath, content);
   }
 }
