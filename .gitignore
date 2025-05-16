@@ -3,6 +3,7 @@
 /.pnp
 .pnp.js
 prisma/node_modules/
+
 # Testing
 /coverage
 
