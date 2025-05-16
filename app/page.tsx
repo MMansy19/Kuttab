@@ -447,29 +447,30 @@ export default function Home() {
                 </div>
                 
                 <div className="flex gap-2">
-                  <AccessibleButton 
+                  <AccessibleButton
                     text=""
-                    ariaLabel="عرض الشهادة التالية"
+                    ariaLabel="عرض الشهادة السابقة"
                     icon={<FaArrowRight className="w-5 h-5" />}
-                    onClick={() => setActiveTestimonial(prev => (prev + 1) % testimonials.length)}
+                    onClick={() => setActiveTestimonial(prev => prev === 0 ? testimonials.length - 1 : prev - 1)}
                     className="w-12 h-12 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 transition-colors min-w-[48px] min-h-[48px]"
                     variant="ghost"
                   />
                   <AccessibleButton
                     text=""
-                    ariaLabel="عرض الشهادة السابقة"
+                    ariaLabel="عرض الشهادة التالية"
                     icon={<FaArrowLeft className="w-5 h-5" />}
-                    onClick={() => setActiveTestimonial(prev => prev === 0 ? testimonials.length - 1 : prev - 1)}
+                    onClick={() => setActiveTestimonial(prev => (prev + 1) % testimonials.length)}
                     className="w-12 h-12 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 transition-colors min-w-[48px] min-h-[48px]"
                     variant="ghost"
                   />
                 </div>
-              </div>              <div className="flex justify-center mt-8">
+              </div>
+              <div className="flex justify-center mt-8">
                 {testimonials.map((_, index) => (
                   <button
                     key={index}
                     aria-label={`View testimonial ${index + 1} of ${testimonials.length}`}
-                    className={`mx-1 rounded-full min-w-8 min-h-8 flex items-center justify-center ${activeTestimonial === index ? 'bg-emerald-600 w-6' : 'bg-gray-300 dark:bg-gray-600 w-2 h-2'} transition-all`}
+                    className={`mx-1 rounded-full min-w-8 min-h-8 flex items-center justify-center ${activeTestimonial === index ? 'bg-emerald-600 w-6' : 'bg-gray-300 dark:bg-gray-600 w-4 h-4'} transition-all`}
                     onClick={() => setActiveTestimonial(index)}
                   />
                 ))}

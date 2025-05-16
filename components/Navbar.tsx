@@ -17,13 +17,20 @@ export default function Navbar() {
   };
 
   return (
-    <nav dir="rtl" className="w-full bg-white dark:bg-gray-900 text-emerald-900 dark:text-white py-4 px-2 sm:px-6 flex flex-col sm:flex-row items-center justify-between shadow-md transition-colors duration-300 border-b border-accent">
-      <div className="flex items-center gap-2 mb-2 sm:mb-0">
+    <nav dir="rtl" className="w-full bg-white dark:bg-gray-900 text-emerald-900 dark:text-white py-4 px-2 sm:px-6 flex flex-col sm:flex-row items-center justify-between shadow-md transition-colors duration-300 border-b border-accent">      <div className="flex items-center gap-2 mb-2 sm:mb-0">
         <div className="flex items-center">
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-blue-600 inline-block text-transparent bg-clip-text">
-            <span>كُتّاب <span className="text-emerald-700 dark:text-emerald-400 opacity-30 mx-1">|</span> <span dir="ltr" className="inline-block">iKuttab</span></span>
-          </h1>
-
+          <Link href="/" className="flex items-center gap-2">
+            <Image 
+              src="/images/ikuttab-logo.png" 
+              alt="كُتّاب Logo" 
+              width={40} 
+              height={40} 
+              className="rounded-md"
+            />
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-blue-600 inline-block text-transparent bg-clip-text">
+              <span>كُتّاب <span className="text-emerald-700 dark:text-emerald-400 opacity-30 mx-1">|</span> <span dir="ltr" className="inline-block">iKuttab</span></span>
+            </h1>
+          </Link>
         </div>
       </div>
 
@@ -31,6 +38,8 @@ export default function Navbar() {
       <button
         className="sm:hidden absolute top-4 left-4"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
+        aria-label={isMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
+        aria-expanded={isMenuOpen}
       >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           {isMenuOpen ? (

@@ -55,8 +55,17 @@ export function AuthCard({
 function AuthFormLoading() {
   return (
     <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700">
+      <div className="flex flex-col items-center justify-center mb-6">
+        <img
+          src="/images/ikuttab-logo.png"
+          alt="كُتّاب Logo"
+          width={64}
+          height={64}
+          className="rounded-md mb-4"
+        />
+        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+      </div>
       <div className="animate-pulse">
-        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto mb-6"></div>
         <div className="space-y-5">
           <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-2"></div>
           <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>

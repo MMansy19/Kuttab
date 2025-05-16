@@ -50,6 +50,31 @@ export const defaultMetadata: Metadata = {
     default: defaultTitle,
     template: '%s | كُتّاب', // Used for individual page titles
   },
+  // Icons configuration
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '64x64' },
+      { url: '/favicon-16x16.png', sizes: '16x16' },
+      { url: '/favicon-32x32.png', sizes: '32x32' },
+      { url: '/favicon-48x48.png', sizes: '48x48' }
+    ],
+    apple: [
+      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' }
+    ],
+    other: [
+      {
+        url: '/icon-192x192.png',
+        sizes: '192x192',
+        type: 'image/png',
+        rel: 'mask-icon',
+      },
+      {
+        url: '/icon-512x512.png',
+        sizes: '512x512',
+        type: 'image/png',
+      }
+    ]
+  },
   description: defaultDescription,
   keywords: siteKeywords,
   authors: [

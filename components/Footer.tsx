@@ -3,6 +3,7 @@
 import { FaFacebook, FaTwitter, FaInstagram, FaYoutube, FaWhatsapp, FaBook, FaGraduationCap, FaUserFriends } from 'react-icons/fa';
 import Link from 'next/link';
 import IconWrapper from './ui/IconWrapper';
+import Image from 'next/image';
 
 // Footer links configuration
 const footerLinks = [
@@ -50,17 +51,26 @@ export default function Footer() {
   return (
     <footer className="w-full bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-950 text-emerald-900 dark:text-white border-t border-accent py-12 mt-16 transition-colors duration-300">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between mb-12">
-          {/* Logo and About section */}
+        <div className="flex flex-col md:flex-row justify-between mb-12">          {/* Logo and About section */}
           <div className="mb-8 md:mb-0 md:w-1/3">
             <div className="flex items-center mb-4">
-              <div>
-                <h3 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 inline-block text-transparent bg-clip-text">
-                  <span>كُتّاب <span className="text-emerald-700 dark:text-emerald-400 opacity-30 mx-1">|</span> <span dir="ltr" className="inline-block">iKuttab</span></span>
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300">منصة تعليمية عربية</p>
+              <div className="flex items-center gap-2">
+                <Image 
+                  src="/images/ikuttab-logo.png"
+                  alt="كُتّاب Logo" 
+                  width={40} 
+                  height={40}
+                  className="rounded-md mr-2"
+                />
+                <div>
+                  <h3 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 inline-block text-transparent bg-clip-text">
+                    <span>كُتّاب <span className="text-emerald-700 dark:text-emerald-400 opacity-30 mx-1">|</span> <span dir="ltr" className="inline-block">iKuttab</span></span>
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">منصة تعليمية عربية</p>
+                </div>
               </div>
             </div>
+            
             <p className="text-gray-600 dark:text-gray-400 mb-4 max-w-md">
               منصة كُتّاب التعليمية هي منصة متخصصة في تعليم القرآن الكريم والعلوم الإسلامية، تهدف إلى توفير تعليم نوعي بأيدي نخبة من المعلمين المتخصصين
             </p>

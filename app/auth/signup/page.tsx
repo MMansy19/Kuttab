@@ -17,7 +17,7 @@ function SignupPageContent() {
   const callbackUrl = searchParams?.get("callbackUrl") || "/dashboard";
   
   // Safe access to session data
-  const { session, status, isAuthenticated } = useAuth();
+  const { status, isAuthenticated } = useAuth();
   
   useEffect(() => {
     // Get error message from URL if it exists
@@ -50,6 +50,7 @@ function SignupPageContent() {
     </AuthCard>
   );
 }
+
 
 export default function SignupPage() {
   return (

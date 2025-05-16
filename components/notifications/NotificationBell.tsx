@@ -52,9 +52,9 @@ const NotificationItem = memo(({
         
         <div className="shrink-0">
           {notification.isRead ? (
-            <span className="inline-block w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600"></span>
+            <span className="inline-block w-4 h-4 rounded-full bg-gray-300 dark:bg-gray-600"></span>
           ) : (
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="inline-block w-4 h-4 rounded-full bg-emerald-500 animate-pulse"></span>
           )}
         </div>
       </div>
