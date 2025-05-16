@@ -3,28 +3,14 @@
   "version": "1.0.0",
   "description": "- تمكين المعلمين المستقلين من الوصول لطلاب محتاجين لتعلم القرآن.",
   "main": "index.js",  
-  "scripts": {
-    "dev": "next dev",
-    "clean": "node ./scripts/build/cleanup.js",
-    "clean:build": "node ./scripts/build/cleanup.js build",
-    "clean:deep": "node ./scripts/build/cleanup.js deep",
-    "install:safe": "npm install --ignore-scripts && npx prisma generate --no-engine",
-    "prisma:generate": "prisma generate",
-    "db:setup": "node ./scripts/setup-production-db.js",
-    "prisma:fix": "node ./scripts/build/prisma-fix.js",
-    "auth:fix": "node ./scripts/build/fix-auth-build.js --build",
-    "prepare:vercel": "node ./scripts/prepare-vercel.js",
-    "build": "npx prisma generate && node scripts/build/prisma-fix.js && node scripts/build/fix-auth-build.js --build && node scripts/pre-build-fix.js && next build",
-    "build:vercel": "node scripts/ensure-build-deps.js && npx prisma generate && node scripts/build-info.js && node scripts/prisma-vercel.js && node scripts/prepare-vercel.js && node scripts/build/prisma-fix.js && node scripts/build/fix-auth-build.js --build && node scripts/pre-build-fix.js && next build && node scripts/fix-route-types.js && node scripts/build/vercel-build.js",
-    "start": "next start",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "db:seed": "prisma db seed",
-    "vercel:validate": "node ./scripts/validate-vercel-config.js",
-    "validate:deps": "node ./scripts/validate-build-deps.js",
-    "predeploy": "npm run vercel:validate && npm run validate:deps",
-    "fix:types": "node scripts/fix-route-types.js",
-    "postbuild": "node scripts/fix-route-types.js"
-  },
+ "scripts": {
+  "dev": "next dev",
+  "build": "prisma generate && next build",
+  "build:vercel": "prisma generate && next build",
+  "start": "next start",
+  "postinstall": "prisma generate",
+  "prisma:generate": "prisma generate"
+},
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   },

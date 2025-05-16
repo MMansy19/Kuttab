@@ -2,11 +2,16 @@
   "version": 2,
   "buildCommand": "npm run build:vercel",
   "devCommand": "npm run dev",
-  "installCommand": "npm install && npm install --save-dev @types/node tailwindcss glob && npx prisma generate",
+  "installCommand": "npm install && npm install --save-dev @types/node && npx prisma generate",
   "framework": "nextjs",
   "outputDirectory": ".next",
   "env": {
     "PRISMA_ENGINES_CHECKSUM_IGNORE_MISSING": "1",
     "PRISMA_GENERATE_DATAPROXY": "false"
+  },
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    }
   }
 }
