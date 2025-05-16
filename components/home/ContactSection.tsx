@@ -8,7 +8,7 @@ const ContactSection = () => {
   return (
     <section id="contact" className="py-20 bg-gray-50 dark:bg-gray-800 relative">
       <OptimizedPatternBackground 
-        opacity={0.1} 
+        opacity={0.05} 
         className="absolute inset-0 z-0" 
         aria-hidden="true"
       />

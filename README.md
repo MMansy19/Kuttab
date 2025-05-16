@@ -29,6 +29,7 @@
 - 📅 **Availability calendar** for easy session booking
 - 🔒 **Role-based authentication** for users, teachers, and administrators
 - 📱 **Responsive design** that works on mobile and desktop
+- ⚡ **Optimized performance** with code splitting and image optimization
 - 🌓 **Dark/light mode toggle** for comfortable viewing
 - 📊 **Admin dashboard** for platform management
 - 🔗 **Direct communication** between students and teachers
@@ -104,7 +105,7 @@ To access the platform in frontend-only mode, use one of these demo accounts:
 ```
 app/                    # Next.js App Router pages
 ├── layout.tsx          # Global layout with theme provider
-├── page.tsx            # Homepage
+├── page.tsx            # Homepage with dynamic imports
 ├── auth/               # Authentication pages
 ├── teachers/           # Teacher discovery and profiles
 ├── book/               # Booking flow
@@ -114,6 +115,7 @@ components/             # Reusable React components
 ├── AuthForm.tsx        # Authentication component
 ├── Navbar.tsx          # Navigation bar
 ├── TeacherCard.tsx     # Teacher listing card
+├── home/               # Modular home page components
 └── ui/                 # UI components
 
 lib/                    # Utility libraries
@@ -126,6 +128,9 @@ prisma/                 # Database schema and migrations
 
 styles/                 # Global styles
 └── globals.css         # Tailwind and global CSS
+
+scripts/                # Utility scripts
+└── convert-to-webp.js  # Image optimization script
 ```
 
 ## 🌓 Theme Support
@@ -146,6 +151,23 @@ Contributions to كُتّاب are welcome! Areas where help is particularly appr
 - Security enhancements
 
 Please feel free to submit issues or pull requests.
+
+## ⚡ Performance Optimizations
+
+This project implements several performance optimizations:
+
+- **Code Splitting**: The main page is split into modular components that are dynamically imported
+- **Selective Hydration**: Components are wrapped in Suspense boundaries for progressive loading
+- **Image Optimization**: All images are served in WebP format for faster loading
+- **Lazy Loading**: Non-critical components load only when needed
+- **Skeleton Loading**: Placeholder UI while content is loading
+- **Intersection Observer**: Elements animate only when they enter the viewport
+
+To run image optimization for new assets:
+
+```bash
+node scripts/convert-to-webp.js
+```
 
 ## 📄 License
 

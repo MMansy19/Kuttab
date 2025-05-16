@@ -15,7 +15,7 @@ interface OptimizedPatternBackgroundProps {
  * 3. Switches to the full-size pattern once loaded
  */
 export default function OptimizedPatternBackground({ 
-  opacity = 0.1, 
+  opacity = 0, 
   className = ''
 }: OptimizedPatternBackgroundProps) {
   const [isFullSizeLoaded, setIsFullSizeLoaded] = useState(false);
@@ -49,7 +49,7 @@ export default function OptimizedPatternBackground({
   return (
     <div 
       className={`absolute inset-0 pattern-bg-hq ${isFullSizeLoaded ? 'loaded' : ''} ${className}`}
-      style={{ opacity }}
+      style={{ opacity: isFullSizeLoaded ? opacity : 0 }}
       aria-hidden="true"
     />
   );

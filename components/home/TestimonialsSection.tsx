@@ -33,7 +33,6 @@ const TestimonialsSection = () => {
   return (
     <section className="py-20 bg-white dark:bg-gray-900 relative overflow-hidden">
       <OptimizedPatternBackground 
-        opacity={0.1} 
         className="absolute inset-0 z-0" 
         aria-hidden="true"
       />

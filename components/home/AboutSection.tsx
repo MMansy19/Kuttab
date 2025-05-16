@@ -9,7 +9,7 @@ const AboutSection = () => {
   return (
     <section id="about" className="py-20 bg-gray-50 dark:bg-gray-800 overflow-hidden relative">
       <OptimizedPatternBackground 
-        opacity={0.1} 
+        opacity={0.05} 
         className="absolute inset-0 z-0" 
         aria-hidden="true"
       />

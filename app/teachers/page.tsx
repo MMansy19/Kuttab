@@ -378,7 +378,7 @@ export default function TeachersPage() {
   return (
     <>      {/* Hero Banner Section */}
       <div className="relative overflow-hidden">
-        <OptimizedPatternBackground opacity={0.1} />
+        <OptimizedPatternBackground />
         <div className="bg-gradient-to-r from-emerald-800 via-emerald-700 to-blue-800 text-white py-16 px-4 relative z-10">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col lg:flex-row items-center justify-between">

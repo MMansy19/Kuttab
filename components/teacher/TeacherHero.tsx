@@ -14,7 +14,7 @@ interface TeacherHeroProps {
 const TeacherHero: React.FC<TeacherHeroProps> = memo(({ teacher }) => {
   return (
     <div className="relative bg-gradient-to-r from-emerald-800 to-blue-800 text-white">
-      <OptimizedPatternBackground opacity={0.1} />
+      <OptimizedPatternBackground  />
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="mb-8 md:mb-0 text-center md:text-right">

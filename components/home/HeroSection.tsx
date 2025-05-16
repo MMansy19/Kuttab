@@ -9,7 +9,7 @@ import CounterStat from './CounterStat';
 const HeroSection = () => {
   return (
     <section className="relative flex items-center md:min-h-[80vh]"> 
-      <OptimizedPatternBackground opacity={0.1} />
+      <OptimizedPatternBackground />
       <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/70 via-blue-900/70 to-gray-900/70"></div>
       
       <div className="container mx-auto px-4 py-16 z-10 relative">

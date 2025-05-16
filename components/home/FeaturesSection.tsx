@@ -56,7 +56,6 @@ const FeaturesSection = () => {
         {/* CTA Banner */}
         <div className="mt-16 relative overflow-hidden rounded-2xl">
           <OptimizedPatternBackground 
-            opacity={0.1} 
             className="absolute inset-0 z-0" 
             aria-hidden="true"
           />
