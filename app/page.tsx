@@ -280,50 +280,33 @@ export default function Home() {
       <section id="about" className="py-20 bg-gray-50 dark:bg-gray-800 overflow-hidden relative">
         <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-5 bg-repeat"></div>
         <div className="container mx-auto px-4 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            <div className="lg:w-1/2">
+          <div className="flex flex-col lg:flex-row items-center gap-12">            <div className="lg:w-1/2">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-blue-500 blur-2xl opacity-20 -z-10 transform rotate-3"></div>
-                <div className="grid grid-cols-2 gap-4 relative z-10">
-                  <div className="space-y-4">
-                    <div className="rounded-lg overflow-hidden shadow-xl h-40 transform translate-y-8 border-4 border-white dark:border-gray-700">
-                      <Image
-                        src="/images/learn-quran.jpg"
-                        alt="تعليم القرآن"
-                        width={300}
-                        height={300}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="rounded-lg overflow-hidden shadow-xl h-64 border-4 border-white dark:border-gray-700">
-                      <Image
-                        src="/images/learn-online.png"
-                        alt="جلسات تعليمية"
-                        width={300}
-                        height={300}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                <div className="grid gap-6 relative z-10">
+                  <div className="rounded-lg overflow-hidden shadow-xl border-4 border-white dark:border-gray-700">
+                    <Image
+                      src="/images/learn-quran.jpg"
+                      alt="تعليم القرآن"
+                      width={600}
+                      height={400}
+                      quality={80}
+                      priority={true}
+                      fetchPriority="high"
+                      className="w-full h-full object-cover"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
+                    />
                   </div>
-                  <div className="space-y-4">
-                    <div className="rounded-lg overflow-hidden shadow-xl h-64 border-4 border-white dark:border-gray-700">
-                      <Image
-                        src="/images/kid-learns-online.png"
-                        alt="معلمون"
-                        width={300}
-                        height={300}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="rounded-lg overflow-hidden shadow-xl h-40 transform translate-y-0 border-4 border-white dark:border-gray-700">
-                      <Image
-                        src="/images/man-reading.avif"
-                        alt="التعلم عن بعد"
-                        width={300}
-                        height={300}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                  <div className="rounded-lg overflow-hidden shadow-xl border-4 border-white dark:border-gray-700">
+                    <Image
+                      src="/images/man-reading.avif"
+                      alt="التعلم عن بعد"
+                      width={600}
+                      height={400}
+                      quality={80}
+                      className="w-full h-full object-cover"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
+                    />
                   </div>
                 </div>
               </div>
