@@ -205,10 +205,10 @@ export default function Home() {
                     width={600} 
                     height={600} 
                     className="w-full h-auto"
-                    quality={80}
+                    quality={75}
                     priority={true}
-                    fetchPriority="high"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
+                    loading="eager" // Explicit eager loading
+                    placeholder="blur" // Add if you can provide a blurDataURL
                   />
                 </div>
                 
@@ -267,7 +267,11 @@ export default function Home() {
           </div>
             {/* CTA Banner */}
           <div className="mt-16 relative overflow-hidden rounded-2xl">
-            <OptimizedPatternBackground opacity={0.05} />
+            <OptimizedPatternBackground 
+              opacity={0.1} 
+              className="absolute inset-0 z-0" 
+              aria-hidden="true"
+            />
             <div className="bg-gradient-to-r from-emerald-600 to-blue-700 p-8 md:p-12 text-center relative z-10">
               <h3 className="text-2xl md:text-3xl font-bold mb-4 text-white">ابدأ رحلتك التعليمية اليوم</h3>
               <p className="text-lg text-emerald-50 mb-8 max-w-2xl mx-auto">
@@ -286,7 +290,11 @@ export default function Home() {
       </section>
         {/* About Us Section */}
       <section id="about" className="py-20 bg-gray-50 dark:bg-gray-800 overflow-hidden relative">
-        <OptimizedPatternBackground opacity={0.05} />
+        <OptimizedPatternBackground 
+              opacity={0.1} 
+              className="absolute inset-0 z-0" 
+              aria-hidden="true"
+            />
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="lg:w-1/2">
@@ -303,9 +311,9 @@ export default function Home() {
                         className="w-full h-full object-cover"
                         quality={75}
                         priority={true}
-                        fetchPriority="high"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px"
-                      />
+                        loading="eager"
+                        placeholder="blur"
+                          />
                     </div>
                   <div className="rounded-lg overflow-hidden shadow-xl h-64 border-4 border-white dark:border-gray-700">                    
                     <Image
@@ -316,8 +324,8 @@ export default function Home() {
                       className="w-full h-full object-cover"
                       quality={80}
                       priority={true}
-                      fetchPriority="high"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px"
+                      loading="eager"
+                      placeholder="blur"
                       />
                     </div>
                   </div>
@@ -398,7 +406,11 @@ export default function Home() {
       </section>
         {/* Testimonials Section */}
       <section className="py-20 bg-white dark:bg-gray-900 relative overflow-hidden">
-        <OptimizedPatternBackground opacity={0.05} />
+        <OptimizedPatternBackground 
+              opacity={0.1} 
+              className="absolute inset-0 z-0" 
+              aria-hidden="true"
+            />
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <div className="inline-block bg-emerald-100 dark:bg-emerald-900/30 px-4 py-1 rounded-full text-emerald-700 dark:text-emerald-500 text-sm font-medium mb-4">
@@ -481,7 +493,11 @@ export default function Home() {
       </section>
         {/* Contact Section */}
       <section id="contact" className="py-20 bg-gray-50 dark:bg-gray-800 relative">
-        <OptimizedPatternBackground opacity={0.05} />
+        <OptimizedPatternBackground 
+              opacity={0.1} 
+              className="absolute inset-0 z-0" 
+              aria-hidden="true"
+            />
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <div className="inline-block bg-emerald-100 dark:bg-emerald-900/30 px-4 py-1 rounded-full text-emerald-700 dark:text-emerald-500 text-sm font-medium mb-4">
