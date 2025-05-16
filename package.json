@@ -2,9 +2,11 @@
   "name": "kottab",
   "version": "1.0.0",
   "description": "- تمكين المعلمين المستقلين من الوصول لطلاب محتاجين لتعلم القرآن.",
-  "main": "index.js",  "scripts": {
+  "main": "index.js",  
+  "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && next build && next-postbuild",
+    "postbuild": "node scripts/optimize-images.js",  
     "build:vercel": "prisma generate && next build",
     "start": "next start",
     "postinstall": "prisma generate",

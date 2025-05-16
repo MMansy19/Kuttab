@@ -52,18 +52,24 @@ function fixAuthBuild() {
 }
 
 const nextConfig = {
-  // Core configurations
-  serverExternalPackages: ['@prisma/client', 'mongoose'],
-  poweredByHeader: false,
+  // Core optimizations
   reactStrictMode: true,
-    // Note: swcMinify is now enabled by default in Next.js 13+
-  // and has been removed from the configuration options
-  
-  // Security headers for SEO and protection
+  compress: true,
+  poweredByHeader: false,
+
+  // Image optimization
+  images: {
+    domains: [],
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 1080, 1200, 1920],
+    imageSizes: [16, 32, 64, 96, 128, 256],
+    minimumCacheTTL: 86400, // 1 day
+  },
+
+  // Security headers
   async headers() {
     return [
       {
-        // Apply these headers to all routes
         source: '/(.*)',
         headers: [
           {
@@ -124,7 +130,7 @@ const nextConfig = {
       },
     ];
   },
-  
+
   // Locale configuration - removed as it's not supported in App Router
   // Use the app/[locale] directory structure instead
   // See: https://nextjs.org/docs/app/building-your-application/routing/internationalization  // Image optimization
@@ -169,6 +175,9 @@ const nextConfig = {
   },
   // Experimental features
   experimental: {
+    modern: true,
+    optimizePackageImports: ['react-icons'],
+    optimizeCss: true,
     serverActions: {
       bodySizeLimit: '2mb',
     },
@@ -183,7 +192,7 @@ const nextConfig = {
       exclude: ['error', 'warn'],
     },
   } : {},
-  
+
   // Configure Browserslist to target modern browsers only
   browserslist: [
     // Target browsers that support ES6 modules natively
@@ -194,6 +203,24 @@ const nextConfig = {
     'not IE 11',
     'not op_mini all'
   ],
+  
+  // Webpack optimizations
+  webpack: (config, { isServer }) => {
+    // Split react-icons into separate chunks
+    config.optimization.splitChunks = {
+      ...config.optimization.splitChunks,
+      cacheGroups: {
+        reactIcons: {
+          test: /[\\/]node_modules[\\/]@react-icons[\\/]/,
+          name: 'react-icons',
+          chunks: 'all',
+          priority: 20,
+        },
+      },
+    };
+
+    return config;
+  },
 };
 
 module.exports = nextConfig;
