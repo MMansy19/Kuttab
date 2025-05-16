@@ -145,7 +145,7 @@ export default function Home() {
     return (
     <main className="overflow-hidden">
       {/* Hero Section with Islamic Pattern Overlay */}      
-      <section className="relative flex items-center">
+      <section className="relative flex items-center md:min-h-[80vh]"> 
         <OptimizedPatternBackground opacity={0.1} />
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/70 via-blue-900/70 to-gray-900/70"></div>
         
