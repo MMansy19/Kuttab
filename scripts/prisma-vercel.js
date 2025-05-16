@@ -20,10 +20,9 @@ try {
   console.log('✅ Prisma Client generated successfully');
 } catch (error) {
   console.error('⚠️ First attempt failed, trying alternative method:', error.message);
-  
-  try {
+    try {
     // Try direct import path
-    execSync('npx prisma@6.7.0 generate', { stdio: 'inherit' });
+    execSync('npx prisma@6.6.0 generate', { stdio: 'inherit' });
     console.log('✅ Prisma Client generated successfully with specific version');
   } catch (secondError) {
     console.error('❌ Failed to generate Prisma Client:', secondError.message);
