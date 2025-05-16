@@ -3,16 +3,11 @@ import type { ReactNode } from 'react';
 import ToastContainer from '../components/ui/Toast';
 import { Metadata, Viewport } from 'next';
 import { defaultMetadata, defaultViewport } from '@/lib/metadata';
-import dynamic from 'next/dynamic';
 import LoadingScreen from '@/components/LoadingScreen';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { AuthProvider } from '@/features/auth/providers/AuthProvider';
-
-// Dynamically load heavy components
-const OptimizedScripts = dynamic(() => import('../components/performance/OptimizedScripts'), {
-  ssr: false
-});
+import ClientOptimizedScripts from '@/components/performance/ClientOptimizedScripts';
 
 export const metadata: Metadata = defaultMetadata;
 export const viewport: Viewport = defaultViewport;
@@ -73,10 +68,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <AuthProvider>
           <LoadingScreen />
           <Navbar />
-          <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
-          <Footer />
+          <main className="flex-1 container mx-auto px-4 py-6">{children}</main>          <Footer />
           <ToastContainer />
-          <OptimizedScripts />
+          <ClientOptimizedScripts />
         </AuthProvider>
       </body>
     </html>

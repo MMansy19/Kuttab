@@ -25,11 +25,10 @@ yarn-error.log*
 # Local env files
 .env
 .env.local
+.env.*.local
+.env.development
+.env.test
 .env.production
-.env.neon
-.env.development.local
-.env.test.local
-.env.production.local
 
 # Vercel
 .vercel
@@ -37,13 +36,27 @@ yarn-error.log*
 # Database
 *.db
 *.db-journal
-prisma/dev.db
-package-lock.json
+/prisma/dev.db
 
-# .md files
+# Build files
+package-lock.json
+tsconfig.tsbuildinfo
+
+# Documentation files
 NEON-DEPLOYMENT.md
+OPTIMIZATION-PLAN.md
 REFACTOR-GUIDE.md
 Tasks.md
 app-structure.txt
 ikuttab-linkedin-profile.md
 ikuttab-logo-prompt.md
+
+# System files
+*.log
+*.tmp
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
