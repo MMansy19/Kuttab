@@ -11,14 +11,14 @@ const path = require('path');
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = process.env.NODE_ENV === 'production';
 const isVercel = process.env.VERCEL === '1';
-const isFrontendOnly = process.env.NEXT_PUBLIC_FRONTEND_ONLY === 'true' || 
+const isFrontendOnly = process.env.NEXT_PUBLIC_FRONTEND_ONLY === 'true' ||
   (isProd && (!process.env.DATABASE_URL || process.env.DATABASE_URL === 'frontend-only'));
 
 // Function to patch generated route type files
 function fixRouteTypes() {
   try {
     console.log('🔧 Fixing route handler types...');
-    
+
     // Only run if the types directory exists
     if (fs.existsSync(path.join(process.cwd(), '.next', 'types'))) {
       // Check if our fix script exists
@@ -38,7 +38,7 @@ function fixRouteTypes() {
 function fixAuthBuild() {
   try {
     console.log('🔧 Applying auth build fixes...');
-    
+
     // Check if our auth fix script exists
     if (fs.existsSync(path.join(process.cwd(), 'scripts', 'build', 'fix-auth-build.js'))) {
       console.log('Running auth fix script...');
@@ -52,25 +52,18 @@ function fixAuthBuild() {
 }
 
 const nextConfig = {
-  // Core optimizations
+  // Core configurations
   serverExternalPackages: ['@prisma/client', 'mongoose'],
-  reactStrictMode: true,
-  compress: true,
   poweredByHeader: false,
+  reactStrictMode: true,
+  // Note: swcMinify is now enabled by default in Next.js 13+
+  // and has been removed from the configuration options
 
-  // Image optimization
-  images: {
-    domains: [],
-    formats: ['image/avif', 'image/webp'],
-    deviceSizes: [640, 750, 1080, 1200, 1920],
-    imageSizes: [16, 32, 64, 96, 128, 256],
-    minimumCacheTTL: 86400, // 1 day
-  },
-
-  // Security headers
+  // Security headers for SEO and protection
   async headers() {
     return [
       {
+        // Apply these headers to all routes
         source: '/(.*)',
         headers: [
           {
@@ -134,22 +127,20 @@ const nextConfig = {
 
   // Locale configuration - removed as it's not supported in App Router
   // Use the app/[locale] directory structure instead
-  // See: https://nextjs.org/docs/app/building-your-application/routing/internationalization  // Image optimization
+  // See: https://nextjs.org/docs/app/building-your-application/routing/internationalization
+  // Image optimization
   images: {
     domains: ['via.placeholder.com', 'placehold.co'],
     formats: ['image/avif', 'image/webp'], // Always use modern formats
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840], // Responsive image sizes
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], // Additional image sizes
     minimumCacheTTL: 60 * 60 * 24 * 7, // Cache images for 7 days
-    dangerouslyAllowSVG: true, // Allow SVG files (for logos, icons)
-    contentDispositionType: 'attachment', // For better caching
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;", // Add CSP for images
   },
-  
+
   // Performance optimizations
   // Note: poweredByHeader is already set above
   compress: true, // Enable compression
-  
+
   // Simplified webpack configuration
   webpack: (config, { isServer }) => {
     config.watchOptions = {
@@ -166,7 +157,7 @@ const nextConfig = {
         },
       });
     }
-    
+
     return config;
   },
   // Environment variables
@@ -176,8 +167,6 @@ const nextConfig = {
   },
   // Experimental features
   experimental: {
-    optimizePackageImports: ['react-icons'],
-    optimizeCss: true,
     serverActions: {
       bodySizeLimit: '2mb',
     },
@@ -186,30 +175,23 @@ const nextConfig = {
     optimizePackageImports: ['react-icons', 'lodash', 'date-fns'],
     // Add any additional experimental features here
   },
-    // Production-specific compiler options
+  // Production-specific compiler options
   compiler: isProd ? {
     removeConsole: {
       exclude: ['error', 'warn'],
     },
   } : {},
-  
-  // Webpack optimizations
-  webpack: (config) => {
-    // Split react-icons into separate chunks
-    config.optimization.splitChunks = {
-      ...config.optimization.splitChunks,
-      cacheGroups: {
-        reactIcons: {
-          test: /[\\/]node_modules[\\/]@react-icons[\\/]/,
-          name: 'react-icons',
-          chunks: 'all',
-          priority: 20,
-        },
-      },
-    };
 
-    return config;
-  },
+  // Configure Browserslist to target modern browsers only
+  browserslist: [
+    // Target browsers that support ES6 modules natively
+    'last 2 Chrome versions',
+    'last 2 Firefox versions',
+    'last 2 Safari versions',
+    'last 2 Edge versions',
+    'not IE 11',
+    'not op_mini all'
+  ],
 };
 
 module.exports = nextConfig;
