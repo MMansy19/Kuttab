@@ -7,6 +7,7 @@ import teachersData from '../../data/teachers';
 import { FaFilter, FaSearch, FaSortAmountDown, FaStar, FaUserGraduate, FaQuran, FaTimes, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import OptimizedPatternBackground from '@/components/performance/OptimizedPatternBackground';
 
 // Islamic Education Subject Categories
 const subjectCategories = {
@@ -375,10 +376,9 @@ export default function TeachersPage() {
   const filterCount = Object.values(filter).filter(val => val !== 'all' && val !== 0).length + (sortOption ? 1 : 0);
 
   return (
-    <>
-      {/* Hero Banner Section */}
+    <>      {/* Hero Banner Section */}
       <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-10 bg-repeat"></div>
+        <OptimizedPatternBackground opacity={0.1} />
         <div className="bg-gradient-to-r from-emerald-800 via-emerald-700 to-blue-800 text-white py-16 px-4 relative z-10">
           <div className="max-w-6xl mx-auto">
             <div className="flex flex-col lg:flex-row items-center justify-between">

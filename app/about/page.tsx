@@ -1,10 +1,10 @@
 'use client';
 
 import React from "react";
-import { FaBookOpenReader } from "react-icons/fa6";
 import { FaMicrophone, FaUserGraduate, FaGlobe, FaBook, FaChalkboardTeacher, FaHandsHelping, FaUniversity, FaLightbulb } from "react-icons/fa";
 import { Section, SectionHeader } from "@/components/ui/Section";
 import { Card, CardContent } from "@/components/ui/Card";
+import Image from "next/image";
 
 // Service Card Component
 interface ServiceCardProps {
@@ -116,7 +116,8 @@ const GoalItem = ({ children }: { children: React.ReactNode }) => (
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900">      {/* Hero Section */}
+    <main className="min-h-screen bg-white dark:bg-gray-900">     
+     {/* Hero Section */}
       <Section
         background="gradient"
         spacing="large"
@@ -129,9 +130,16 @@ export default function AboutPage() {
           </p>
           <div className="flex justify-center">
             <div className="flex items-center justify-center">
-              <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full bg-white/20 p-2 backdrop-blur-sm animate-pulse">
+              <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full bg-white/10 p-2 backdrop-blur-sm">
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <FaBookOpenReader className="w-16 h-16 md:w-20 md:h-20 text-white" />
+                  <Image
+                    src="/images/icon-192x192.png"
+                    alt="iKuttab Logo"
+                    width={80}
+                    height={80}
+                    priority
+                    className="w-16 h-16 md:w-20 md:h-20 object-contain"
+                  />
                 </div>
               </div>
             </div>

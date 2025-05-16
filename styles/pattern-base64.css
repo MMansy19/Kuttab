@@ -1,0 +1,20 @@
+/* Manual inline pattern for immediate loading */
+:root {
+  /* This is a tiny 30px version of the islamic-pattern.webp, compressed as base64 */
+  --pattern-bg: url('data:image/webp;base64,UklGRiQBAABXRUJQVlA4WAoAAAAQAAAADwAADwAAQUxQSEIAAAABHyAQIAQRHUCwbdtIttX27dsRe7Mze/9HxASQ/P+WETEBYPKZeKxzB4DkrAAAsBf/B2Cc/GmXA5CcAACLv/xfAFZQOCBSAAAA0AIAnQEqEAAQAAFAJiWkAAL13wAAQH5tHYXOBx2G4YuTjsMPUxJz8Tc6DTpCDn5rhz8y5R+zNGfJgAAA/vXKwyBGOSRbk3P98t0o7y8dPFZfvVeHZm5jnYbU67D+EEG7igI5wvd4o2IuSPPVtm/r5X0i0Y1ZxAhg0l6mOy0UdCsw4dyrL6GFwMYGGJyzHlOb6Xdmm8wgLF8Pjhg9sUkIKTl8w5l1vf9zvRhVvyqCmgSpvLQAAAA=');
+}
+
+/* CSS class for the pattern background */
+.pattern-bg {
+  background-image: var(--pattern-bg);
+  background-repeat: repeat;
+}
+
+/* Use the high-res version once loaded */
+.pattern-bg-hq {
+  background-image: var(--pattern-bg); /* Start with tiny version */
+}
+.pattern-bg-hq.loaded {
+  background-image: url('/images/islamic-pattern.webp'); /* Replace with high-res when loaded */
+  transition: background-image 0.3s ease-in-out;
+}

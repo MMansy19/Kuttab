@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+@import './pattern-base64.css';
 
 html {
   direction: rtl;
@@ -75,4 +76,18 @@ nav {
   font-family: 'Cairo', 'Tajawal', 'Noto Kufi Arabic', Arial, sans-serif;
 }
 
-/* Custom styles can be added below */
+/* Loading animation */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.loading-screen-exit {
+  animation: fadeOut 0.5s ease-out forwards;
+}

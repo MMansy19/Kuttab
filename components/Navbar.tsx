@@ -1,4 +1,5 @@
-"use client";
+'use client';
+
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,24 +9,44 @@ import { FaUser } from 'react-icons/fa';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  // Safe access to session with fallback for SSG/SSR
-  const session_result = useSession();
-  const { data: session, status } = session_result || { 
-    data: null, 
-    status: 'loading' 
-  };
+  const { data: session, status } = useSession();
+
+  // Loading state
+  if (status === 'loading') {
+    return (
+      <nav dir="rtl" className="w-full bg-white dark:bg-gray-900 text-emerald-900 dark:text-white py-4 px-2 sm:px-6 flex flex-col sm:flex-row items-center justify-between shadow-md transition-colors duration-300 border-b border-accent">
+        <div className="flex items-center gap-2 mb-2 sm:mb-0">
+          <div className="flex items-center ">
+            <Link href="/" className="flex items-center gap-2">
+              <Image
+                src="/images/icon-192x192.png"
+                alt="iKuttab Logo"
+                width={40}
+                height={40}
+                className="rounded-md animate-pulse"
+              />
+              <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-blue-600 inline-block text-transparent bg-clip-text">
+                <span>كُتّاب <span className="text-emerald-700 dark:text-emerald-400 opacity-30 mx-1">|</span> <span dir="ltr" className="inline-block">iKuttab</span></span>
+              </h1>
+            </Link>
+          </div>
+        </div>
+        <div className="h-10 w-40 bg-gray-200 dark:bg-gray-700 animate-pulse rounded"></div>
+      </nav>
+    );
+  }
 
   return (
-    <nav dir="rtl" className="w-full bg-white dark:bg-gray-900 text-emerald-900 dark:text-white py-4 px-2 sm:px-6 flex flex-col sm:flex-row items-center justify-between shadow-md transition-colors duration-300 border-b border-accent">      <div className="flex items-center gap-2 mb-2 sm:mb-0">
-        <div className="flex items-center">
+    <nav dir="rtl" className="w-full bg-white dark:bg-gray-900 text-emerald-900 dark:text-white py-4 px-2 sm:px-6 flex flex-col sm:flex-row items-center justify-between shadow-md transition-colors duration-300 border-b border-accent">
+      <div className="flex items-center gap-2 mb-2 sm:mb-0">
+        <div className="flex items-center ">
           <Link href="/" className="flex items-center gap-2">
             <Image 
-              src="/images/ikuttab-logo.png" 
+              src="/images/icon-192x192.png" 
               alt="كُتّاب Logo" 
               width={40} 
               height={40} 
-              className="rounded-md"
+              className="rounded-md animate-pulse"
             />
             <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-emerald-600 to-blue-600 inline-block text-transparent bg-clip-text">
               <span>كُتّاب <span className="text-emerald-700 dark:text-emerald-400 opacity-30 mx-1">|</span> <span dir="ltr" className="inline-block">iKuttab</span></span>

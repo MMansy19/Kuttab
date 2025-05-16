@@ -194,7 +194,7 @@ export const LoginForm = ({ callbackUrl = "/dashboard" }: LoginFormProps) => {
               value={formData.password}
               onChange={handleChange}
               disabled={isLoading}
-              dir="ltr"
+              dir="rtl"
             />
             <div className="absolute inset-y-0 left-0 flex items-center pl-3">
               <button

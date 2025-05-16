@@ -4,6 +4,7 @@ import React, { memo } from "react";
 import { FaStar } from "@/components/ui/Icons";
 import Image from "next/image";
 import { Teacher } from "@/types";
+import OptimizedPatternBackground from '@/components/performance/OptimizedPatternBackground';
 
 interface TeacherHeroProps {
   teacher: Teacher;
@@ -13,7 +14,7 @@ interface TeacherHeroProps {
 const TeacherHero: React.FC<TeacherHeroProps> = memo(({ teacher }) => {
   return (
     <div className="relative bg-gradient-to-r from-emerald-800 to-blue-800 text-white">
-      <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-10"></div>
+      <OptimizedPatternBackground opacity={0.1} />
       <div className="container mx-auto px-4 py-20 relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="mb-8 md:mb-0 text-center md:text-right">

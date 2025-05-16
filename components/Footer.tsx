@@ -56,7 +56,7 @@ export default function Footer() {
             <div className="flex items-center mb-4">
               <div className="flex items-center gap-2">
                 <Image 
-                  src="/images/ikuttab-logo.png"
+                  src="/images/icon-192x192.png"
                   alt="كُتّاب Logo" 
                   width={40} 
                   height={40}
