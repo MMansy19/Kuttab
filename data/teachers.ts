@@ -306,3 +306,10 @@ const teachersData: Teacher[] = [
 ];
 
 export default teachersData;
+
+/**
+ * Find a teacher by ID
+ */
+export function getTeacherById(id: string) {
+  return teachersData.find(teacher => teacher.id === id);
+}
