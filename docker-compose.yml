@@ -6,8 +6,10 @@ services:
     restart: always
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=Mahmoud_132003
-      - POSTGRES_DB=kottab_db
+      # - POSTGRES_PASSWORD=Mahmoud_132003
+      - POSTGRES_PASSWORD=npg_o5Qhkv3pFBuZ
+      # - POSTGRES_DB=kottab_db
+      - POSTGRES_DB=neondb
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:

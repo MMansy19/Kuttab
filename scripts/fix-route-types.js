@@ -5,7 +5,18 @@
 
 const fs = require('fs');
 const path = require('path');
-const { glob } = require('glob'); // Fix: import glob properly for v11
+
+// Handle different versions of glob
+let glob;
+try {
+  // Try to import glob using v11 syntax
+  const globModule = require('glob');
+  glob = globModule.glob || globModule;
+} catch (e) {
+  // Fallback if glob isn't available at all
+  console.error('Could not load glob module:', e.message);
+  process.exit(1);
+}
 
 /**
  * Find all generated route type files
@@ -13,9 +24,20 @@ const { glob } = require('glob'); // Fix: import glob properly for v11
  */
 async function findGeneratedRouteTypes() {
   try {
-    // Using glob as a promise-based function for v11
-    const files = await glob('.next/types/app/**/route.ts');
-    return files;
+    // Handle both glob v11+ promise-based API and older callback-based API
+    if (typeof glob.then === 'function' || typeof glob === 'function') {
+      // New promise-based glob v11+
+      const files = await glob('.next/types/app/**/route.ts');
+      return files;
+    } else {
+      // Older callback-based glob
+      return new Promise((resolve, reject) => {
+        glob('.next/types/app/**/route.ts', (err, files) => {
+          if (err) reject(err);
+          else resolve(files);
+        });
+      });
+    }
   } catch (err) {
     console.error('Error finding route types:', err);
     throw err;
