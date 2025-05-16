@@ -11,12 +11,12 @@ require('./fix-all-api-route-handlers');
 // 2. Clean generated types
 const fs = require('fs');
 const path = require('path');
-const rimraf = require('rimraf');
+const { rimraf } = require('rimraf');
 
 const typesDir = path.join(process.cwd(), '.next', 'types');
 if (fs.existsSync(typesDir)) {
   console.log(`Cleaning types directory: ${typesDir}`);
-  rimraf.sync(typesDir);
+  rimraf(typesDir);
 }
 
 // 3. Apply specific fixes to problematic files
