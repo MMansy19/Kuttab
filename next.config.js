@@ -175,23 +175,14 @@ const nextConfig = {
     optimizePackageImports: ['react-icons', 'lodash', 'date-fns'],
     // Add any additional experimental features here
   },
-    // Production-specific compiler options
+  // Production-specific compiler options
   compiler: isProd ? {
     removeConsole: {
       exclude: ['error', 'warn'],
     },
   } : {},
   
-  // Configure Browserslist to target modern browsers only
-  browserslist: [
-    // Target browsers that support ES6 modules natively
-    'last 2 Chrome versions',
-    'last 2 Firefox versions',
-    'last 2 Safari versions',
-    'last 2 Edge versions',
-    'not IE 11',
-    'not op_mini all'
-  ],
+  // Browserslist should be defined in package.json or .browserslistrc, not here
 };
 
 module.exports = nextConfig;
