@@ -145,7 +145,7 @@ export default function Home() {
     return (
     <main className="overflow-hidden">
       {/* Hero Section with Islamic Pattern Overlay */}      
-      <section className="relative min-h-[90vh] flex items-center">
+      <section className="relative flex items-center">
         <OptimizedPatternBackground opacity={0.1} />
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-900/70 via-blue-900/70 to-gray-900/70"></div>
         
@@ -294,7 +294,8 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-blue-500 blur-2xl opacity-20 -z-10 transform rotate-3"></div>
                 <div className="flex flex-col justify-center items-center relative z-10">
                   <div className="space-y-4">
-                    <div className="sm:block hidden rounded-lg overflow-hidden shadow-xl h-64 border-4 border-white dark:border-gray-700">                      <Image
+                    <div className=" rounded-lg overflow-hidden shadow-xl h-64 border-4 border-white dark:border-gray-700">                      
+                      <Image
                         src="/images/kid-learns-online.webp"
                         alt="طفل يتعلم القرآن عبر الإنترنت"
                         width={300}
@@ -306,7 +307,8 @@ export default function Home() {
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px"
                       />
                     </div>
-                  <div className="rounded-lg overflow-hidden shadow-xl h-64 border-4 border-white dark:border-gray-700">                    <Image
+                  <div className="rounded-lg overflow-hidden shadow-xl h-64 border-4 border-white dark:border-gray-700">                    
+                    <Image
                       src="/images/learn-online.webp"
                       alt="جلسات تعليمية عبر الإنترنت"
                       width={300}
