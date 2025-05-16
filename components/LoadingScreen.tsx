@@ -9,7 +9,7 @@ export default function LoadingScreen() {
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsVisible(false);
-        }, 1000);
+        }, );
 
         return () => clearTimeout(timer);
     }, []);

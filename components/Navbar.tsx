@@ -31,8 +31,20 @@ export default function Navbar() {
             </Link>
           </div>
         </div>
-        <div className="h-10 w-40 bg-gray-200 dark:bg-gray-700 animate-pulse rounded"></div>
-      </nav>
+        {/* Navigation Links */}
+        <ul className={`flex flex-col sm:flex-row gap-2 sm:gap-4 text-lg font-bold w-full sm:w-auto text-center ${isMenuOpen ? 'block' : 'hidden'} sm:flex`}>
+          <li><Link href="/" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">الرئيسية</Link></li>
+          <li><Link href="/about" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">عن المنصة</Link></li>
+          <li><Link href="/teachers" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">المعلمون</Link></li>
+          <li><Link href="/donate" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">تبرع</Link></li>
+          <li><Link href="/contact" className="hover:text-emerald-700 dark:hover:text-emerald-400 transition">تواصل</Link></li>
+        </ul>
+
+        <div className={`flex items-center gap-2 mt-2 sm:mt-0 ${isMenuOpen ? 'block' : 'hidden'} sm:flex`}>
+        <Link href="/auth/login" className="px-3 py-1 rounded bg-emerald-800 hover:bg-emerald-900 dark:hover:bg-emerald-700 transition text-white font-bold">دخول</Link>
+          <Link href="/auth/signup" className="px-3 py-1 rounded bg-emerald-200 dark:bg-emerald-700 hover:bg-emerald-300 dark:hover:bg-emerald-800 transition text-emerald-900 dark:text-white font-bold">حساب جديد</Link>
+        </div>
+        </nav>
     );
   }
 

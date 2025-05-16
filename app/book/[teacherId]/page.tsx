@@ -79,7 +79,6 @@ const availabilityData = [
 export default function BookTeacherPage() {
   const params = useParams();
   const teacherId = params?.teacherId as string;
-  const [isLoading, setIsLoading] = useState(true);
   const [teacher, setTeacher] = useState<Teacher | null>(null);
   const [availabilitySlots, setAvailabilitySlots] = useState<SlotType[]>([]);
 
@@ -95,12 +94,7 @@ export default function BookTeacherPage() {
       setAvailabilitySlots(generatedSlots);
     }
 
-    // Simulate data loading
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
     
-    return () => clearTimeout(timer);
   }, [teacherId]);
 
   // Generate availability slots for the next 4 weeks based on teacher's weekly schedule
@@ -154,24 +148,11 @@ export default function BookTeacherPage() {
     return slots;
   };
 
-  if (!teacher && !isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-950 py-8 flex items-center justify-center">
-        <div className="text-white text-center">
-          <h2 className="text-2xl font-bold mb-4">المعلم غير موجود</h2>
-          <p>عذراً، لم يتم العثور على المعلم المطلوب.</p>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
-    <div className="min-h-screen bg-gray-950 py-8">
-      {isLoading ? (
-        <div className="flex items-center justify-center h-64">
-          <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      ) : teacher && (
+    <div className="min-h-screen  py-4">
+       {teacher && (
         <TeacherBooking teacher={teacher} availabilitySlots={availabilitySlots} />
       )}
     </div>
