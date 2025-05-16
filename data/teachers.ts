@@ -317,4 +317,6 @@ export function getFeaturedTeachers() {
   return teachersData.filter(teacher => teacher.rating >= 4.5);
 }
 
+export const teachers = teachersData;
+
 export default teachersData;
