@@ -5,8 +5,7 @@
   "main": "index.js",  
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build && next-postbuild",
-    "postbuild": "node scripts/optimize-images.js",  
+    "build": "prisma generate && next build",
     "build:vercel": "prisma generate && next build",
     "start": "next start",
     "postinstall": "prisma generate",
