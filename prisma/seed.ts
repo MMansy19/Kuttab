@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
-const { prisma: db } = require('../lib/prisma');
+const { PrismaClient } = require('@prisma/client');
+const db = new PrismaClient();
 
 async function main() {
   // Clean up existing seed users if they exist (by email)
@@ -28,8 +29,7 @@ async function main() {
     },
   })
   console.log(`👤 Created admin user: ${admin.email} (ID: ${admin.id})`)
-
-  // Create TEACHER user
+  // Create TEACHER user with a teacher profile
   const teacher = await db.user.create({
     data: {
       name: 'Teacher User',
@@ -37,6 +37,15 @@ async function main() {
       password: passwordHash,
       role: 'TEACHER',
       emailVerified: new Date(),
+      teacherProfile: {
+        create: {
+          bio: 'مدرس خبير في تعليم القرآن الكريم لكافة المستويات',
+          specializations: ['حفظ القرآن', 'التجويد', 'القراءات'],
+          languages: ['العربية', 'الإنجليزية'],
+          hourlyRate: 50,
+          isActive: true
+        }
+      }
     },
   })
   console.log(`👤 Created teacher user: ${teacher.email} (ID: ${teacher.id})`)

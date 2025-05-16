@@ -111,10 +111,16 @@ export default function TeacherDashboard() {
         if (profileData.teacherProfile) {
           profileData.teacherProfile.isAvailable = profileData.teacherProfile.isActive;
           setTeacherProfile(profileData.teacherProfile);
+        } else if (profileData.user && profileData.user.teacherProfile) {
+          profileData.user.teacherProfile.isAvailable = profileData.user.teacherProfile.isActive;
+          setTeacherProfile(profileData.user.teacherProfile);
         } else {
           console.error("No teacher profile found in the response");
           setError("لم يتم العثور على ملف المعلم");
-        }// Fetch bookings with credentials
+          return; // Exit early if no teacher profile found to prevent further API calls
+        }
+        
+        // Fetch bookings with credentials
         const bookingsResponse = await fetch("/api/bookings", {
           headers: {
             'Content-Type': 'application/json',

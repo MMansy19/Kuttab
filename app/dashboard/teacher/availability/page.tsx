@@ -129,29 +129,47 @@ export default function AvailabilityPage() {
         const profileData = await profileResponse.json();
         console.log("Teacher profile response:", profileData);
         
-        if (!profileData.teacherProfile) {
+        let teacherProfileData = null;
+        if (profileData.teacherProfile) {
+          teacherProfileData = profileData.teacherProfile;
+        } else if (profileData.user && profileData.user.teacherProfile) {
+          teacherProfileData = profileData.user.teacherProfile;
+        }
+        
+        if (!teacherProfileData) {
           throw new Error("Teacher profile not found");
         }
         
-        setTeacherProfile(profileData.teacherProfile);
+        setTeacherProfile(teacherProfileData);
         
         // Fetch the teacher's availabilities
-        const availabilityResponse = await fetch(`/api/teachers/${profileData.teacherProfile.id}/availability`);
+        const availabilityResponse = await fetch(`/api/teachers/${teacherProfileData.id}/availability`);
         if (!availabilityResponse.ok) {
           throw new Error("Failed to fetch availabilities");
         }
         const availabilityData = await availabilityResponse.json();
+        console.log("Availability data:", availabilityData);
+        
+        // Process the availability data correctly based on API response structure
+        let slots = [];
+        if (availabilityData.data && availabilityData.data.availability) {
+          slots = availabilityData.data.availability;
+        } else if (Array.isArray(availabilityData)) {
+          slots = availabilityData;
+        } else if (availabilityData.availability && Array.isArray(availabilityData.availability)) {
+          slots = availabilityData.availability;
+        }
         
         // If no availabilities found, create a default set
-        if (!availabilityData.length) {
+        if (!slots || !slots.length) {
           setAvailabilities([]);
         } else {
-          setAvailabilities(availabilityData);
+          setAvailabilities(slots);
         }
         
         // Fetch availability templates if they exist
-        if (profileData.teacherProfile.availabilityTemplates) {
-          setAvailabilityTemplates(profileData.teacherProfile.availabilityTemplates);
+        if (teacherProfileData.availabilityTemplates) {
+          setAvailabilityTemplates(teacherProfileData.availabilityTemplates);
         }
       } catch (err: any) {
         setError(err.message || "An error occurred");

@@ -124,7 +124,17 @@ interface ApiResponse<T = any> {
 async function parseResponse(response: Response) {
   const contentType = response.headers.get('content-type');
   if (contentType?.includes('application/json')) {
-    return await response.json();
+    try {
+      const text = await response.text();
+      // Handle empty responses gracefully
+      if (!text || text.trim() === '') {
+        return null;
+      }
+      return JSON.parse(text);
+    } catch (error) {
+      console.error('Error parsing JSON response:', error);
+      return { error: 'Failed to parse JSON response' };
+    }
   }
   return await response.text();
 }
