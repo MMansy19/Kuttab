@@ -420,15 +420,16 @@ export default function TeachersPage() {
 
       <div className="flex flex-col md:flex-row gap-6 py-8 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Mobile filter toggle */}
-        <div className="md:hidden flex justify-between items-center mb-4 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-          <button
-            className="flex items-center gap-2 text-emerald-600 dark:text-emerald-500 font-medium"
+        <div className="md:hidden flex justify-between items-center mb-4 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">          <button
+            className="flex items-center gap-2 text-emerald-600 dark:text-emerald-500 font-medium min-w-[48px] min-h-[48px] p-2"
             onClick={() => setShowMobileFilters(prev => !prev)}
+            aria-expanded={showMobileFilters}
+            aria-label="عرض خيارات التصفية والفرز"
           >
-            <FaFilter />
+            <FaFilter aria-hidden="true" />
             <span>التصفية والفرز</span>
             {filterCount > 0 && (
-              <span className="bg-emerald-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="bg-emerald-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" aria-label={`${filterCount} من عوامل التصفية نشطة`}>
                 {filterCount}
               </span>
             )}
@@ -437,9 +438,10 @@ export default function TeachersPage() {
           {(sortOption || Object.values(filter).some(val => val !== 'all' && val !== 0)) && (
             <button
               onClick={resetFilters}
-              className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 flex items-center gap-1"
+              className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 flex items-center gap-1 min-w-[48px] min-h-[48px] p-2"
+              aria-label="إعادة ضبط جميع عوامل التصفية"
             >
-              <FaTimes className="h-4 w-4" />
+              <FaTimes className="h-4 w-4" aria-hidden="true" />
               مسح التصفية
             </button>
           )}
@@ -601,21 +603,21 @@ export default function TeachersPage() {
                 </div>
               </div>
 
-              {/* Reset filters button */}
-              <button
+              {/* Reset filters button */}              <button
                 onClick={resetFilters}
-                className="mt-4 py-2 px-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-white rounded-full transition-colors duration-200 font-medium flex items-center justify-center gap-2"
+                className="mt-4 py-2 px-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-white rounded-full transition-colors duration-200 font-medium flex items-center justify-center gap-2 min-w-[48px] min-h-[48px]"
+                aria-label="إعادة ضبط جميع عوامل التصفية"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
                 إعادة ضبط الفلاتر
               </button>
 
-              {showMobileFilters && (
-                <button
+              {showMobileFilters && (                <button
                   onClick={() => setShowMobileFilters(false)}
-                  className="mt-2 py-3 px-4 bg-emerald-600 text-white rounded-lg transition-colors duration-200 font-medium flex items-center justify-center"
+                  className="mt-2 py-3 px-4 bg-emerald-600 text-white rounded-lg transition-colors duration-200 font-medium flex items-center justify-center min-w-[48px] min-h-[48px]"
+                  aria-label={`عرض ${filteredTeachers.length} من نتائج البحث`}
                 >
                   عرض النتائج ({filteredTeachers.length})
                 </button>
@@ -643,21 +645,23 @@ export default function TeachersPage() {
             </div>
 
             {/* Sort dropdown */}
-            <div className="w-full md:w-auto relative">
-              <button
+            <div className="w-full md:w-auto relative">              <button
                 id="sort-button"
-                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full py-3 px-4 flex items-center justify-between gap-2 w-full md:w-64 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-full py-3 px-4 flex items-center justify-between gap-2 w-full md:w-64 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 min-w-[48px] min-h-[48px]"
                 onClick={() => setShowSortDropdown(!showSortDropdown)}
+                aria-haspopup="listbox"
+                aria-expanded={showSortDropdown}
+                aria-label="ترتيب المعلمين حسب"
               >
                 <span className="flex items-center gap-2">
-                  <FaSortAmountDown className="text-emerald-600" />
+                  <FaSortAmountDown className="text-emerald-600" aria-hidden="true" />
                   <span>
                     {sortOption ?
                       sortOptions.find(opt => opt.id === sortOption)?.label :
                       'ترتيب حسب'}
                   </span>
                 </span>
-                {showSortDropdown ? <FaChevronUp /> : <FaChevronDown />}
+                {showSortDropdown ? <FaChevronUp aria-hidden="true" /> : <FaChevronDown aria-hidden="true" />}
               </button>
 
               {showSortDropdown && (

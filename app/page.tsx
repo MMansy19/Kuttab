@@ -3,8 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState, useRef, memo } from "react";
-import { FaBook, FaUserGraduate, FaCalendarAlt, FaGlobe, FaAward, FaMedal, FaLaptop, FaComment, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaUserCircle } from "react-icons/fa";
-
+import { FaBook, FaUserGraduate, FaCalendarAlt, FaGlobe, FaAward, FaMedal, FaLaptop, FaComment, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaUserCircle, FaArrowRight, FaArrowLeft } from "react-icons/fa";
+import { AccessibleButton } from '@/components/ui/AccessibleButton';
 
 export default function Home() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
@@ -51,7 +51,9 @@ export default function Home() {
       title: "مناهج متنوعة",
       description: "تخصصات متعددة في علوم القرآن والتجويد والتفسير واللغة العربية"
     }
-  ];  // Memoized CounterStat component to prevent unnecessary re-renders
+  ];  
+  
+  // Memoized CounterStat component to prevent unnecessary re-renders
   const CounterStat = memo(({ endValue, label }: { endValue: number; label: string }) => {
     const [count, setCount] = useState(0);
     const animationRef = useRef<number | null>(null);
@@ -134,7 +136,8 @@ export default function Home() {
         className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-center"
       >
         <div className="text-3xl font-bold text-white">{count}+</div>
-        <div className="text-xs text-gray-300">{label}</div>      </div>
+        <div className="text-xs text-gray-300">{label}</div>      
+      </div>
     );
   });
 
@@ -150,37 +153,39 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
             <div className="text-center lg:text-right lg:max-w-2xl">
               <div className="inline-block animate-float">
-              <div className="bg-white dark:bg-gray-800 px-4 py-1 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-6 mx-auto lg:mx-0 inline-flex items-center">
+              <div className="bg-white dark:bg-gray-800 px-4 py-1 rounded-full text-emerald-700 dark:text-emerald-500 text-sm font-medium mb-6 mx-auto lg:mx-0 inline-flex items-center">
                 <span className="animate-pulse inline-block w-2 h-2 rounded-full bg-emerald-500 ml-2"></span>
                 منصة تعليمية متميزة
               </div>
               </div>
               
-                <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight" dir="rtl">
-                تعلم 
-                <span className="text-gradient bg-gradient-to-r from-emerald-400 to-blue-500"> القرآن الكريم </span>
-                مع أفضل المعلمين
-                </h1>
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 text-white leading-tight" dir="rtl">
+              تعلم 
+              <span className="text-gradient bg-gradient-to-r from-emerald-400 to-blue-500"> القرآن الكريم </span>
+              مع أفضل المعلمين
+              </h1>
               
               <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto lg:mx-0" dir="rtl">
               منصة كُـــتَّـــاب تجمع بين الطلاب والمعلمين المتميزين لجلسات تعليمية عالية الجودة عبر الإنترنت. ابدأ رحلتك التعليمية الآن.
               </p>
               
               <div className="flex flex-wrap gap-4 justify-center lg:justify-end">
-              <Link 
-                href="/teachers" 
-                className="px-8 py-3 rounded-full bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-medium text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
-              >
-                <FaUserGraduate />
-                <span>ابدأ الآن</span>
-              </Link>
+              <AccessibleButton 
+                text="ابدأ الآن"
+                ariaLabel="بدء رحلتك التعليمية"
+                icon={<FaUserGraduate />}
+                className="px-8 py-3 rounded-full bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-medium text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                onClick={() => window.location.href = '/teachers'}
+                variant="default"
+              />
               
-              <Link 
-                href="/about" 
+              <AccessibleButton
+                text="اكتشف المزيد"
+                ariaLabel="اكتشف المزيد عن المنصة"
                 className="px-8 py-3 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-medium text-lg transition-all duration-300 border border-white/20 transform hover:scale-105"
-              >
-                اكتشف المزيد
-              </Link>
+                onClick={() => window.location.href = '/about'}
+                variant="ghost"
+              />
               </div>
               
               <div className="mt-10 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0">
@@ -200,6 +205,10 @@ export default function Home() {
                     width={600} 
                     height={600} 
                     className="w-full h-auto"
+                    quality={80}
+                    priority={true}
+                    fetchPriority="high"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
                   />
                 </div>
                 
@@ -210,7 +219,7 @@ export default function Home() {
                     </div>
                     <div className="text-sm">
                       <div className="font-bold text-gray-900 dark:text-white">تجربة فريدة</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">منصة تعليمية مميزة</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">منصة تعليمية مميزة</div>
                     </div>
                   </div>
                 </div>
@@ -222,7 +231,7 @@ export default function Home() {
                     </div>
                     <div className="text-sm">
                       <div className="font-bold text-gray-900 dark:text-white">معلمون متميزون</div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">خبرة عالية في التعليم</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">خبرة عالية في التعليم</div>
                     </div>
                   </div>
                 </div>
@@ -236,8 +245,8 @@ export default function Home() {
       <section id="business" className="py-20 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">لماذا تختار منصة <span className="text-emerald-600 dark:text-emerald-500">كُـــتَّـــاب</span>؟</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">لماذا تختار منصة <span className="text-emerald-700 dark:text-emerald-500">كُـــتَّـــاب</span>؟</h2>
+            <p className="text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
               نقدم لك تجربة تعليمية فريدة من نوعها مع أفضل المعلمين وأحدث التقنيات لضمان أقصى استفادة
             </p>
           </div>
@@ -252,7 +261,7 @@ export default function Home() {
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-bold mb-2 text-center text-gray-900 dark:text-white">{feature.title}</h3>
-                <p className="text-gray-600 dark:text-gray-400 text-center">{feature.description}</p>
+                <p className="text-gray-700 dark:text-gray-300 text-center">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -265,12 +274,13 @@ export default function Home() {
               <p className="text-lg text-emerald-50 mb-8 max-w-2xl mx-auto">
                 احجز جلستك الأولى مع أحد معلمينا المتميزين واستمتع بتجربة تعليمية فريدة من نوعها
               </p>
-              <Link
-                href="/teachers"
-                className="px-8 py-3 rounded-full bg-white text-emerald-600 font-medium text-lg hover:bg-emerald-50 transition-colors duration-300 inline-block shadow-lg"
-              >
-                تصفح المعلمين
-              </Link>
+              <AccessibleButton
+                text="تصفح المعلمين"
+                ariaLabel="استعراض قائمة المعلمين المتاحين"
+                className="px-8 py-3 rounded-full bg-white text-emerald-700 font-medium text-lg hover:bg-emerald-50 transition-colors duration-300 inline-block shadow-lg"
+                onClick={() => window.location.href = '/teachers'}
+                variant="default"
+              />
             </div>
           </div>
         </div>
@@ -289,27 +299,27 @@ export default function Home() {
                     <div className="rounded-lg overflow-hidden shadow-xl h-64 border-4 border-white dark:border-gray-700">
                       <Image
                         src="/images/kid-learns-online.png"
-                        alt="معلمون"
+                        alt="طفل يتعلم القرآن عبر الإنترنت"
                         width={300}
                         height={300}
                         className="w-full h-full object-cover"
                         quality={70}
                         priority={true}
                         fetchPriority="high"
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 300px"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px"
                       />
                     </div>
                   <div className="rounded-lg overflow-hidden shadow-xl h-64 border-4 border-white dark:border-gray-700">
                     <Image
                       src="/images/learn-online.png"
-                      alt="جلسات تعليمية"
+                      alt="جلسات تعليمية عبر الإنترنت"
                       width={300}
                       height={300}
                       className="w-full h-full object-cover"
                       quality={70}
                       priority={true}
                       fetchPriority="high"
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 300px"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px"
                       />
                     </div>
                   </div>
@@ -319,64 +329,65 @@ export default function Home() {
             </div>
             
             <div className="lg:w-1/2">
-              <div className="inline-block bg-emerald-100 dark:bg-emerald-900/30 px-4 py-1 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+              <div className="inline-block bg-emerald-100 dark:bg-emerald-900/30 px-4 py-1 rounded-full text-emerald-700 dark:text-emerald-500 text-sm font-medium mb-4">
                 من نحن
               </div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-white" dir="rtl">
-                منصة <span className="text-emerald-600">كُـــتَّـــاب</span> للتعليم الإسلامي عن بعد
+                منصة <span className="text-emerald-700">كُـــتَّـــاب</span> للتعليم الإسلامي عن بعد
               </h2>
-              <p className="text-lg mb-6 text-gray-600 dark:text-gray-400" dir="rtl">
+              <p className="text-lg mb-6 text-gray-700 dark:text-gray-300" dir="rtl">
                 تأسست منصة كُـــتَّـــاب بهدف نشر تعليم القرآن الكريم والعلوم الإسلامية بطريقة ميسرة وحديثة تتناسب مع متطلبات العصر، وتمكن الطلاب من التعلم في أي وقت ومن أي مكان.
               </p>
-              <p className="text-lg mb-6 text-gray-600 dark:text-gray-400" dir="rtl">
+              <p className="text-lg mb-6 text-gray-700 dark:text-gray-300" dir="rtl">
                 نسعى لتوفير بيئة تعليمية تفاعلية وآمنة تجمع بين الأصالة والحداثة، مع فريق من المعلمين والمعلمات ذوي الخبرة والكفاءة العالية في مختلف التخصصات.
               </p>
               
               <div className="grid grid-cols-2 gap-4 mb-8">
                 <div className="flex items-center gap-3">
                   <div className="rounded-full bg-emerald-100 dark:bg-emerald-900/30 w-10 h-10 flex items-center justify-center flex-shrink-0">
-                    <FaUserGraduate className="text-emerald-600 dark:text-emerald-400" />
+                    <FaUserGraduate className="text-emerald-700 dark:text-emerald-400" />
                   </div>
                   <div>
                     <div className="font-bold text-gray-900 dark:text-white">معلمون مجازون</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">بإجازات معتمدة</div>
+                    <div className="text-sm text-gray-700 dark:text-gray-300">بإجازات معتمدة</div>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-3">
                   <div className="rounded-full bg-emerald-100 dark:bg-emerald-900/30 w-10 h-10 flex items-center justify-center flex-shrink-0">
-                    <FaLaptop className="text-emerald-600 dark:text-emerald-400" />
+                    <FaLaptop className="text-emerald-700 dark:text-emerald-400" />
                   </div>
                   <div>
                     <div className="font-bold text-gray-900 dark:text-white">منصة متطورة</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">سهلة الاستخدام</div>
+                    <div className="text-sm text-gray-700 dark:text-gray-300">سهلة الاستخدام</div>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-3">
                   <div className="rounded-full bg-emerald-100 dark:bg-emerald-900/30 w-10 h-10 flex items-center justify-center flex-shrink-0">
-                    <FaBook className="text-emerald-600 dark:text-emerald-400" />
+                    <FaBook className="text-emerald-700 dark:text-emerald-400" />
                   </div>
                   <div>
                     <div className="font-bold text-gray-900 dark:text-white">مناهج متنوعة</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">لجميع المستويات</div>
+                    <div className="text-sm text-gray-700 dark:text-gray-300">لجميع المستويات</div>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-3">
                   <div className="rounded-full bg-emerald-100 dark:bg-emerald-900/30 w-10 h-10 flex items-center justify-center flex-shrink-0">
-                    <FaComment className="text-emerald-600 dark:text-emerald-400" />
+                    <FaComment className="text-emerald-700 dark:text-emerald-400" />
                   </div>
                   <div>
                     <div className="font-bold text-gray-900 dark:text-white">دعم مستمر</div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">على مدار الساعة</div>
+                    <div className="text-sm text-gray-700 dark:text-gray-300">على مدار الساعة</div>
                   </div>
                 </div>
               </div>
               
               <Link 
                 href="/about" 
-                className="inline-flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors"
+                className="inline-flex items-center gap-2 text-emerald-700 dark:text-emerald-500 font-medium hover:text-emerald-800 dark:hover:text-emerald-300 transition-colors"
+                aria-label="تعرف أكثر على منصة كتّاب"
               >
                 تعرف علينا أكثر
                 <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
@@ -393,11 +404,11 @@ export default function Home() {
         <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-5 bg-repeat"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <div className="inline-block bg-emerald-100 dark:bg-emerald-900/30 px-4 py-1 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+            <div className="inline-block bg-emerald-100 dark:bg-emerald-900/30 px-4 py-1 rounded-full text-emerald-700 dark:text-emerald-500 text-sm font-medium mb-4">
               تجارب الطلاب
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">ماذا يقول طلابنا عن منصة كُـــتَّـــاب؟</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
               آراء حقيقية من طلاب استفادوا من خدماتنا التعليمية
             </p>
           </div>
@@ -406,7 +417,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500 to-blue-500 blur-2xl opacity-10 -z-10 transform rotate-3"></div>
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 md:p-10 relative z-10">
               <div className="mb-10">
-                <div className="text-gray-800 dark:text-gray-200 text-lg md:text-xl italic line-clamp-1">
+                <div className="text-gray-800 dark:text-gray-200 text-lg md:text-xl italic">
                   "{testimonials[activeTestimonial].text}"
                 </div>
               </div>
@@ -421,10 +432,10 @@ export default function Home() {
                         width={60}
                         height={60}
                         className="w-full h-full object-cover"
-                                              quality={80}
-                      priority={true}
-                      fetchPriority="high"
-sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 300px"
+                        quality={80}
+                        priority={true}
+                        fetchPriority="high"
+                        sizes="60px"
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-600">
@@ -434,36 +445,39 @@ sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 300px"
                   </div>
                   <div>
                     <div className="font-bold text-gray-900 dark:text-white">{testimonials[activeTestimonial].name}</div>
-                    <div className="text-sm text-emerald-600 dark:text-emerald-400">{testimonials[activeTestimonial].role}</div>
+                    <div className="text-sm text-emerald-700 dark:text-emerald-500">{testimonials[activeTestimonial].role}</div>
                   </div>
                 </div>
                 
                 <div className="flex gap-2">
-                  <button 
+                  <AccessibleButton 
+                    text=""
+                    ariaLabel="عرض الشهادة التالية"
+                    icon={<FaArrowRight className="w-5 h-5" />}
                     onClick={() => setActiveTestimonial(prev => (prev + 1) % testimonials.length)}
-                    className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 transition-colors"
-                  >
-                    <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </button>
-                  <button
+                    className="w-12 h-12 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 transition-colors min-w-[48px] min-h-[48px]"
+                    variant="ghost"
+                  />
+                  <AccessibleButton
+                    text=""
+                    ariaLabel="عرض الشهادة السابقة"
+                    icon={<FaArrowLeft className="w-5 h-5" />}
                     onClick={() => setActiveTestimonial(prev => prev === 0 ? testimonials.length - 1 : prev - 1)}
-                    className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 transition-colors"
-                  >
-                    <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </button>
+                    className="w-12 h-12 rounded-full border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 transition-colors min-w-[48px] min-h-[48px]"
+                    variant="ghost"
+                  />
                 </div>
               </div>
               
-              <div className="flex justify-center mt-8">
+              <div className="flex justify-center mt-8 gap-2">
                 {testimonials.map((_, index) => (
-                  <button 
+                  <AccessibleButton
                     key={index}
-                    className={`w-2 h-2 mx-1 rounded-full ${activeTestimonial === index ? 'bg-emerald-600 w-6' : 'bg-gray-300 dark:bg-gray-600'} transition-all`}
+                    text=""
+                    ariaLabel={`عرض شهادة ${testimonials[index].name}`}
                     onClick={() => setActiveTestimonial(index)}
+                    className={`min-w-[48px] h-6 mx-1 rounded-full ${activeTestimonial === index ? 'bg-emerald-700 w-12' : 'bg-gray-300 dark:bg-gray-600 w-6'} transition-all`}
+                    variant="ghost"
                   />
                 ))}
               </div>
@@ -477,11 +491,11 @@ sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 300px"
         <div className="absolute inset-0 bg-[url('/images/islamic-pattern.png')] opacity-5 bg-repeat"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <div className="inline-block bg-emerald-100 dark:bg-emerald-900/30 px-4 py-1 rounded-full text-emerald-600 dark:text-emerald-400 text-sm font-medium mb-4">
+            <div className="inline-block bg-emerald-100 dark:bg-emerald-900/30 px-4 py-1 rounded-full text-emerald-700 dark:text-emerald-500 text-sm font-medium mb-4">
               تواصل معنا
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">نحن هنا لمساعدتك</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
               هل لديك أسئلة أو استفسارات؟ فريقنا جاهز للرد عليك
             </p>
           </div>
@@ -499,6 +513,7 @@ sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 300px"
                       className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors" 
                       placeholder="أدخل اسمك" 
                       dir="rtl"
+                      aria-required="true"
                     />
                   </div>
                   <div>
@@ -509,6 +524,7 @@ sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 300px"
                       className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors" 
                       placeholder="أدخل بريدك الإلكتروني" 
                       dir="rtl"
+                      aria-required="true"
                     />
                   </div>
                 </div>
@@ -532,15 +548,17 @@ sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 300px"
                     className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors" 
                     placeholder="اكتب رسالتك هنا" 
                     dir="rtl"
+                    aria-required="true"
                   />
                 </div>
                 
-                <button 
-                  type="button" 
+                <AccessibleButton
+                  text="إرسال الرسالة"
+                  ariaLabel="إرسال الرسالة المكتوبة"
                   className="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-medium text-lg transition-all duration-300 shadow-lg hover:shadow-xl"
-                >
-                  إرسال الرسالة
-                </button>
+                  variant="default"
+                  type="submit"
+                />
               </form>
             </div>
             
@@ -550,31 +568,31 @@ sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 300px"
                 <div className="space-y-6">
                   <div className="flex gap-4 items-start">
                     <div className="bg-emerald-100 dark:bg-emerald-900/30 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0">
-                      <FaPhoneAlt className="text-emerald-600 dark:text-emerald-400" />
+                      <FaPhoneAlt className="text-emerald-700 dark:text-emerald-400" />
                     </div>
                     <div>
                       <div className="font-medium text-gray-900 dark:text-white mb-1">رقم الهاتف</div>
-                      <div className="text-gray-600 dark:text-gray-400" dir="ltr">+966 123 456 789</div>
+                      <div className="text-gray-700 dark:text-gray-300" dir="ltr">+966 123 456 789</div>
                     </div>
                   </div>
                   
                   <div className="flex gap-4 items-start">
                     <div className="bg-emerald-100 dark:bg-emerald-900/30 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0">
-                      <FaEnvelope className="text-emerald-600 dark:text-emerald-400" />
+                      <FaEnvelope className="text-emerald-700 dark:text-emerald-400" />
                     </div>
                     <div>
                       <div className="font-medium text-gray-900 dark:text-white mb-1">البريد الإلكتروني</div>
-                      <div className="text-gray-600 dark:text-gray-400">info@kottab.com</div>
+                      <div className="text-gray-700 dark:text-gray-300">info@kottab.com</div>
                     </div>
                   </div>
                   
                   <div className="flex gap-4 items-start">
                     <div className="bg-emerald-100 dark:bg-emerald-900/30 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0">
-                      <FaMapMarkerAlt className="text-emerald-600 dark:text-emerald-400" />
+                      <FaMapMarkerAlt className="text-emerald-700 dark:text-emerald-400" />
                     </div>
                     <div>
                       <div className="font-medium text-gray-900 dark:text-white mb-1">العنوان</div>
-                      <div className="text-gray-600 dark:text-gray-400">
+                      <div className="text-gray-700 dark:text-gray-300">
                         المملكة العربية السعودية، الرياض<br />
                         طريق الملك فهد، مبنى الأمانة
                       </div>
@@ -585,7 +603,7 @@ sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 300px"
               
               <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
                 <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">ساعات العمل</h3>
-                <div className="space-y-2 text-gray-600 dark:text-gray-400">
+                <div className="space-y-2 text-gray-700 dark:text-gray-300">
                   <p>السبت - الخميس: 9 صباحاً - 10 مساءً</p>
                   <p>الجمعة: مغلق</p>
                 </div>
@@ -601,22 +619,24 @@ sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 300px"
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="text-center md:text-left md:max-w-lg">
-              <h2 className="text-3xl font-bold mb-4" >ابدأ رحلة التعلم مع كُـــتَّـــاب اليوم</h2>
-              <p className="text-lg text-emerald-100" >انضم إلى آلاف الطلاب الذين يتعلمون القرآن الكريم والعلوم الإسلامية على منصتنا</p>
+              <h2 className="text-3xl font-bold mb-4">ابدأ رحلة التعلم مع كُـــتَّـــاب اليوم</h2>
+              <p className="text-lg text-emerald-100">انضم إلى آلاف الطلاب الذين يتعلمون القرآن الكريم والعلوم الإسلامية على منصتنا</p>
             </div>
             <div className="flex flex-wrap gap-4 justify-center md:justify-end">
-              <Link 
-                href="/teachers" 
-                className="px-8 py-3 rounded-full bg-white text-emerald-700 font-medium text-lg hover:bg-emerald-50 transition-colors duration-300 shadow-lg"
-              >
-                تصفح المعلمين
-              </Link>
-              <Link 
-                href="/auth/signup" 
-                className="px-8 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 border border-white/20 text-white font-medium text-lg transition-colors duration-300 shadow-lg"
-              >
-                إنشاء حساب
-              </Link>
+              <AccessibleButton
+                text="تصفح المعلمين"
+                ariaLabel="تصفح قائمة المعلمين المتاحين"
+                className="px-8 py-3 rounded-full bg-white text-emerald-700 font-medium text-lg hover:bg-emerald-50 transition-colors duration-300 shadow-lg min-w-[48px] min-h-[48px]"
+                onClick={() => window.location.href = '/teachers'}
+                variant="default"
+              />
+              <AccessibleButton
+                text="إنشاء حساب"
+                ariaLabel="إنشاء حساب جديد في المنصة"
+                className="px-8 py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 border border-white/20 text-white font-medium text-lg transition-colors duration-300 shadow-lg min-w-[48px] min-h-[48px]"
+                onClick={() => window.location.href = '/auth/signup'}
+                variant="default"
+              />
             </div>
           </div>
         </div>
