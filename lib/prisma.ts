@@ -1,4 +1,5 @@
-import { PrismaClient, Prisma } from '../prisma/node_modules/.prisma/client';
+// Use the explicit import path from the generated prisma client directory
+import { PrismaClient, Prisma } from '../prisma/generated/prisma-client';
 
 // Helper function to safely convert objects to SQL
 const convertToSQL = (obj: any): string => {

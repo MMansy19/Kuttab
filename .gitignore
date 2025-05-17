@@ -3,9 +3,10 @@
 /.pnp
 .pnp.js
 prisma/node_modules
-prisma/node_modules/.prisma/client/
+
 # Testing
 /coverage
+
 
 # Next.js
 /.next/
@@ -36,9 +37,11 @@ yarn-error.log*
 .vercel
 
 # Database
+/generated/
 *.db
 *.db-journal
 prisma/dev.db
+
 package-lock.json
 
 # .md files

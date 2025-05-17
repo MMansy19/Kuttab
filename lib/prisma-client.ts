@@ -4,7 +4,8 @@
  * This file provides an optimized Prisma client for serverless environments
  * such as Vercel with Neon PostgreSQL.
  */
-import { PrismaClient } from '../prisma/node_modules/.prisma/client';
+// Use the explicit import path from the generated prisma client directory
+import { PrismaClient } from '../prisma/generated/prisma-client';
 
 // PrismaClient is attached to the `global` object in development to prevent
 // exhausting your database connection limit during hot reloads.
