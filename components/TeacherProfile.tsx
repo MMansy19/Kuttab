@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import type { Teacher } from '../types';
 import Image from 'next/image';
-import { getOptimizedImageProps } from '@/utils/image-optimization';
 
 interface TeacherProfileProps {
   teacher: Teacher & {

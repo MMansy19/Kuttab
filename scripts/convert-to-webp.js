@@ -23,13 +23,14 @@ const sharp = require('sharp');
 
 // Define image directories to process
 const imageDirs = [
-  './public/images',
+  './public/images', // your images directory
 ];
 
-// Critical images that need priority optimization
+// all images that need  optimization
 const criticalImages = [
-  'kid-learns-online.png',
-  'islamic-pattern.png'
+  'image1.png',
+  'image2.png',
+  // ... 
 ];
 
 // Quality settings
