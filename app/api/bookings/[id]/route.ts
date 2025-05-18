@@ -1,106 +1,56 @@
+import { PrismaClient } from "@/prisma/generated/prisma-client";
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
-import { z } from "zod";
-import prisma from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import { isFrontendOnlyMode } from "@/lib/config";
+import { z } from "zod";
 
-// Validation schema for booking updates
+// Initialize Prisma client
+const prisma = new PrismaClient();
+
 const bookingUpdateSchema = z.object({
   status: z.enum(["PENDING", "SCHEDULED", "CONFIRMED", "COMPLETED", "CANCELLED", "NO_SHOW"]).optional(),
   teacherNotes: z.string().max(1000).optional(),
   cancelReason: z.string().max(500).optional(),
 });
 
-// GET a single booking by ID
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const session = await getServerSession(authOptions);
-    
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const bookingId = params.id;
+
+    if (!bookingId) {
+      return NextResponse.json(
+        { error: "معرف الحجز مفقود" },
+        { status: 400 }
+      );
     }
-    
-    // Mock data for frontend-only mode
-    if (isFrontendOnlyMode) {
-      return NextResponse.json({
-        id: params.id,
-        userId: "mock-user-1",
-        teacherProfileId: "teacher-1",
-        startTime: new Date("2025-05-10T10:00:00Z").toISOString(),
-        endTime: new Date("2025-05-10T11:00:00Z").toISOString(),
-        status: "CONFIRMED",
-        notes: "Demo booking in frontend-only mode",
-        meetingLink: "https://meet.google.com/demo",
-        createdAt: new Date("2025-05-01T12:00:00Z").toISOString(),
-        updatedAt: new Date("2025-05-01T12:30:00Z").toISOString(),
-        user: {
-          id: "mock-user-1",
-          name: "طالب نموذجي",
-          image: "/images/kid-learns-online.png",
-          email: "demo@example.com"
-        },
-        teacherProfile: {
-          id: "teacher-1",
-          user: {
-            id: "mock-teacher-1",
-            name: "أحمد محمد",
-            image: "/images/learn-quran.jpg",
-            email: "teacher@example.com"
-          }
-        },
-        reviews: []
-      });
-    }
-      // Get the booking with related data
+
     const booking = await prisma.booking.findUnique({
-      where: { id: params.id },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-            email: true,
-          },
-        },
-        teacherProfile: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-                email: true,
-              },
-            },
-          },
-        },
-        reviews: true,
-      },
+      where: { id: bookingId },
     });
-    
+
     if (!booking) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "لم يتم العثور على الحجز" },
+        { status: 404 }
+      );
     }
-    
-    // Check permission
-    const isAuthorized = 
-      session.user.id === booking.userId || 
-      session.user.id === booking.teacherProfile.userId ||
-      session.user.role === "ADMIN";
-      
-    if (!isAuthorized) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-    
-    return NextResponse.json(booking);
+
+    return NextResponse.json({ booking });
   } catch (error) {
-    console.error("Error fetching booking:", error);
+    console.error("Booking fetch error:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+
     return NextResponse.json(
-      { error: "Failed to fetch booking" },
+      { error: "حدث خطأ أثناء جلب الحجز", details: errorMessage },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -257,8 +207,6 @@ export async function PATCH(
           message: notificationMessage,
           type: "BOOKING",
           isRead: false,
-          entityId: booking.id,
-          entityType: "BOOKING"
         },
       });
     }
@@ -333,8 +281,6 @@ export async function DELETE(
       where: { id: context.params.id },
       data: {
         status: "CANCELLED",
-        cancelReason: reason, // Using the correct field name as per Prisma schema
-        canceledBy: session.user.id,
       },
     });
     
@@ -355,8 +301,6 @@ export async function DELETE(
         message: `Your booking on ${dateStr} at ${startTime} has been cancelled. Reason: ${reason}`,
         type: "BOOKING",
         isRead: false,
-        entityId: booking.id,
-        entityType: "BOOKING"
       },
     });
     
