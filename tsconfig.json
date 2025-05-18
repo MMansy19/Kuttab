@@ -47,7 +47,6 @@
     ".next-build",
     ".next-temp",
     "build-output",
-    // Don't exclude .next entirely to allow generated types to be processed
     ".next/cache"
   ]
 }
