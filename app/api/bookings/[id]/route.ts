@@ -1,10 +1,9 @@
-import { prisma } from '@/lib/prisma';
+import { isFrontendOnlyMode } from "@/lib/config";
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from "zod";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { isFrontendOnlyMode } from "@/lib/config";
-import { z } from "zod";
-
+import prisma from "@/lib/prisma";
 // Initialize Prisma client
 
 const bookingUpdateSchema = z.object({
@@ -13,45 +12,45 @@ const bookingUpdateSchema = z.object({
   cancelReason: z.string().max(500).optional(),
 });
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const bookingId = params.id;
+// export async function GET(
+//   request: Request,
+//   { params }: { params: { id: string } }
+// ) {
+//   try {
+//     const bookingId = params.id;
 
-    if (!bookingId) {
-      return NextResponse.json(
-        { error: "معرف الحجز مفقود" },
-        { status: 400 }
-      );
-    }
+//     if (!bookingId) {
+//       return NextResponse.json(
+//         { error: "معرف الحجز مفقود" },
+//         { status: 400 }
+//       );
+//     }
 
-    const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
-    });
+//     const booking = await prisma.booking.findUnique({
+//       where: { id: bookingId },
+//     });
 
-    if (!booking) {
-      return NextResponse.json(
-        { error: "لم يتم العثور على الحجز" },
-        { status: 404 }
-      );
-    }
+//     if (!booking) {
+//       return NextResponse.json(
+//         { error: "لم يتم العثور على الحجز" },
+//         { status: 404 }
+//       );
+//     }
 
-    return NextResponse.json({ booking });
-  } catch (error) {
-    console.error("Booking fetch error:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
+//     return NextResponse.json({ booking });
+//   } catch (error) {
+//     console.error("Booking fetch error:", error);
+//     const errorMessage =
+//       error instanceof Error ? error.message : "Unknown error";
 
-    return NextResponse.json(
-      { error: "حدث خطأ أثناء جلب الحجز", details: errorMessage },
-      { status: 500 }
-    );
-  } finally {
-    await prisma.$disconnect();
-  }
-}
+//     return NextResponse.json(
+//       { error: "حدث خطأ أثناء جلب الحجز", details: errorMessage },
+//       { status: 500 }
+//     );
+//   } finally {
+//     await prisma.$disconnect();
+//   }
+// }
 
 // PATCH to update booking status
 export async function PATCH(
