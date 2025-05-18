@@ -2,9 +2,11 @@
 /node_modules
 /.pnp
 .pnp.js
+prisma/node_modules
 
 # Testing
 /coverage
+
 
 # Next.js
 /.next/
@@ -34,9 +36,12 @@ yarn-error.log*
 .vercel
 
 # Database
+/generated/
 *.db
 *.db-journal
-/prisma/dev.db
+prisma/dev.db
+
+package-lock.json
 
 # Build files
 package-lock.json

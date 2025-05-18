@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import bcrypt from "bcryptjs";
-import { prisma } from "@/lib/prisma";
+import { PrismaClient } from "@/prisma/generated/prisma-client";
+
+// Initialize a new client instance for this route
+const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
@@ -40,14 +43,22 @@ export async function POST(request: Request) {
         email: user.email,
         name: user.name,
         role: user.role,
-      },
-    });  } catch (error) {
+      },    });  } catch (error) {
     console.error("Signup error:", error);
     // Return more detailed error information for debugging
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    
+    // Check for Prisma-specific errors
+    if (errorMessage.includes('prisma')) {
+      console.error("Prisma error detected. Make sure Prisma client is properly initialized.");
+    }
+    
     return NextResponse.json(
       { error: "حدث خطأ أثناء التسجيل", details: errorMessage },
       { status: 500 }
     );
+  } finally {
+    // Disconnect Prisma client to avoid hanging connections
+    await prisma.$disconnect();
   }
 }

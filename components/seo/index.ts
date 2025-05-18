@@ -1,13 +1,8 @@
 import React, { ReactNode } from 'react';
 import SEOMonitor from './SEOMonitor';
 
-/**
- * Export all SEO components for easy importing
- */
 export { default as StructuredData } from './StructuredData';
 export { default as SchemaOrgData } from './SchemaOrgData';
-export { default as PageHeader } from './PageHeader';
-export { default as LinkRel } from './LinkRel';
 export { default as SEOMonitor } from './SEOMonitor';
 
 // Only use SEOMonitor in development or for admin users

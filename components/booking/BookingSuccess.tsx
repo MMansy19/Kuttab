@@ -15,9 +15,6 @@ interface BookingSuccessProps {
   selectedSlot: SlotType;
 }
 
-/**
- * Component displayed after successful booking completion
- */
 const BookingSuccess: React.FC<BookingSuccessProps> = ({
   bookingId,
   teacherName,

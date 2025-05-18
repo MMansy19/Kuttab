@@ -1,10 +1,20 @@
-/** @type {import('next').NextConfig} */
+/**
+ * Next.js Configuration
+ * Consolidated configuration file that handles both development and production builds
+ * @type {import('next').NextConfig}
+ */
+
+// Constants
+const isProd = process.env.NODE_ENV === 'production';
+const isFrontendOnly = 
+  (isProd && (!process.env.DATABASE_URL || process.env.DATABASE_URL === 'frontend-only'));
 
 const nextConfig = {
   serverExternalPackages: ['@prisma/client', 'mongoose'],
   poweredByHeader: false,
   reactStrictMode: true,
 
+  // Security headers for SEO and protection
   async headers() {
     return [
       {
@@ -68,57 +78,17 @@ const nextConfig = {
     ];
   },
 
-
+  // Image optimization
   images: {
     domains: ['via.placeholder.com', 'placehold.co'],
     formats: ['image/avif', 'image/webp'], 
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840], 
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384], 
   },
-  webpack: (config, { isServer }) => {
-    // Configure webpack with case-sensitive resolution
-    config.resolve = config.resolve || {};
-    config.resolve.symlinks = false;
-    
-    // Set watchOptions
-    config.watchOptions = {
-      ignored: ['**/node_modules/**', '**/.next/**'],
-      poll: false,
-    };
-      // Fix the import issues when building on Vercel
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      '@/components': `${__dirname}/components`,
-      '@/features': `${__dirname}/features`,
-      '@/lib': `${__dirname}/lib`,
-      '@/utils': `${__dirname}/utils`,
-      '@/hooks': `${__dirname}/hooks`,
-      '@/styles': `${__dirname}/styles`,
-      '@/types': `${__dirname}/types`,
-      '@/data': `${__dirname}/data`,
-    };
-    
-    if (isServer) {
-      config.plugins.push({
-        apply: (compiler) => {
-          compiler.hooks.afterEmit.tap('FixRouteTypes', () => {
-            // fixAuthBuild function is not defined, commented out to fix build issue
-            // fixAuthBuild();
-            
-            // Require and run the entire script instead of just the function
-            try {
-              require('./scripts/fix-route-types');
-              console.log('Route type fixing script executed successfully');
-            } catch (error) {
-              console.error('Error executing route type fixing script:', error);
-            }
-          });
-        },
-      });
-    }
 
-    return config;
-  },
+  compress: true,
+
+
   experimental: {
     optimizeCss: true,
     serverActions: {
@@ -126,9 +96,13 @@ const nextConfig = {
     },
     optimizePackageImports: ['react-icons', 'lodash', 'date-fns'],
   },
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production'
-  },
-} 
+  // Production-specific compiler options
+  compiler: isProd ? {
+    removeConsole: {
+      exclude: ['error', 'warn'],
+    },
+  } : {},
+
+};
 
 module.exports = nextConfig;

@@ -2,10 +2,10 @@
 
 **كُتّاب** is an Islamic educational platform that connects students with independent Quran teachers. The platform provides a simple way for users to discover teachers, view their availability, and book sessions directly without intermediaries or payment processing.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-blue)](http://localhost:3000)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-blue)](https://kuttab.vercel.app)
 
 <p align="center">
-  <img src="public/images/islamic-pattern.png" alt="Kottab Platform" width="600px" />
+  <img src="public/images/icon-512x512.png" alt="Kottab Platform" width="300px" />
 </p>
 
 ## 🌍 About Kottab

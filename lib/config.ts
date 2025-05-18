@@ -9,16 +9,3 @@ export const isFrontendOnlyMode =
   process.env.DATABASE_URL === 'frontend-only' ||
   // For client-side, we never want to run database operations
   (typeof window !== 'undefined');
-
-// Console output is suppressed in production
-if (process.env.NODE_ENV !== 'production') {
-  console.log(`Running in ${isFrontendOnlyMode ? 'frontend-only' : 'full'} mode`);
-}
-
-// Export application config
-export const appConfig = {
-  isFrontendOnlyMode,
-  demoMode: process.env.NEXT_PUBLIC_DEMO_MODE === 'true',
-  apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || '',
-  disableAuth: isFrontendOnlyMode, // Disable authentication in frontend-only mode
-};
