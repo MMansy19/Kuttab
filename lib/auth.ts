@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "./prisma";
 import { DefaultSession } from "next-auth";
+import { PrismaClient } from '../prisma/generated/prisma-client';
 
 // Use a default secret for build time, but require real secret at runtime
 const getAuthSecret = () => {
@@ -20,8 +21,17 @@ const getAuthSecret = () => {
   throw new Error("NEXTAUTH_SECRET is not set in environment variables");
 };
 
+// Create a standard Prisma client for NextAuth adapter only
+const standardPrismaClient = new PrismaClient({
+  datasources: {
+    db: {
+      url: process.env.DATABASE_URL,
+    },
+  },
+});
+
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(standardPrismaClient),
   providers: [
     CredentialsProvider({
       name: "credentials",
