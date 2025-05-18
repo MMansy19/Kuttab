@@ -225,98 +225,98 @@ export async function PATCH(
 }
 
 // DELETE to cancel a booking (soft delete)
-export async function DELETE(
-  request: NextRequest,
-  context: { params: { id: string } }
-){
-  try {
-    const session = await getServerSession(authOptions);
+// export async function DELETE(
+//   request: NextRequest,
+//   context: { params: { id: string } }
+// ){
+//   try {
+//     const session = await getServerSession(authOptions);
     
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+//     if (!session) {
+//       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+//     }
     
-    // Mock response for frontend-only mode
-    if (isFrontendOnlyMode) {
-      return NextResponse.json({
-        message: "Booking cancelled successfully",
-        booking: {
-          id: context.params.id,
-          status: "CANCELLED",
-          cancelReason: "Cancelled in frontend-only mode",
-          canceledBy: session.user.id,
-          updatedAt: new Date().toISOString()
-        }
-      });
-    }
+//     // Mock response for frontend-only mode
+//     if (isFrontendOnlyMode) {
+//       return NextResponse.json({
+//         message: "Booking cancelled successfully",
+//         booking: {
+//           id: context.params.id,
+//           status: "CANCELLED",
+//           cancelReason: "Cancelled in frontend-only mode",
+//           canceledBy: session.user.id,
+//           updatedAt: new Date().toISOString()
+//         }
+//       });
+//     }
     
-    // Get the booking
-    const booking = await prisma.booking.findUnique({
-      where: { id: context.params.id },
-      include: {
-        teacherProfile: true,
-      },
-    });
+//     // Get the booking
+//     const booking = await prisma.booking.findUnique({
+//       where: { id: context.params.id },
+//       include: {
+//         teacherProfile: true,
+//       },
+//     });
     
-    if (!booking) {
-      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
-    }
+//     if (!booking) {
+//       return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+//     }
     
-    // Check if user is authorized to cancel (student, teacher, or admin)
-    const isAuthorized = 
-      session.user.id === booking.userId || 
-      session.user.id === booking.teacherProfile.userId ||
-      session.user.role === "ADMIN";
+//     // Check if user is authorized to cancel (student, teacher, or admin)
+//     const isAuthorized = 
+//       session.user.id === booking.userId || 
+//       session.user.id === booking.teacherProfile.userId ||
+//       session.user.role === "ADMIN";
       
-    if (!isAuthorized) {
-      return NextResponse.json({ error: "Not authorized to cancel booking" }, { status: 403 });
-    }
+//     if (!isAuthorized) {
+//       return NextResponse.json({ error: "Not authorized to cancel booking" }, { status: 403 });
+//     }
     
-    // Get cancellation reason from query params
-    const { searchParams } = new URL(request.url);
-    const reason = searchParams.get("reason") || "Cancelled by user";
+//     // Get cancellation reason from query params
+//     const { searchParams } = new URL(request.url);
+//     const reason = searchParams.get("reason") || "Cancelled by user";
     
-    // Update booking to cancelled status with the correct field name
-    const cancelledBooking = await prisma.booking.update({
-      where: { id: context.params.id },
-      data: {
-        status: "CANCELLED",
-        cancelReason: reason, // Using the correct field name as per Prisma schema
-        canceledBy: session.user.id,
-      },
-    });
+//     // Update booking to cancelled status with the correct field name
+//     const cancelledBooking = await prisma.booking.update({
+//       where: { id: context.params.id },
+//       data: {
+//         status: "CANCELLED",
+//         cancelReason: reason, // Using the correct field name as per Prisma schema
+//         canceledBy: session.user.id,
+//       },
+//     });
     
-    // Notify the counterparty
-    const isStudentAction = session.user.id === booking.userId;
-    const notificationUserId = isStudentAction 
-      ? booking.teacherProfile.userId 
-      : booking.userId;
+//     // Notify the counterparty
+//     const isStudentAction = session.user.id === booking.userId;
+//     const notificationUserId = isStudentAction 
+//       ? booking.teacherProfile.userId 
+//       : booking.userId;
     
-    // Format date and time in a readable format
-    const startTime = new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const dateStr = new Date(booking.startTime).toLocaleDateString();
+//     // Format date and time in a readable format
+//     const startTime = new Date(booking.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+//     const dateStr = new Date(booking.startTime).toLocaleDateString();
     
-    await prisma.notification.create({
-      data: {
-        receiverId: notificationUserId, // Using receiverId instead of userId
-        title: "Booking Cancelled",
-        message: `Your booking on ${dateStr} at ${startTime} has been cancelled. Reason: ${reason}`,
-        type: "BOOKING",
-        isRead: false,
-        entityId: booking.id,
-        entityType: "BOOKING"
-      },
-    });
+//     await prisma.notification.create({
+//       data: {
+//         receiverId: notificationUserId, // Using receiverId instead of userId
+//         title: "Booking Cancelled",
+//         message: `Your booking on ${dateStr} at ${startTime} has been cancelled. Reason: ${reason}`,
+//         type: "BOOKING",
+//         isRead: false,
+//         entityId: booking.id,
+//         entityType: "BOOKING"
+//       },
+//     });
     
-    return NextResponse.json({
-      message: "Booking cancelled successfully",
-      booking: cancelledBooking,
-    });
-  } catch (error) {
-    console.error("Error cancelling booking:", error);
-    return NextResponse.json(
-      { error: "Failed to cancel booking" },
-      { status: 500 }
-    );
-  }
-}
+//     return NextResponse.json({
+//       message: "Booking cancelled successfully",
+//       booking: cancelledBooking,
+//     });
+//   } catch (error) {
+//     console.error("Error cancelling booking:", error);
+//     return NextResponse.json(
+//       { error: "Failed to cancel booking" },
+//       { status: 500 }
+//     );
+//   }
+// }
