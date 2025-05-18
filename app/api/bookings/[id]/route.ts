@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/prisma/generated/prisma-client";
+import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
@@ -6,7 +6,6 @@ import { isFrontendOnlyMode } from "@/lib/config";
 import { z } from "zod";
 
 // Initialize Prisma client
-const prisma = new PrismaClient();
 
 const bookingUpdateSchema = z.object({
   status: z.enum(["PENDING", "SCHEDULED", "CONFIRMED", "COMPLETED", "CANCELLED", "NO_SHOW"]).optional(),
@@ -207,6 +206,8 @@ export async function PATCH(
           message: notificationMessage,
           type: "BOOKING",
           isRead: false,
+          entityId: booking.id,
+          entityType: "BOOKING"
         },
       });
     }
@@ -281,6 +282,8 @@ export async function DELETE(
       where: { id: context.params.id },
       data: {
         status: "CANCELLED",
+        cancelReason: reason, // Using the correct field name as per Prisma schema
+        canceledBy: session.user.id,
       },
     });
     
@@ -301,6 +304,8 @@ export async function DELETE(
         message: `Your booking on ${dateStr} at ${startTime} has been cancelled. Reason: ${reason}`,
         type: "BOOKING",
         isRead: false,
+        entityId: booking.id,
+        entityType: "BOOKING"
       },
     });
     
