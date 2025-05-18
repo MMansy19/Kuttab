@@ -13,10 +13,7 @@ const bookingUpdateSchema = z.object({
 });
 
 // GET a single booking by ID
-export async function GET(
-  request: NextRequest,
-  context: { params: { id: string } }
-){
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -27,7 +24,7 @@ export async function GET(
     // Mock data for frontend-only mode
     if (isFrontendOnlyMode) {
       return NextResponse.json({
-        id: context.params.id,
+        id: params.id,
         userId: "mock-user-1",
         teacherProfileId: "teacher-1",
         startTime: new Date("2025-05-10T10:00:00Z").toISOString(),
@@ -57,7 +54,7 @@ export async function GET(
     }
       // Get the booking with related data
     const booking = await prisma.booking.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       include: {
         user: {
           select: {
