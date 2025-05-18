@@ -1,5 +1,5 @@
-import { type NextRequest } from 'next/dist/server/web/spec-extension/request';
-import { NextResponse } from 'next/dist/server/web/spec-extension/response';
+import { type NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
@@ -13,13 +13,11 @@ const bookingUpdateSchema = z.object({
   cancelReason: z.string().max(500).optional(),
 });
 
-// @ts-ignore - The following route handlers may cause TypeScript errors during build
-// but they work correctly at runtime
 
 // GET a single booking by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: Record<string, string> }
+  context: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -31,7 +29,7 @@ export async function GET(
     // Mock data for frontend-only mode
     if (isFrontendOnlyMode) {
       return NextResponse.json({
-        id: params.id,
+        id: context.params.id,
         userId: "mock-user-1",
         teacherProfileId: "teacher-1",
         startTime: new Date("2025-05-10T10:00:00Z").toISOString(),
@@ -62,7 +60,7 @@ export async function GET(
     
     // Get the booking with related data
     const booking = await prisma.booking.findUnique({
-      where: { id: params.id },
+      where: { id: context.params.id },
       include: {
         user: {
           select: {
@@ -115,7 +113,7 @@ export async function GET(
 // PATCH to update booking status
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Record<string, string> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -287,7 +285,7 @@ export async function PATCH(
 // DELETE to cancel a booking (soft delete)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Record<string, string> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
