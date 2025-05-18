@@ -6,6 +6,7 @@
 
 // Constants
 const isProd = process.env.NODE_ENV === 'production';
+const isFrontendOnly = 
   (isProd && (!process.env.DATABASE_URL || process.env.DATABASE_URL === 'frontend-only'));
 
 const nextConfig = {
@@ -90,25 +91,7 @@ const nextConfig = {
 
   compress: true,
 
-  webpack: (config, { isServer }) => {
-    config.watchOptions = {
-      ignored: ['**/node_modules/**', '**/.next/**'],
-      poll: false,
-    };    // Run after webpack build completes
-    if (isServer) {
-      config.plugins.push({
-        apply: (compiler) => {
-          compiler.hooks.afterEmit.tap('FixAuthAndRouteTypes', () => {
-            fixAuthBuild();
-            fixRouteTypes();
-          });
-        },
-      });
-    }
 
-    return config;
-  },
-  // Experimental features
   experimental: {
     serverActions: {
       bodySizeLimit: '2mb',
