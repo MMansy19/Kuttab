@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate",
+    "build": "prisma generate && next build",
     "build:vercel": "prisma generate && next build",
     "start": "next start",
     "postinstall": "prisma generate",
