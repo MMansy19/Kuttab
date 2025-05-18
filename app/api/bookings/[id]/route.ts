@@ -1,5 +1,5 @@
-import { type NextRequest } from 'next/dist/server/web/spec-extension/request';
-import { NextResponse } from 'next/dist/server/web/spec-extension/response';
+import { type NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
@@ -13,12 +13,16 @@ const bookingUpdateSchema = z.object({
   cancelReason: z.string().max(500).optional(),
 });
 
+// Type for route params
+type RouteParams = {
+  id: string;
+}
 
 // GET a single booking by ID
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
-) {
+  { params }: { params: RouteParams }
+){
   try {
     const session = await getServerSession(authOptions);
     
@@ -57,10 +61,9 @@ export async function GET(
         reviews: []
       });
     }
-    
-    // Get the booking with related data
+      // Get the booking with related data
     const booking = await prisma.booking.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       include: {
         user: {
           select: {
@@ -113,8 +116,8 @@ export async function GET(
 // PATCH to update booking status
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: RouteParams }
+){
   try {
     const session = await getServerSession(authOptions);
     
@@ -285,8 +288,8 @@ export async function PATCH(
 // DELETE to cancel a booking (soft delete)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+  { params }: { params: RouteParams }
+){
   try {
     const session = await getServerSession(authOptions);
     
