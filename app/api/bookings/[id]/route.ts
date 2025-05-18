@@ -19,7 +19,7 @@ const bookingUpdateSchema = z.object({
 // GET a single booking by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Record<string, string> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -115,7 +115,7 @@ export async function GET(
 // PATCH to update booking status
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Record<string, string> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -287,7 +287,7 @@ export async function PATCH(
 // DELETE to cancel a booking (soft delete)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Record<string, string> }
 ) {
   try {
     const session = await getServerSession(authOptions);

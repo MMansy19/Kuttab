@@ -1,4 +1,5 @@
 export { AuthCard } from './components/AuthCard';
+export { AuthErrorHandler } from './components/AuthErrorHandler';
 export { LoginForm } from './components/LoginForm';
 export { RegisterForm } from './components/RegisterForm';
 export { useAuth } from './hooks/useAuth';
