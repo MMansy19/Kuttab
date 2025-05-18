@@ -1,5 +1,5 @@
-import { type NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { type NextRequest } from 'next/dist/server/web/spec-extension/request';
+import { NextResponse } from 'next/dist/server/web/spec-extension/response';
 import { getServerSession } from "next-auth/next";
 import { z } from "zod";
 import prisma from "@/lib/prisma";
@@ -33,7 +33,7 @@ export async function GET(
     // Mock data for frontend-only mode
     if (isFrontendOnlyMode) {
       return NextResponse.json({
-        id: context.params.id,
+        id: params.id,
         userId: "mock-user-1",
         teacherProfileId: "teacher-1",
         startTime: new Date("2025-05-10T10:00:00Z").toISOString(),
