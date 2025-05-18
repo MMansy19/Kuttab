@@ -1,8 +1,0 @@
-
-# Paths that cause permission errors on Windows
-**/Application Data/**
-**/AppData/**
-**/node_modules/.cache/**
-**/node_modules/.bin/**
-C:\Users\mahmo\Application Data
-C:\Users\mahmo\Application Data/**

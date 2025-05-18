@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { PrismaClient } from "@prisma/client";
 import { isFrontendOnlyMode } from "@/lib/config";
 
 /**
